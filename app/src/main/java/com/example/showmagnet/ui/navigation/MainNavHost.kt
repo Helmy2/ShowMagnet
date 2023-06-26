@@ -1,10 +1,13 @@
 package com.example.showmagnet.ui.navigation
 
+import android.widget.Toast
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -15,10 +18,10 @@ import com.example.showmagnet.ui.auth.sign_in.SignInEvent
 import com.example.showmagnet.ui.auth.sign_in.SignInScreen
 import com.example.showmagnet.ui.auth.sign_in.SignInState
 import com.example.showmagnet.ui.auth.sign_in.SignInViewModel
-import com.example.showmagnet.ui.auth.sign_up.SignUpEvent
+import com.example.showmagnet.ui.auth.sign_up.SignUpContract
 import com.example.showmagnet.ui.auth.sign_up.SignUpScreen
-import com.example.showmagnet.ui.auth.sign_up.SignUpState
 import com.example.showmagnet.ui.auth.sign_up.SignUpViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun MainNavHost() {
@@ -94,18 +97,31 @@ fun NavGraphBuilder.signUpScreen(
 ) {
     composable(NavScreen.SignUp.route) {
         val viewModel = hiltViewModel<SignUpViewModel>()
-        val state: SignUpState by viewModel.uiState.collectAsState()
+        val state by viewModel.viewState
+        val context = LocalContext.current
+        LaunchedEffect(key1 = viewModel.effect) {
+            viewModel.effect.collectLatest {
+                when (it) {
+                    SignUpContract.Effect.NavigateToSignIn -> {
+                        onNavigateToSignIn()
+                    }
 
-        SideEffect {
-            if (state.navigateToNextScreen) {
-                onNavigateToSignIn()
-                viewModel.handleEvent(SignUpEvent.NavigateDismissed)
+                    SignUpContract.Effect.ShowSuccessToastAndNavigate -> {
+                        Toast.makeText(context, "Create account successfully", Toast.LENGTH_SHORT)
+                            .show()
+                        onNavigateToSignIn()
+                    }
+
+                    is SignUpContract.Effect.ShowErrorToast -> {
+                        Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
 
         SignUpScreen(
             state = state,
-            handleEvent = viewModel::handleEvent
+            handleEvent = viewModel::setEvent
         )
     }
 }

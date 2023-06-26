@@ -1,6 +1,6 @@
 package com.example.showmagnet.ui.auth.sign_up
 
-import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,7 +26,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -35,10 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -54,25 +51,12 @@ import com.example.showmagnet.ui.auth.components.TitleField
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SignUpScreen(
-    state: SignUpState,
-    handleEvent: (SignUpEvent) -> Unit,
+    state: SignUpContract.State,
+    handleEvent: (SignUpContract.Event) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var passwordHidden by rememberSaveable { mutableStateOf(true) }
-    val context = LocalContext.current
-
-    SideEffect {
-        if (!state.error.isNullOrBlank()) {
-            Toast.makeText(context, state.error, Toast.LENGTH_SHORT).show()
-            handleEvent(SignUpEvent.ErrorDismissed)
-        }
-        if (state.successSignUp) {
-            Toast.makeText(context, "Create account successfully", Toast.LENGTH_SHORT).show()
-
-            handleEvent(SignUpEvent.NavigateToSignIn)
-        }
-    }
 
     Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         if (state.loading) CircularProgressIndicator()
@@ -92,31 +76,29 @@ fun SignUpScreen(
             )
             Spacer(modifier = Modifier.weight(.5f))
             NameTextField(
-                name = state.name ?: "",
-                onValueChange = { handleEvent(SignUpEvent.NameChanged(it)) },
+                name = state.name,
+                onValueChange = { handleEvent(SignUpContract.Event.NameChanged(it)) },
             )
             EmailTextField(
-                email = state.email ?: "",
-                onValueChange = { handleEvent(SignUpEvent.EmailChanged(it)) },
+                email = state.email,
+                onValueChange = { handleEvent(SignUpContract.Event.EmailChanged(it)) },
                 keyboardController = keyboardController,
             )
             PasswordField(
                 password = state.password ?: "",
-                onValueChange = { handleEvent(SignUpEvent.PasswordChanged(it)) },
+                onValueChange = { handleEvent(SignUpContract.Event.PasswordChanged(it)) },
                 keyboardController = keyboardController,
                 isHidden = passwordHidden,
                 onIsHiddenChange = { passwordHidden = it },
             )
-            state.passwordRequirements.firstOrNull()?.let {
-                PasswordRequirements(
-                    stringResource(id = it.label)
-                )
+            AnimatedVisibility(visible = state.passwordRequirement != null) {
+                PasswordRequirements(state.passwordRequirement ?: "")
             }
             Spacer(modifier = Modifier.weight(.5f))
-            SignButton(enabled = state.isFormValid(),
-                onClick = { handleEvent(SignUpEvent.SignUP) },
+            SignButton(enabled = state.isValuedSignUp,
+                onClick = { handleEvent(SignUpContract.Event.SignUP) },
                 content = { Text(text = "Sign Up") })
-            SignInField(onClick = { handleEvent(SignUpEvent.NavigateToSignIn) })
+            SignInField(onClick = { handleEvent(SignUpContract.Event.NavigateToSignIn) })
             Spacer(modifier = Modifier.weight(1f))
         }
     }
