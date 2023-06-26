@@ -2,7 +2,9 @@ package com.example.showmagnet.di
 
 import android.content.Context
 import com.example.showmagnet.data.repository.AuthRepositoryImpl
+import com.example.showmagnet.data.repository.UserRepositoryImpl
 import com.example.showmagnet.domain.repository.AuthRepository
+import com.example.showmagnet.domain.repository.UserRepository
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -25,9 +27,15 @@ object AuthenticatorModule {
 
     @Provides
     @Singleton
-    fun provideAuthenticator(
+    fun provideAuthRepository(
         auth: FirebaseAuth,
         @ApplicationContext context: Context
     ): AuthRepository =
         AuthRepositoryImpl(context, auth, Identity.getSignInClient(context))
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(
+        auth: FirebaseAuth,
+    ): UserRepository = UserRepositoryImpl(auth)
 }

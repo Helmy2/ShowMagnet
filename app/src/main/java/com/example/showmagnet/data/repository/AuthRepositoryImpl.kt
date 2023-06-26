@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import com.example.showmagnet.R
-import com.example.showmagnet.domain.model.SignInResult
+import com.example.showmagnet.domain.model.SignResult
 import com.example.showmagnet.domain.model.UserData
 import com.example.showmagnet.domain.repository.AuthRepository
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
@@ -20,23 +20,23 @@ class AuthRepositoryImpl(
     private val oneTapClient: SignInClient
 ) : AuthRepository {
 
-    override suspend fun signUp(email: String, password: String): SignInResult {
+    override suspend fun signUp(email: String, password: String): SignResult {
         return try {
-            val user = auth.createUserWithEmailAndPassword(email, password).await()
-            SignInResult(user == null)
+            val result = auth.createUserWithEmailAndPassword(email, password).await()
+            SignResult(result != null)
         } catch (e: Exception) {
             e.printStackTrace()
-            SignInResult(false)
+            SignResult(false, e.message)
         }
     }
 
-    override suspend fun signIn(email: String, password: String): SignInResult {
+    override suspend fun signIn(email: String, password: String): SignResult {
         return try {
-            val user = auth.signInWithEmailAndPassword(email, password).await()
-            SignInResult(user == null)
+            val result = auth.signInWithEmailAndPassword(email, password).await()
+            SignResult(result == null)
         } catch (e: Exception) {
             e.printStackTrace()
-            SignInResult(false)
+            SignResult(false)
         }
     }
 
@@ -66,17 +66,17 @@ class AuthRepositoryImpl(
             .build()
     }
 
-    override suspend fun signInWithIntent(intent: Intent): SignInResult {
+    override suspend fun signInWithIntent(intent: Intent): SignResult {
         val credential = oneTapClient.getSignInCredentialFromIntent(intent)
         val googleIdToken = credential.googleIdToken
         val googleCredentials = GoogleAuthProvider.getCredential(googleIdToken, null)
         return try {
             val user = auth.signInWithCredential(googleCredentials).await().user
-            SignInResult(user != null)
+            SignResult(user != null)
         } catch (e: Exception) {
             e.printStackTrace()
             if (e is CancellationException) throw e
-            SignInResult(false, e.localizedMessage?.toString())
+            SignResult(false, e.localizedMessage?.toString())
         }
     }
 
