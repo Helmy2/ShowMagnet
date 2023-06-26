@@ -4,6 +4,7 @@ import com.example.showmagnet.domain.model.SignResult
 import com.example.showmagnet.domain.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 
 class UserRepositoryImpl(
@@ -17,5 +18,16 @@ class UserRepositoryImpl(
         SignResult(true)
     } catch (e: Exception) {
         SignResult(false, e.message)
+    }
+
+    override suspend fun signOut(): Boolean {
+        try {
+            auth.signOut()
+            return true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            if (e is CancellationException) throw e
+        }
+        return false
     }
 }

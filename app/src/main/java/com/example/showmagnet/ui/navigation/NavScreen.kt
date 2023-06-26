@@ -6,4 +6,5 @@ import com.google.errorprone.annotations.Immutable
 sealed class NavScreen(val route: String) {
     object SignIn : NavScreen("SignIn")
     object SignUp : NavScreen("SignUp")
+    object Home : NavScreen("Home")
 }

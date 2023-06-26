@@ -70,7 +70,7 @@ fun SignUpScreen(
         if (state.successSignUp) {
             Toast.makeText(context, "Create account successfully", Toast.LENGTH_SHORT).show()
 
-            handleEvent(SignUpEvent.NavigateToNextScreen)
+            handleEvent(SignUpEvent.NavigateToSignIn)
         }
     }
 
@@ -116,7 +116,7 @@ fun SignUpScreen(
             SignButton(enabled = state.isFormValid(),
                 onClick = { handleEvent(SignUpEvent.SignUP) },
                 content = { Text(text = "Sign Up") })
-            SignInField(onClick = { handleEvent(SignUpEvent.NavigateToNextScreen) })
+            SignInField(onClick = { handleEvent(SignUpEvent.NavigateToSignIn) })
             Spacer(modifier = Modifier.weight(1f))
         }
     }

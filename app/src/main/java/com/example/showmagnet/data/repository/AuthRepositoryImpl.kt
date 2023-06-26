@@ -33,10 +33,10 @@ class AuthRepositoryImpl(
     override suspend fun signIn(email: String, password: String): SignResult {
         return try {
             val result = auth.signInWithEmailAndPassword(email, password).await()
-            SignResult(result == null)
+            SignResult(result != null)
         } catch (e: Exception) {
             e.printStackTrace()
-            SignResult(false)
+            SignResult(false, e.message)
         }
     }
 
@@ -80,17 +80,16 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun signOut(): Boolean {
-        try {
-            oneTapClient.signOut().await()
-            auth.signOut()
-            return true
+    override suspend fun resetPassword(email: String): SignResult {
+        return try {
+            auth.sendPasswordResetEmail(email).await()
+            SignResult(true)
         } catch (e: Exception) {
             e.printStackTrace()
-            if (e is CancellationException) throw e
+            SignResult(false, e.message)
         }
-        return false
     }
+
 
     override fun isSignedIn(): Boolean {
         return auth.currentUser != null

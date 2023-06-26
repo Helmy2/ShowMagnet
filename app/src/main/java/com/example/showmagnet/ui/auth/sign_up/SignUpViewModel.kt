@@ -78,6 +78,12 @@ class SignUpViewModel
         )
     }
 
+    private fun dismissNavigation() {
+        uiState.value = uiState.value.copy(
+            navigateToNextScreen = false
+        )
+    }
+
     fun handleEvent(signUpEvent: SignUpEvent) {
         when (signUpEvent) {
             is SignUpEvent.EmailChanged -> updateEmail(signUpEvent.email)
@@ -86,7 +92,8 @@ class SignUpViewModel
 
             SignUpEvent.SignUP -> signUp()
             SignUpEvent.ErrorDismissed -> dismissError()
-            SignUpEvent.NavigateToNextScreen -> navigate()
+            SignUpEvent.NavigateToSignIn -> navigate()
+            SignUpEvent.NavigateDismissed -> dismissNavigation()
         }
     }
 }

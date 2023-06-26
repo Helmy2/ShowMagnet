@@ -3,7 +3,8 @@ package com.example.showmagnet.ui.auth.sign_up
 sealed class SignUpEvent {
     object SignUP : SignUpEvent()
 
-    object NavigateToNextScreen : SignUpEvent()
+    object NavigateToSignIn : SignUpEvent()
+    object NavigateDismissed : SignUpEvent()
 
     object ErrorDismissed : SignUpEvent()
     class NameChanged(val name: String) :

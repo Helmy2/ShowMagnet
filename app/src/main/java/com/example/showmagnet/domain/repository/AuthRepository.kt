@@ -16,7 +16,7 @@ interface AuthRepository {
 
     suspend fun signInWithIntent(intent: Intent): SignResult
 
-    suspend fun signOut(): Boolean
+    suspend fun resetPassword(email: String): SignResult
     fun getSignedInUser(): UserData?
     fun isSignedIn(): Boolean
 }
