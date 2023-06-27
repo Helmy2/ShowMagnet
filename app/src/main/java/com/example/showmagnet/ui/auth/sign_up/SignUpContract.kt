@@ -44,6 +44,8 @@ class SignUpContract {
 
         class ShowErrorToast(val message: String) : Effect()
         object ShowSuccessToastAndNavigate : Effect()
-        object NavigateToSignIn : Effect()
+        sealed class Navigation : Effect() {
+            object ToSignIn : Navigation()
+        }
     }
 }

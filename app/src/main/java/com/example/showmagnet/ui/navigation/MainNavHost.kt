@@ -1,11 +1,13 @@
 package com.example.showmagnet.ui.navigation
 
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -14,9 +16,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.showmagnet.ui.auth.sign_in.SignInEvent
+import com.example.showmagnet.ui.auth.sign_in.SignInContract
 import com.example.showmagnet.ui.auth.sign_in.SignInScreen
-import com.example.showmagnet.ui.auth.sign_in.SignInState
 import com.example.showmagnet.ui.auth.sign_in.SignInViewModel
 import com.example.showmagnet.ui.auth.sign_up.SignUpContract
 import com.example.showmagnet.ui.auth.sign_up.SignUpScreen
@@ -50,7 +51,9 @@ fun MainNavHost() {
 }
 
 fun NavController.navigateToHomeUp() {
-    this.navigate(NavScreen.Home.route)
+    this.navigate(NavScreen.Home.route) {
+        popUpTo(NavScreen.SignIn.route){ inclusive = true}
+    }
 }
 
 fun NavController.navigateToSignIn() {
@@ -67,27 +70,50 @@ fun NavGraphBuilder.signInScreen(
 ) {
     composable(NavScreen.SignIn.route) {
         val viewModel = hiltViewModel<SignInViewModel>()
-        val state by viewModel.uiState.collectAsState()
+        val state by viewModel.viewState
+        val context = LocalContext.current
 
-        SideEffect {
-            when (state.navigateTo) {
-                SignInState.NavigateTo.SIGN_UP -> {
-                    onNavigateToSignUp()
-                    viewModel.handleEvent(SignInEvent.NavigateDismissed)
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartIntentSenderForResult(),
+            onResult = { result ->
+                if (result.resultCode == ComponentActivity.RESULT_OK && result.data != null)
+                    viewModel.setEvent(SignInContract.Event.SignInWithGoogle(result.data!!))
+            }
+        )
+
+        LaunchedEffect(key1 = viewModel.effect) {
+            viewModel.effect.collectLatest {
+                when (it) {
+                    is SignInContract.Effect.ShowErrorToast -> {
+                        Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                    }
+
+                    is SignInContract.Effect.ShowSuccessToast -> {
+                        Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                    }
+
+                    SignInContract.Effect.Navigation.ToHome -> {
+                        onNavigateToHome()
+                    }
+
+                    SignInContract.Effect.Navigation.ToSignUp -> {
+                        onNavigateToSignUp()
+                    }
+
+                    SignInContract.Effect.StartSignInWithGoogle -> {
+                        launcher.launch(
+                            IntentSenderRequest.Builder(
+                                state.intentSender ?: return@collectLatest
+                            ).build()
+                        )
+                    }
                 }
-
-                SignInState.NavigateTo.Home -> {
-                    onNavigateToHome()
-                    viewModel.handleEvent(SignInEvent.NavigateDismissed)
-                }
-
-                else -> {}
             }
         }
 
         SignInScreen(
             state = state,
-            handleEvent = viewModel::handleEvent
+            handleEvent = viewModel::setEvent
         )
     }
 }
@@ -102,12 +128,16 @@ fun NavGraphBuilder.signUpScreen(
         LaunchedEffect(key1 = viewModel.effect) {
             viewModel.effect.collectLatest {
                 when (it) {
-                    SignUpContract.Effect.NavigateToSignIn -> {
+                    SignUpContract.Effect.Navigation.ToSignIn -> {
                         onNavigateToSignIn()
                     }
 
                     SignUpContract.Effect.ShowSuccessToastAndNavigate -> {
-                        Toast.makeText(context, "Create account successfully", Toast.LENGTH_SHORT)
+                        Toast.makeText(
+                            context,
+                            "Create account successfully",
+                            Toast.LENGTH_SHORT
+                        )
                             .show()
                         onNavigateToSignIn()
                     }

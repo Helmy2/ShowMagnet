@@ -1,10 +1,5 @@
 package com.example.showmagnet.ui.auth.sign_in
 
-import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.IntentSenderRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,7 +28,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -42,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -61,45 +54,14 @@ import com.example.showmagnet.ui.auth.components.TitleField
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SignInScreen(
-    state: SignInState,
-    handleEvent: (SignInEvent) -> Unit,
+    state: SignInContract.State,
+    handleEvent: (SignInContract.Event) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var passwordHidden by rememberSaveable { mutableStateOf(true) }
     var openResetPassword by rememberSaveable { mutableStateOf(false) }
-    val context = LocalContext.current
 
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartIntentSenderForResult(),
-        onResult = { result ->
-            if (result.resultCode == ComponentActivity.RESULT_OK && result.data != null)
-                handleEvent(SignInEvent.SignInWithGoogle(result.data!!))
-        }
-    )
-
-    SideEffect {
-        if (!state.error.isNullOrBlank()) {
-            Toast.makeText(context, state.error, Toast.LENGTH_SHORT).show()
-            handleEvent(SignInEvent.ErrorDismissed)
-        }
-        if (!state.success.isNullOrBlank()) {
-            Toast.makeText(context, state.error, Toast.LENGTH_SHORT).show()
-            handleEvent(SignInEvent.ErrorDismissed)
-        }
-        if (state.successSignIn) {
-            Toast.makeText(context, "Successfully signed in", Toast.LENGTH_SHORT).show()
-
-            handleEvent(SignInEvent.NavigateToHome)
-        }
-        if (state.startSignInWithGoogle) {
-            launcher.launch(
-                IntentSenderRequest.Builder(
-                    state.intentSender ?: return@SideEffect
-                ).build()
-            )
-        }
-    }
 
     Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         if (state.loading)
@@ -108,7 +70,7 @@ fun SignInScreen(
             ResetPasswordDialog(
                 onResetClick = {
                     openResetPassword = false
-                    handleEvent(SignInEvent.ResetPassword(it))
+                    handleEvent(SignInContract.Event.ResetPassword(it))
                 },
                 onDismissRequest = { openResetPassword = false },
                 keyboardController = keyboardController,
@@ -130,13 +92,13 @@ fun SignInScreen(
                 )
                 Spacer(modifier = Modifier.weight(.5f))
                 EmailTextField(
-                    email = state.email ?: "",
-                    onValueChange = { handleEvent(SignInEvent.EmailChanged(it)) },
+                    email = state.email,
+                    onValueChange = { handleEvent(SignInContract.Event.EmailChanged(it)) },
                     keyboardController = keyboardController,
                 )
                 PasswordField(
-                    password = state.password ?: "",
-                    onValueChange = { handleEvent(SignInEvent.PasswordChanged(it)) },
+                    password = state.password,
+                    onValueChange = { handleEvent(SignInContract.Event.PasswordChanged(it)) },
                     isHidden = passwordHidden,
                     onIsHiddenChange = { passwordHidden = it },
                     keyboardController = keyboardController,
@@ -146,14 +108,16 @@ fun SignInScreen(
                     onClick = { openResetPassword = true }
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                SignButton(enabled = state.isFormValid(),
-                    onClick = { handleEvent(SignInEvent.SignInWithEmail) }, content = {
+                SignButton(enabled = state.isValuedSignUp,
+                    onClick = { handleEvent(SignInContract.Event.SignInWithEmail) }, content = {
                         Text(text = "Sign In")
                     })
                 SignWithGoogleButton(
                     modifier = Modifier,
-                    onClick = { handleEvent(SignInEvent.StartSignInWithGoogle) })
-                SignUpField(Modifier, onClick = { handleEvent(SignInEvent.NavigateToSignUp) })
+                    onClick = { handleEvent(SignInContract.Event.StartSignInWithGoogle) })
+                SignUpField(
+                    Modifier,
+                    onClick = { handleEvent(SignInContract.Event.NavigateToSignUp) })
                 Spacer(modifier = Modifier.weight(1f))
             }
         }

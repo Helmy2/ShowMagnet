@@ -63,6 +63,6 @@ class SignUpViewModel
     }
 
     private fun navigate() {
-        setEffect { Effect.NavigateToSignIn }
+        setEffect { Effect.Navigation.ToSignIn }
     }
 }

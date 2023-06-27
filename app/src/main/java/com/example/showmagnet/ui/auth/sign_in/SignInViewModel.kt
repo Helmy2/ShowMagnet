@@ -1,14 +1,13 @@
 package com.example.showmagnet.ui.auth.sign_in
 
 import android.content.Intent
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.showmagnet.domain.use_case.ResetPasswordUseCase
 import com.example.showmagnet.domain.use_case.SignInWithEmailUseCase
 import com.example.showmagnet.domain.use_case.SignInWithGoogleUseCase
+import com.example.showmagnet.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -19,127 +18,87 @@ class SignInViewModel
     private val signInWithEmailUseCase: SignInWithEmailUseCase,
     private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
     private val resetPasswordUseCase: ResetPasswordUseCase,
-) : ViewModel() {
-    val uiState = MutableStateFlow(SignInState())
+) : BaseViewModel<SignInContract.Event, SignInContract.State, SignInContract.Effect>() {
 
+    override fun setInitialState() = SignInContract.State()
+
+    override fun handleEvents(event: SignInContract.Event) {
+        when (event) {
+            is SignInContract.Event.EmailChanged -> updateEmail(event.email)
+            is SignInContract.Event.PasswordChanged -> updatePassword(event.password)
+            is SignInContract.Event.ResetPassword -> resetPassword(event.email)
+            is SignInContract.Event.SignInWithGoogle -> signInWithGoogle(event.intent)
+            SignInContract.Event.SignInWithEmail -> signIn()
+            SignInContract.Event.StartSignInWithGoogle -> startSignInWithGoogle()
+            SignInContract.Event.NavigateToSignUp -> navigateToSignUp()
+        }
+    }
 
     init {
         viewModelScope.launch {
             val intentSender = signInWithGoogleUseCase.getIntentSender()
-
-            withContext(Dispatchers.Main) {
-                uiState.value = uiState.value.copy(
-                    intentSender = intentSender
-                )
-            }
+            setState { copy(intentSender = intentSender) }
         }
     }
 
     private fun updateEmail(email: String) {
-        this.uiState.value = this.uiState.value.copy(
-            email = email
-        )
+        setState { copy(email = email) }
     }
 
     private fun updatePassword(password: String) {
-        this.uiState.value = this.uiState.value.copy(
-            password = password,
-        )
-    }
-
-    private fun dismissError() {
-        uiState.value = uiState.value.copy(
-            error = null
-        )
+        setState { copy(password = password) }
     }
 
     private fun signIn() {
-        uiState.value = uiState.value.copy(
-            loading = true
-        )
+        setState { copy(loading = true) }
         viewModelScope.launch(Dispatchers.IO) {
             val result =
-                signInWithEmailUseCase(uiState.value.email!!, uiState.value.password!!)
+                signInWithEmailUseCase(viewState.value.email, viewState.value.password)
 
             withContext(Dispatchers.Main) {
-                if (result.success)
-                    uiState.value = uiState.value.copy(loading = false, successSignIn = true)
-                else
-                    uiState.value = uiState.value.copy(
-                        loading = false,
-                        error = result.errorMessage
-                    )
+                if (result.success) {
+                    setEffect { SignInContract.Effect.ShowSuccessToast("Signed in with email successfully") }
+                    setEffect { SignInContract.Effect.Navigation.ToHome }
+                } else
+                    setEffect { SignInContract.Effect.ShowErrorToast(result.errorMessage ?: "") }
+                setState { copy(loading = false) }
             }
         }
     }
 
-    private fun navigateToHome() {
-        uiState.value = uiState.value.copy(
-            navigateTo = SignInState.NavigateTo.Home,
-            successSignIn = false
-        )
-    }
-
-    private fun navigateToSignUP() {
-        uiState.value = uiState.value.copy(
-            navigateTo = SignInState.NavigateTo.SIGN_UP,
-        )
-    }
-
-    private fun dismissNavigation() {
-        uiState.value = uiState.value.copy(
-            navigateTo = SignInState.NavigateTo.None,
-        )
-    }
-
     private fun signInWithGoogle(intent: Intent) {
+        setState { copy(loading = true) }
+
         viewModelScope.launch(Dispatchers.IO) {
             val result = signInWithGoogleUseCase(intent)
-            if (result.success)
-                uiState.value = uiState.value.copy(loading = false, successSignIn = true)
-            else
-                uiState.value = uiState.value.copy(
-                    loading = false,
-                    error = result.errorMessage
-                )
+
+            withContext(Dispatchers.Main) {
+                if (result.success) {
+                    setEffect { SignInContract.Effect.ShowSuccessToast("Signed in with Google successfully") }
+                    setEffect { SignInContract.Effect.Navigation.ToHome }
+                } else
+                    setEffect { SignInContract.Effect.ShowErrorToast(result.errorMessage ?: "") }
+                setState { copy(loading = false) }
+            }
         }
     }
 
+    private fun navigateToSignUp() {
+        setEffect { SignInContract.Effect.Navigation.ToSignUp }
+    }
+
     private fun startSignInWithGoogle() {
-        uiState.value = uiState.value.copy(
-            startSignInWithGoogle = true
-        )
+        setEffect { SignInContract.Effect.StartSignInWithGoogle }
     }
 
     private fun resetPassword(email: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val result = resetPasswordUseCase(email)
             if (result.success)
-                uiState.value = uiState.value.copy(
-                    loading = false,
-                    success = "Password reset email sent to $email"
-                )
+                setEffect { SignInContract.Effect.ShowSuccessToast("Password reset email sent to $email") }
             else
-                uiState.value = uiState.value.copy(
-                    loading = false,
-                    error = result.errorMessage
-                )
-        }
-    }
-
-    fun handleEvent(signInEvent: SignInEvent) {
-        when (signInEvent) {
-            is SignInEvent.EmailChanged -> updateEmail(signInEvent.email)
-            is SignInEvent.PasswordChanged -> updatePassword(signInEvent.password)
-            is SignInEvent.SignInWithGoogle -> signInWithGoogle(signInEvent.intent)
-            is SignInEvent.ResetPassword -> resetPassword(signInEvent.email)
-
-            SignInEvent.SignInWithEmail -> signIn()
-            SignInEvent.ErrorDismissed -> dismissError()
-            SignInEvent.NavigateToSignUp -> navigateToSignUP()
-            SignInEvent.NavigateToHome -> navigateToHome()
-            SignInEvent.NavigateDismissed -> dismissNavigation()
-            SignInEvent.StartSignInWithGoogle -> startSignInWithGoogle()
+                setEffect { SignInContract.Effect.ShowErrorToast(result.errorMessage ?: "") }
+            setState { copy(loading = false) }
         }
     }
 }
