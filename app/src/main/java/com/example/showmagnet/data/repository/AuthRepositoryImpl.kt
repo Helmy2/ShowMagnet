@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.IntentSender
 import com.example.showmagnet.R
 import com.example.showmagnet.domain.model.SignResult
-import com.example.showmagnet.domain.model.UserData
 import com.example.showmagnet.domain.repository.AuthRepository
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -93,13 +92,5 @@ class AuthRepositoryImpl(
 
     override fun isSignedIn(): Boolean {
         return auth.currentUser != null
-    }
-
-    override fun getSignedInUser(): UserData? = auth.currentUser?.run {
-        UserData(
-            userId = uid,
-            username = displayName,
-            profilePictureUrl = photoUrl?.toString()
-        )
     }
 }

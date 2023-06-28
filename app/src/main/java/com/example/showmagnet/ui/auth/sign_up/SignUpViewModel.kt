@@ -26,7 +26,7 @@ class SignUpViewModel
             is SignUpContract.Event.PasswordChanged -> updatePassword(event.password)
 
             SignUpContract.Event.SignUP -> signUp()
-            SignUpContract.Event.NavigateToSignIn -> navigate()
+            SignUpContract.Event.Navigation.ToSignIn -> navigate()
         }
     }
 
@@ -54,7 +54,7 @@ class SignUpViewModel
                 )
             withContext(Dispatchers.Main) {
                 if (result.success)
-                    setEffect { Effect.ShowSuccessToastAndNavigate }
+                    setEffect { Effect.ShowSuccessToast("Create account successfully") }
                 else
                     setEffect { Effect.ShowErrorToast(result.errorMessage ?: "") }
                 setState { copy(loading = false) }

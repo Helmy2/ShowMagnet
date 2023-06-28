@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,14 +19,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -43,28 +50,70 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.showmagnet.ui.auth.components.EmailTextField
-import com.example.showmagnet.ui.auth.components.SignButton
+import com.example.showmagnet.ui.auth.components.LoadingButton
 import com.example.showmagnet.ui.auth.components.SignTextFiled
 import com.example.showmagnet.ui.auth.components.TitleField
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(
     state: SignUpContract.State,
+    effect: Flow<SignUpContract.Effect>,
     handleEvent: (SignUpContract.Event) -> Unit,
-    modifier: Modifier = Modifier,
+    onNavigationRequested: (SignUpContract.Effect.Navigation) -> Unit
 ) {
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var passwordHidden by rememberSaveable { mutableStateOf(true) }
 
-    Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        if (state.loading) CircularProgressIndicator()
-        else Column(
+
+    LaunchedEffect(key1 = effect) {
+        effect.collectLatest {
+            when (it) {
+                SignUpContract.Effect.Navigation.ToSignIn -> {
+                    onNavigationRequested(SignUpContract.Effect.Navigation.ToSignIn)
+                }
+
+                is SignUpContract.Effect.ShowSuccessToast -> {
+                    scope.launch {
+                        val snackbarResult = snackbarHostState.showSnackbar(
+                            message = it.message,
+                            duration = SnackbarDuration.Long,
+                            actionLabel = "Sign In",
+                            withDismissAction = true
+                        )
+                        if (snackbarResult == SnackbarResult.ActionPerformed) {
+                            handleEvent(SignUpContract.Event.Navigation.ToSignIn)
+                        }
+                    }
+                }
+
+                is SignUpContract.Effect.ShowErrorToast -> {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = it.message,
+                            duration = SnackbarDuration.Short
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        }
+    ) { padding ->
+        Column(
             Modifier
-                .align(Alignment.Center)
-                .fillMaxWidth(0.8f)
-                .fillMaxHeight(),
+                .padding(padding)
+                .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -78,11 +127,13 @@ fun SignUpScreen(
             NameTextField(
                 name = state.name,
                 onValueChange = { handleEvent(SignUpContract.Event.NameChanged(it)) },
+                modifier = Modifier.fillMaxWidth(0.8f)
             )
             EmailTextField(
                 email = state.email,
                 onValueChange = { handleEvent(SignUpContract.Event.EmailChanged(it)) },
                 keyboardController = keyboardController,
+                modifier = Modifier.fillMaxWidth(0.8f)
             )
             PasswordField(
                 password = state.password ?: "",
@@ -90,15 +141,24 @@ fun SignUpScreen(
                 keyboardController = keyboardController,
                 isHidden = passwordHidden,
                 onIsHiddenChange = { passwordHidden = it },
+                modifier = Modifier.fillMaxWidth(0.8f)
             )
             AnimatedVisibility(visible = state.passwordRequirement != null) {
-                PasswordRequirements(state.passwordRequirement ?: "")
+                PasswordRequirements(
+                    state.passwordRequirement ?: "",
+                    modifier = Modifier.fillMaxWidth(0.8f)
+                )
             }
             Spacer(modifier = Modifier.weight(.5f))
-            SignButton(enabled = state.isValuedSignUp,
+            LoadingButton(
+                enabled = state.isValuedSignUp,
+                loading = state.loading,
                 onClick = { handleEvent(SignUpContract.Event.SignUP) },
-                content = { Text(text = "Sign Up") })
-            SignInField(onClick = { handleEvent(SignUpContract.Event.NavigateToSignIn) })
+                modifier = Modifier.fillMaxWidth(0.8f)
+            ) {
+                Text(text = "Sign Up")
+            }
+            SignInField(onClick = { handleEvent(SignUpContract.Event.Navigation.ToSignIn) })
             Spacer(modifier = Modifier.weight(1f))
         }
     }
@@ -106,15 +166,20 @@ fun SignUpScreen(
 
 @Composable
 private fun NameTextField(
-    name: String, onValueChange: (String) -> Unit
+    name: String, onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     SignTextFiled(
-        value = name, onValueChange = onValueChange, label = {
+        modifier = modifier,
+        value = name,
+        onValueChange = onValueChange,
+        label = {
             Text(
                 "Name",
                 style = MaterialTheme.typography.labelMedium,
             )
-        }, keyboardOptions = KeyboardOptions(
+        },
+        keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Next, keyboardType = KeyboardType.Text
         )
     )

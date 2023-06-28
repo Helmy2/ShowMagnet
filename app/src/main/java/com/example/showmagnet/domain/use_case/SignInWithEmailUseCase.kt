@@ -6,8 +6,12 @@ import javax.inject.Inject
 
 class SignInWithEmailUseCase @Inject constructor(
     private val authRepository: AuthRepository,
+    private val changeSignedInUseCase: ChangeSignedInUseCase
 ) {
     suspend operator fun invoke(email: String, password: String): SignResult {
-        return authRepository.signIn(email, password)
+        val result = authRepository.signIn(email, password)
+        if (result.success)
+            changeSignedInUseCase(true)
+        return result
     }
 }

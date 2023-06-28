@@ -3,7 +3,6 @@ package com.example.showmagnet.domain.repository
 import android.content.Intent
 import android.content.IntentSender
 import com.example.showmagnet.domain.model.SignResult
-import com.example.showmagnet.domain.model.UserData
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 
 interface AuthRepository {
@@ -17,6 +16,5 @@ interface AuthRepository {
     suspend fun signInWithIntent(intent: Intent): SignResult
 
     suspend fun resetPassword(email: String): SignResult
-    fun getSignedInUser(): UserData?
     fun isSignedIn(): Boolean
 }

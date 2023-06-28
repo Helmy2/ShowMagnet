@@ -30,14 +30,7 @@ class SignInViewModel
             is SignInContract.Event.SignInWithGoogle -> signInWithGoogle(event.intent)
             SignInContract.Event.SignInWithEmail -> signIn()
             SignInContract.Event.StartSignInWithGoogle -> startSignInWithGoogle()
-            SignInContract.Event.NavigateToSignUp -> navigateToSignUp()
-        }
-    }
-
-    init {
-        viewModelScope.launch {
-            val intentSender = signInWithGoogleUseCase.getIntentSender()
-            setState { copy(intentSender = intentSender) }
+            SignInContract.Event.Navigation.ToSignUp -> navigateToSignUp()
         }
     }
 
@@ -50,35 +43,29 @@ class SignInViewModel
     }
 
     private fun signIn() {
-        setState { copy(loading = true) }
+        setState { copy(loadingWithEmail = true) }
         viewModelScope.launch(Dispatchers.IO) {
             val result =
                 signInWithEmailUseCase(viewState.value.email, viewState.value.password)
 
             withContext(Dispatchers.Main) {
-                if (result.success) {
-                    setEffect { SignInContract.Effect.ShowSuccessToast("Signed in with email successfully") }
-                    setEffect { SignInContract.Effect.Navigation.ToHome }
-                } else
+                if (!result.success)
                     setEffect { SignInContract.Effect.ShowErrorToast(result.errorMessage ?: "") }
-                setState { copy(loading = false) }
+                setState { copy(loadingWithEmail = false) }
             }
         }
     }
 
     private fun signInWithGoogle(intent: Intent) {
-        setState { copy(loading = true) }
+        setState { copy(loadingWithGoogle = true) }
 
         viewModelScope.launch(Dispatchers.IO) {
             val result = signInWithGoogleUseCase(intent)
 
             withContext(Dispatchers.Main) {
-                if (result.success) {
-                    setEffect { SignInContract.Effect.ShowSuccessToast("Signed in with Google successfully") }
-                    setEffect { SignInContract.Effect.Navigation.ToHome }
-                } else
+                if (!result.success)
                     setEffect { SignInContract.Effect.ShowErrorToast(result.errorMessage ?: "") }
-                setState { copy(loading = false) }
+                setState { copy(loadingWithGoogle = false) }
             }
         }
     }
@@ -88,7 +75,15 @@ class SignInViewModel
     }
 
     private fun startSignInWithGoogle() {
-        setEffect { SignInContract.Effect.StartSignInWithGoogle }
+        viewModelScope.launch(Dispatchers.IO) {
+            val intentSender = signInWithGoogleUseCase.getIntentSender()
+
+            withContext(Dispatchers.Main) {
+                setEffect {
+                    SignInContract.Effect.StartSignInWithGoogle(intentSender)
+                }
+            }
+        }
     }
 
     private fun resetPassword(email: String) {
@@ -98,7 +93,6 @@ class SignInViewModel
                 setEffect { SignInContract.Effect.ShowSuccessToast("Password reset email sent to $email") }
             else
                 setEffect { SignInContract.Effect.ShowErrorToast(result.errorMessage ?: "") }
-            setState { copy(loading = false) }
         }
     }
 }

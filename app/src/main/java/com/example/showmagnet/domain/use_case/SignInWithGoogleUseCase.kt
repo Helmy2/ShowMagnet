@@ -8,6 +8,7 @@ import javax.inject.Inject
 
 class SignInWithGoogleUseCase @Inject constructor(
     private val authRepository: AuthRepository,
+    private val changeSignedInUseCase: ChangeSignedInUseCase
 ) {
 
     suspend fun getIntentSender(): IntentSender? {
@@ -15,6 +16,9 @@ class SignInWithGoogleUseCase @Inject constructor(
     }
 
     suspend operator fun invoke(intent: Intent): SignResult {
-        return authRepository.signInWithIntent(intent)
+        val result = authRepository.signInWithIntent(intent)
+        if (result.success)
+            changeSignedInUseCase(true)
+        return result
     }
 }

@@ -65,12 +65,19 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
 
-    implementation ("androidx.core:core-splashscreen:1.0.1")
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose")
 
     implementation("androidx.navigation:navigation-compose:2.6.0")
 
+    implementation("androidx.compose.ui:ui-util")
+
+    // color extraction
+    implementation("androidx.palette:palette-ktx:1.0.0")
+
+    // data store
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     // firebase
     implementation(platform("com.google.firebase:firebase-bom:32.1.1"))
@@ -81,7 +88,6 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.44.2")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

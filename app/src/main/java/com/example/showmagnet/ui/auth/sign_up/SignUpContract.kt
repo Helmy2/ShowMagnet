@@ -7,13 +7,16 @@ import com.example.showmagnet.ui.base.ViewState
 class SignUpContract {
     sealed class Event : ViewEvent {
         object SignUP : Event()
-        object NavigateToSignIn : Event()
 
         class NameChanged(val name: String) : Event()
 
         class EmailChanged(val email: String) : Event()
 
         class PasswordChanged(val password: String) : Event()
+
+        sealed class Navigation : Event() {
+            object ToSignIn : Navigation()
+        }
     }
 
     data class State(
@@ -43,7 +46,7 @@ class SignUpContract {
     sealed class Effect : ViewEffect {
 
         class ShowErrorToast(val message: String) : Effect()
-        object ShowSuccessToastAndNavigate : Effect()
+        class ShowSuccessToast(val message: String) : Effect()
         sealed class Navigation : Effect() {
             object ToSignIn : Navigation()
         }
