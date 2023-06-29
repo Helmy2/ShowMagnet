@@ -48,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -60,6 +61,7 @@ import com.example.showmagnet.ui.auth.components.EmailTextField
 import com.example.showmagnet.ui.auth.components.LoadingButton
 import com.example.showmagnet.ui.auth.components.SignTextFiled
 import com.example.showmagnet.ui.auth.components.TitleField
+import com.example.showmagnet.ui.base.TestTage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -155,7 +157,9 @@ fun SignInScreen(
                 email = state.email,
                 onValueChange = { handleEvent(SignInContract.Event.EmailChanged(it)) },
                 keyboardController = keyboardController,
-                modifier = Modifier.fillMaxWidth(0.8f)
+                modifier = Modifier
+                    .testTag(TestTage.EMAIL_TEXT_FIELD_TAGE)
+                    .fillMaxWidth(0.8f)
             )
             PasswordField(
                 password = state.password,
@@ -163,7 +167,9 @@ fun SignInScreen(
                 isHidden = passwordHidden,
                 onIsHiddenChange = { passwordHidden = it },
                 keyboardController = keyboardController,
-                modifier = Modifier.fillMaxWidth(0.8f)
+                modifier = Modifier
+                    .testTag(TestTage.PASSWORD_TEXT_FIELD_TAGE)
+                    .fillMaxWidth(0.8f)
             )
             ForgetPasswordField(
                 modifier = Modifier
@@ -181,7 +187,9 @@ fun SignInScreen(
             )
             SignWithGoogleButton(
                 loading = state.loadingWithGoogle,
-                modifier = Modifier.fillMaxWidth(0.8f),
+                modifier = Modifier
+                    .testTag(TestTage.SIGN_IN_WITH_GOOGLE)
+                    .fillMaxWidth(0.8f),
                 onClick = { handleEvent(SignInContract.Event.StartSignInWithGoogle) },
             )
             SignUpField(
@@ -216,7 +224,8 @@ fun ResetPasswordDialog(
                 EmailTextField(
                     email = email,
                     onValueChange = { email = it },
-                    keyboardController = keyboardController
+                    keyboardController = keyboardController,
+                    modifier = Modifier.testTag(TestTage.FORGET_PASSWORD_TEXT_FIELD_TAGE)
                 )
                 Button(onClick = { onResetClick(email) }) {
                     Text(text = "Reset Password")
