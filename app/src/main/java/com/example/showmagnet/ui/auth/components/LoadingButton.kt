@@ -7,6 +7,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import com.example.showmagnet.ui.base.TestTage
 
 @Composable
 fun LoadingButton(
@@ -19,7 +21,8 @@ fun LoadingButton(
     Box(modifier, contentAlignment = Alignment.Center) {
         if (loading)
             CircularProgressIndicator(
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.testTag(TestTage.LOADING)
             )
         else
             SignButton(

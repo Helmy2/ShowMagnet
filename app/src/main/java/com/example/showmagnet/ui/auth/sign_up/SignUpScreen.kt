@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -52,6 +53,7 @@ import com.example.showmagnet.ui.auth.components.EmailTextField
 import com.example.showmagnet.ui.auth.components.LoadingButton
 import com.example.showmagnet.ui.auth.components.SignTextFiled
 import com.example.showmagnet.ui.auth.components.TitleField
+import com.example.showmagnet.ui.base.TestTage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -126,13 +128,17 @@ fun SignUpScreen(
             NameTextField(
                 name = state.name,
                 onValueChange = { handleEvent(SignUpContract.Event.NameChanged(it)) },
-                modifier = Modifier.fillMaxWidth(0.8f)
+                modifier = Modifier
+                    .testTag(TestTage.NAME_TEXT_FIELD_TAGE)
+                    .fillMaxWidth(0.8f)
             )
             EmailTextField(
                 email = state.email,
                 onValueChange = { handleEvent(SignUpContract.Event.EmailChanged(it)) },
                 keyboardController = keyboardController,
-                modifier = Modifier.fillMaxWidth(0.8f)
+                modifier = Modifier
+                    .testTag(TestTage.EMAIL_TEXT_FIELD_TAGE)
+                    .fillMaxWidth(0.8f)
             )
             PasswordField(
                 password = state.password ?: "",
@@ -140,7 +146,9 @@ fun SignUpScreen(
                 keyboardController = keyboardController,
                 isHidden = passwordHidden,
                 onIsHiddenChange = { passwordHidden = it },
-                modifier = Modifier.fillMaxWidth(0.8f)
+                modifier = Modifier
+                    .testTag(TestTage.PASSWORD_TEXT_FIELD_TAGE)
+                    .fillMaxWidth(0.8f)
             )
             AnimatedVisibility(visible = state.passwordRequirement != null) {
                 PasswordRequirements(
