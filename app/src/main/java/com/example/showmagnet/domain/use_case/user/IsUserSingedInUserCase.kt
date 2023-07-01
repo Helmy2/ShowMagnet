@@ -9,6 +9,6 @@ class IsUserSingedInUserCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
     operator fun invoke(): Flow<Boolean> {
-        return userRepository.userPreferencesFlow.map { it.isOnboardingComplete }
+        return userRepository.userPreferencesFlow.map { it.isUserSignedIn }
     }
 }

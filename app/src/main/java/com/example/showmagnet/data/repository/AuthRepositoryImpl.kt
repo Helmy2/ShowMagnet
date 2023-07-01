@@ -2,7 +2,6 @@ package com.example.showmagnet.data.repository
 
 import android.content.Context
 import android.content.Intent
-import android.content.IntentSender
 import com.example.showmagnet.R
 import com.example.showmagnet.domain.repository.AuthRepository
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
@@ -36,20 +35,18 @@ class AuthRepositoryImpl(
     }
 
 
-    override suspend fun signInWithGoogle(): IntentSender? {
-        val result = try {
-            oneTapClient.beginSignIn(
-                buildSignInRequest()
-            ).await()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            if (e is CancellationException) throw e
-            null
-        }
-        return result?.pendingIntent?.intentSender
+    override suspend fun signInWithGoogle() = try {
+        val result = oneTapClient.beginSignIn(
+            buildSignInRequest()
+        ).await()
+        Result.success(result?.pendingIntent?.intentSender)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        if (e is CancellationException) throw e
+        Result.failure(e)
     }
 
-    override fun buildSignInRequest(): BeginSignInRequest {
+    private fun buildSignInRequest(): BeginSignInRequest {
         return BeginSignInRequest.Builder()
             .setGoogleIdTokenRequestOptions(
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()

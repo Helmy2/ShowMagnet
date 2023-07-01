@@ -89,9 +89,12 @@ class SignInViewModel
             val intentSender = getGoogleIntentUseCase()
 
             withContext(Dispatchers.Main) {
-                setEffect {
-                    SignInContract.Effect.StartSignInWithGoogle(intentSender)
+                if (intentSender.isSuccess) {
+                    setEffect {
+                        SignInContract.Effect.StartSignInWithGoogle(intentSender.getOrNull())
+                    }
                 }
+
             }
         }
     }
