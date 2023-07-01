@@ -1,6 +1,6 @@
 package com.example.showmagnet.domain.source.preference
 
-import com.example.showmagnet.data.source.preference.UserPreferences
+import com.example.showmagnet.domain.model.UserPreferences
 import kotlinx.coroutines.flow.Flow
 
 interface UserPreferencesManager {

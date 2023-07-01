@@ -1,4 +1,4 @@
-package com.example.showmagnet.data.source.preference
+package com.example.showmagnet.domain.model
 
 data class UserPreferences(
     val isUserSignedIn: Boolean = false
