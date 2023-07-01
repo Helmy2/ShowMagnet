@@ -54,5 +54,5 @@ class UserRepositoryImpl(
     }
 
     override suspend fun setIsSignedIn(isSignedIn: Boolean) =
-        userPreferencesManager.setIsUserSignedIn(isSignedIn)
+        userPreferencesManager.updateIsUserSignedIn(isSignedIn)
 }

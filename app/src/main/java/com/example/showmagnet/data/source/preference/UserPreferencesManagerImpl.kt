@@ -1,6 +1,5 @@
 package com.example.showmagnet.data.source.preference
 
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -18,8 +17,6 @@ class UserPreferencesManagerImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) : UserPreferencesManager {
     companion object {
-        private const val TAG: String = "UserPreferencesManager"
-
         private object PreferencesKeys {
             val IsUserSignedIN =
                 booleanPreferencesKey("IsUserSignedIN")
@@ -29,7 +26,6 @@ class UserPreferencesManagerImpl @Inject constructor(
     override val userPreferencesFlow: Flow<UserPreferences> = dataStore.data
         .catch { exception ->
             if (exception is IOException) {
-                Log.e(TAG, "Error reading preferences.", exception)
                 emit(emptyPreferences())
             } else {
                 throw exception
@@ -38,7 +34,7 @@ class UserPreferencesManagerImpl @Inject constructor(
             mapUserPreferences(preferences)
         }
 
-    override suspend fun setIsUserSignedIn(isSignedIn: Boolean) = try {
+    override suspend fun updateIsUserSignedIn(isSignedIn: Boolean) = try {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.IsUserSignedIN] = isSignedIn
         }

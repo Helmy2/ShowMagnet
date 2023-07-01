@@ -83,7 +83,7 @@ class UserRepositoryImplTest {
     @Test
     fun setIsSignedInSuccessTest() = runBlocking {
         whenever(
-            userPreferencesManager.setIsUserSignedIn(true)
+            userPreferencesManager.updateIsUserSignedIn(true)
         ).doReturn(Result.success(true))
 
         val result = userRepository.setIsSignedIn(true)
@@ -93,7 +93,7 @@ class UserRepositoryImplTest {
     @Test
     fun setIsSignedInFailureTest() = runBlocking {
         whenever(
-            userPreferencesManager.setIsUserSignedIn(true)
+            userPreferencesManager.updateIsUserSignedIn(true)
         ).doReturn(Result.failure(Exception()))
 
         val result = userRepository.setIsSignedIn(true)
