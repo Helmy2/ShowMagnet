@@ -37,11 +37,15 @@ class UserPreferencesManagerImpl @Inject constructor(
             mapUserPreferences(preferences)
         }
 
-    override suspend fun setIsUserSignedIn(isSignedIn: Boolean) {
+    override suspend fun setIsUserSignedIn(isSignedIn: Boolean) = try {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.IsUserSignedIN] = isSignedIn
         }
+        Result.success(true)
+    } catch (e: Exception) {
+        Result.failure(e)
     }
+
 
     private fun mapUserPreferences(preferences: Preferences): UserPreferences {
         val isOnboardingComplete = preferences[PreferencesKeys.IsUserSignedIN] ?: false

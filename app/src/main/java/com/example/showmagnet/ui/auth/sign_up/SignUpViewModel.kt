@@ -53,10 +53,14 @@ class SignUpViewModel
                     password = viewState.value.password!!
                 )
             withContext(Dispatchers.Main) {
-                if (result.success)
+                if (result.isSuccess)
                     setEffect { Effect.ShowSuccessToast("Create account successfully") }
                 else
-                    setEffect { Effect.ShowErrorToast(result.errorMessage ?: "") }
+                    setEffect {
+                        Effect.ShowErrorToast(
+                            result.exceptionOrNull()?.localizedMessage ?: ""
+                        )
+                    }
                 setState { copy(loading = false) }
             }
         }

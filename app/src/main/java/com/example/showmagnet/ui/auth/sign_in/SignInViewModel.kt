@@ -51,8 +51,12 @@ class SignInViewModel
                 signInWithEmailUseCase(viewState.value.email, viewState.value.password)
 
             withContext(Dispatchers.Main) {
-                if (!result.success)
-                    setEffect { SignInContract.Effect.ShowErrorToast(result.errorMessage ?: "") }
+                if (result.isFailure)
+                    setEffect {
+                        SignInContract.Effect.ShowErrorToast(
+                            result.exceptionOrNull()?.localizedMessage ?: ""
+                        )
+                    }
                 setState { copy(loadingWithEmail = false) }
             }
         }
@@ -65,8 +69,12 @@ class SignInViewModel
             val result = signInWithGoogleUseCase(intent)
 
             withContext(Dispatchers.Main) {
-                if (!result.success)
-                    setEffect { SignInContract.Effect.ShowErrorToast(result.errorMessage ?: "") }
+                if (result.isFailure)
+                    setEffect {
+                        SignInContract.Effect.ShowErrorToast(
+                            result.exceptionOrNull()?.localizedMessage ?: ""
+                        )
+                    }
                 setState { copy(loadingWithGoogle = false) }
             }
         }
@@ -91,10 +99,14 @@ class SignInViewModel
     private fun resetPassword(email: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val result = resetPasswordUseCase(email)
-            if (result.success)
+            if (result.isSuccess)
                 setEffect { SignInContract.Effect.ShowSuccessToast("Password reset email sent to $email") }
             else
-                setEffect { SignInContract.Effect.ShowErrorToast(result.errorMessage ?: "") }
+                setEffect {
+                    SignInContract.Effect.ShowErrorToast(
+                        result.exceptionOrNull()?.localizedMessage ?: ""
+                    )
+                }
         }
     }
 }

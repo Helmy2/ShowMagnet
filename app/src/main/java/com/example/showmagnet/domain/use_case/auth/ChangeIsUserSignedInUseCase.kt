@@ -6,7 +6,6 @@ import javax.inject.Inject
 class ChangeIsUserSignedInUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
-    suspend operator fun invoke(isSignedIn: Boolean) {
-        return userRepository.setIsSignedIn(isSignedIn)
-    }
+    suspend operator fun invoke(isSignedIn: Boolean) =
+        userRepository.setIsSignedIn(isSignedIn)
 }

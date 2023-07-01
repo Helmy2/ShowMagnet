@@ -1,7 +1,6 @@
 package com.example.showmagnet.ui.auth.sign_in
 
 import com.example.showmagnet.MainDispatcherRule
-import com.example.showmagnet.domain.model.SignResult
 import com.example.showmagnet.domain.use_case.auth.GetGoogleIntentUseCase
 import com.example.showmagnet.domain.use_case.auth.ResetPasswordUseCase
 import com.example.showmagnet.domain.use_case.auth.SignInWithEmailUseCase
@@ -72,7 +71,7 @@ class SignInViewModelTest {
     fun signUpWithEmailFailedEvent() = runBlocking {
         var isLoadingRequest = false
         whenever(signInWithEmailUseCase("test", "test"))
-            .doReturn(SignResult(success = false, errorMessage = "Error"))
+            .doReturn(Result.failure(Exception("Error")))
 
         viewModel.handleEvents(SignInContract.Event.EmailChanged("test"))
         viewModel.handleEvents(SignInContract.Event.PasswordChanged("test"))
@@ -92,7 +91,7 @@ class SignInViewModelTest {
     @Test
     fun resetPasswordFailedEvent() = runBlocking {
         whenever(resetPasswordUseCase("test@example.com"))
-            .doReturn(SignResult(success = false, errorMessage = "Error"))
+            .doReturn(Result.failure(Exception("Error")))
 
         viewModel.handleEvents(SignInContract.Event.ResetPassword("test@example.com"))
 
@@ -105,7 +104,7 @@ class SignInViewModelTest {
     @Test
     fun resetPasswordSuccessEvent() = runBlocking {
         whenever(resetPasswordUseCase("test@example.com"))
-            .doReturn(SignResult(success = true))
+            .doReturn(Result.success(true))
 
         viewModel.handleEvents(SignInContract.Event.ResetPassword("test@example.com"))
 
