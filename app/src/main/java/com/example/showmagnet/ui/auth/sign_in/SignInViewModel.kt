@@ -2,9 +2,9 @@ package com.example.showmagnet.ui.auth.sign_in
 
 import android.content.Intent
 import androidx.lifecycle.viewModelScope
-import com.example.showmagnet.domain.use_case.ResetPasswordUseCase
-import com.example.showmagnet.domain.use_case.SignInWithEmailUseCase
-import com.example.showmagnet.domain.use_case.SignInWithGoogleUseCase
+import com.example.showmagnet.domain.use_case.auth.ResetPasswordUseCase
+import com.example.showmagnet.domain.use_case.auth.SignInWithEmailUseCase
+import com.example.showmagnet.domain.use_case.auth.SignInWithGoogleUseCase
 import com.example.showmagnet.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

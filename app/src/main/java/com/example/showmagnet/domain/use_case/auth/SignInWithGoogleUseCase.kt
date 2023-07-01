@@ -1,4 +1,4 @@
-package com.example.showmagnet.domain.use_case
+package com.example.showmagnet.domain.use_case.auth
 
 import android.content.Intent
 import android.content.IntentSender
@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class SignInWithGoogleUseCase @Inject constructor(
     private val authRepository: AuthRepository,
-    private val changeSignedInUseCase: ChangeSignedInUseCase
+    private val changeIsUserSignedInUseCase: ChangeIsUserSignedInUseCase
 ) {
 
     suspend fun getIntentSender(): IntentSender? {
@@ -18,7 +18,7 @@ class SignInWithGoogleUseCase @Inject constructor(
     suspend operator fun invoke(intent: Intent): SignResult {
         val result = authRepository.signInWithIntent(intent)
         if (result.success)
-            changeSignedInUseCase(true)
+            changeIsUserSignedInUseCase(true)
         return result
     }
 }

@@ -83,7 +83,7 @@ dependencies {
     // firebase
     implementation(platform("com.google.firebase:firebase-bom:32.1.1"))
     implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.android.gms:play-services-auth:20.5.0")
+    implementation("com.google.android.gms:play-services-auth:20.6.0")
 
     // hilt
     implementation("com.google.dagger:hilt-android:2.46.1")
@@ -92,7 +92,9 @@ dependencies {
 
     // test
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0")
+    testImplementation("android.arch.core:core-testing:1.1.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
 
     // AndroidTests
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

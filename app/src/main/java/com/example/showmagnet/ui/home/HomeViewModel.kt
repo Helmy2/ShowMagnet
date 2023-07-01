@@ -3,7 +3,7 @@ package com.example.showmagnet.ui.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.showmagnet.domain.use_case.GetUserInfoUserCase
+import com.example.showmagnet.domain.use_case.user.GetUserInfoUserCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

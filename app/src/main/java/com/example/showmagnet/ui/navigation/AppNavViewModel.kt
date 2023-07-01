@@ -2,7 +2,7 @@ package com.example.showmagnet.ui.navigation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.showmagnet.domain.use_case.IsUserSingedInUserCase
+import com.example.showmagnet.domain.use_case.user.IsUserSingedInUserCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn

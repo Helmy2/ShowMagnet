@@ -1,4 +1,4 @@
-package com.example.showmagnet.domain.use_case
+package com.example.showmagnet.domain.use_case.user
 
 import com.example.showmagnet.domain.model.UserData
 import com.example.showmagnet.domain.repository.UserRepository

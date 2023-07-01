@@ -1,4 +1,4 @@
-package com.example.showmagnet.domain.use_case
+package com.example.showmagnet.domain.use_case.auth
 
 import com.example.showmagnet.domain.model.SignResult
 import com.example.showmagnet.domain.repository.AuthRepository
