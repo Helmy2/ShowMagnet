@@ -2,6 +2,7 @@ package com.example.showmagnet.ui.auth.sign_in
 
 import android.content.Intent
 import androidx.lifecycle.viewModelScope
+import com.example.showmagnet.domain.use_case.auth.GetGoogleIntentUseCase
 import com.example.showmagnet.domain.use_case.auth.ResetPasswordUseCase
 import com.example.showmagnet.domain.use_case.auth.SignInWithEmailUseCase
 import com.example.showmagnet.domain.use_case.auth.SignInWithGoogleUseCase
@@ -18,6 +19,7 @@ class SignInViewModel
     private val signInWithEmailUseCase: SignInWithEmailUseCase,
     private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
     private val resetPasswordUseCase: ResetPasswordUseCase,
+    private val getGoogleIntentUseCase: GetGoogleIntentUseCase
 ) : BaseViewModel<SignInContract.Event, SignInContract.State, SignInContract.Effect>() {
 
     override fun setInitialState() = SignInContract.State()
@@ -76,7 +78,7 @@ class SignInViewModel
 
     private fun startSignInWithGoogle() {
         viewModelScope.launch(Dispatchers.IO) {
-            val intentSender = signInWithGoogleUseCase.getIntentSender()
+            val intentSender = getGoogleIntentUseCase()
 
             withContext(Dispatchers.Main) {
                 setEffect {
