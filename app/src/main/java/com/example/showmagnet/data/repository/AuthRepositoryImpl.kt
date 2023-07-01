@@ -19,7 +19,7 @@ class AuthRepositoryImpl(
 
     override suspend fun signUp(email: String, password: String) = try {
         val result = auth.createUserWithEmailAndPassword(email, password).await()
-        Result.success(result != null)
+        Result.success(result.user != null)
     } catch (e: Exception) {
         e.printStackTrace()
         Result.failure(e)
