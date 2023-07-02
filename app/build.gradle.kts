@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.konan.properties.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -18,9 +20,23 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        vectorDrawables { useSupportLibrary = true }
+
+        val properties = Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+
+        buildConfigField(
+            "String",
+            "TMDB_API_KEY",
+            "\"${properties.getProperty("tmdb_api_key")}\""
+        )
+
+        buildConfigField(
+            "String",
+            "ACCESS_TOKEN",
+            "\"${properties.getProperty("access_token")}\""
+        )
+
     }
 
     buildTypes {
@@ -68,6 +84,16 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose")
     implementation("androidx.compose.ui:ui-util")
 
+    // retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+
+    // JSON Parsing
+    implementation("com.google.code.gson:gson:2.10")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
     // navigation
     implementation("androidx.navigation:navigation-compose:2.6.0")
 
@@ -91,8 +117,8 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     // coroutines
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
 
     // test
     testImplementation("junit:junit:4.13.2")
@@ -106,7 +132,7 @@ dependencies {
     androidTestImplementation("android.arch.core:core-testing:1.1.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
-    androidTestImplementation ("androidx.test:runner:1.5.2")
+    androidTestImplementation("androidx.test:runner:1.5.2")
 
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.06.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
