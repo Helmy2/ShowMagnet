@@ -18,10 +18,10 @@ fun ShowResponse.toListShow(): List<Show> {
     return shows.map { show ->
         Show(
             id = show.id,
-            title = if (show.mediaType == MediaType.MOVIE.name) show.title ?: "" else show.name
+            title = if (show.mediaType == "movie") show.title ?: "" else show.name
                 ?: "",
             voteAverage = show.voteAverage,
-            posterPath = show.posterPath ?: "",
+            posterPath = Constants.IMAGE_URL_W500 + show.posterPath,
             type =
             MediaType.values().firstOrNull { it.value == show.mediaType }
                 ?: MediaType.MOVIE

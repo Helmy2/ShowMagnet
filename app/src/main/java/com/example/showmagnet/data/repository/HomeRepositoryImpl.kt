@@ -22,12 +22,10 @@ class HomeRepositoryImpl @Inject constructor(
         Result.failure(e)
     }
 
-    override suspend fun getNowPlaying(mediaType: MediaType): Result<List<Show>> = try {
-        val response = when (mediaType) {
-            MediaType.MOVIE -> api.getNowPlayingMovie()
-            MediaType.TV -> api.getNowPlayingTv()
-        }
-        Result.success(response.toListShow(mediaType))
+    override suspend fun getUpcoming(): Result<List<Show>> = try {
+        val response = api.getUpcomingMovie()
+
+        Result.success(response.toListShow(MediaType.MOVIE))
     } catch (e: Exception) {
         e.printStackTrace()
         Result.failure(e)

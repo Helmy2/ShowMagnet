@@ -14,15 +14,11 @@ interface HomeApi {
     @GET("tv/popular")
     suspend fun getPopularTv(): ShowResponse
 
-    @GET("movie/now_playing")
-    suspend fun getNowPlayingMovie(): ShowResponse
-
-    @GET("tv/on_the_air")
-    suspend fun getNowPlayingTv(): ShowResponse
+    @GET("movie/upcoming")
+    suspend fun getUpcomingMovie(): ShowResponse
 
     @GET("discover/movie?with_genres=16")
     suspend fun getAnimationMovies(): ShowResponse
-
 
     @GET("discover/tv?with_genres=16")
     suspend fun getAnimationTv(): ShowResponse

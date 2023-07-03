@@ -1,18 +1,15 @@
 package com.example.showmagnet.ui.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun AppNavHost(appNavViewModel: AppNavViewModel) {
+fun AppNavHost(isUserSingedIn: Boolean) {
     val navController = rememberNavController()
-    val isUserSingedIn by appNavViewModel.isUserSingedIn.collectAsState()
 
-    val startDestination = if (isUserSingedIn == true)
+    val startDestination = if (isUserSingedIn)
         AppDestinations.Home
     else
         AppDestinations.Onboarding
