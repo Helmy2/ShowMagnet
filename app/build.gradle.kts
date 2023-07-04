@@ -84,6 +84,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose")
     implementation("androidx.compose.ui:ui-util")
 
+    // accompanist
+    implementation("com.google.accompanist:accompanist-placeholder-material:0.30.1")
+
     // retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
 

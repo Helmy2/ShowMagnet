@@ -1,12 +1,12 @@
 package com.example.showmagnet.ui.home.components
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,9 +25,8 @@ fun ShowsList(
     selectionList: List<String> = emptyList(),
     onSelectionChange: (Int) -> Unit = {},
     onItemClick: (Show) -> Unit,
+    loading: Boolean,
 ) {
-
-
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     Column(
@@ -50,15 +49,48 @@ fun ShowsList(
 
         Spacer(modifier = Modifier.height(8.dp))
         LazyRow {
-            items(items = shows, key = { it.id }) {
-                MovieItem(
-                    url = it.posterPath,
-                    title = it.title,
-                    rating = it.voteAverage.toFloat(),
-                    onItemClick = { onItemClick(it) },
-                    modifier = Modifier.padding(horizontal = 8.dp)
+            items(count = maxOf(shows.size, 10)) { i ->
+                ShimmerListItem(
+                    isLoading = loading || shows.isEmpty(),
+                    contentAfterLoading = {
+                        MovieItem(
+                            loading = false,
+                            url = shows[i].posterPath,
+                            title = shows[i].title,
+                            rating = shows[i].voteAverage.toFloat(),
+                            onItemClick = { onItemClick(shows[i]) },
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
+                    },
+                    contentBeforeLoading = {
+                        MovieItem(
+                            loading = true,
+                            url = "",
+                            title = "",
+                            rating = 0f,
+                            onItemClick = { },
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        )
+                    }
                 )
             }
+        }
+    }
+}
+
+
+@Composable
+fun ShimmerListItem(
+    isLoading: Boolean,
+    contentAfterLoading: @Composable (Modifier) -> Unit,
+    contentBeforeLoading: @Composable (Modifier) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Crossfade(targetState = isLoading, label = "") {
+        if (it) {
+            contentBeforeLoading(modifier)
+        } else {
+            contentAfterLoading(modifier)
         }
     }
 }

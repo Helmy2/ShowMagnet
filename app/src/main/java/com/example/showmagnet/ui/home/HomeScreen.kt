@@ -7,11 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.example.showmagnet.domain.model.MediaType
 import com.example.showmagnet.domain.model.TimeWindow
 import com.example.showmagnet.ui.home.components.ShowsList
+import com.example.showmagnet.ui.utils.NetworkStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -61,12 +63,15 @@ fun HomeScreen(
             SnackbarHost(snackbarHostState)
         }
     ) { padding ->
-        if (state.loading)
+        if (
+            state.connected == NetworkStatus.Disconnected &&
+            state.upcoming.isEmpty()
+        )
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                Text(text = "No Internet Connection", style = MaterialTheme.typography.titleLarge)
             }
         else
             Column(
@@ -79,6 +84,7 @@ fun HomeScreen(
                 ShowsList(
                     shows = state.upcoming,
                     title = "Upcoming",
+                    loading = state.loading,
                     onItemClick = { handleEvent(HomeContract.Event.Navigation.ToDigitalis(it)) }
                 )
                 ShowsList(
@@ -93,7 +99,8 @@ fun HomeScreen(
                             )
                         )
                     },
-                    onItemClick = { handleEvent(HomeContract.Event.Navigation.ToDigitalis(it)) }
+                    onItemClick = { handleEvent(HomeContract.Event.Navigation.ToDigitalis(it)) },
+                    loading = state.loading
                 )
                 ShowsList(
                     shows = state.popular,
@@ -107,7 +114,8 @@ fun HomeScreen(
                             )
                         )
                     },
-                    onItemClick = { handleEvent(HomeContract.Event.Navigation.ToDigitalis(it)) }
+                    onItemClick = { handleEvent(HomeContract.Event.Navigation.ToDigitalis(it)) },
+                    loading = state.loading
                 )
                 ShowsList(
                     shows = state.anime,
@@ -121,10 +129,10 @@ fun HomeScreen(
                             )
                         )
                     },
-                    onItemClick = { handleEvent(HomeContract.Event.Navigation.ToDigitalis(it)) }
+                    onItemClick = { handleEvent(HomeContract.Event.Navigation.ToDigitalis(it)) },
+                    loading = state.loading
                 )
             }
-
     }
 }
 

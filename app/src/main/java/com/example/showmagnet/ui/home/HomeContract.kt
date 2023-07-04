@@ -6,6 +6,7 @@ import com.example.showmagnet.domain.model.TimeWindow
 import com.example.showmagnet.ui.base.ViewEffect
 import com.example.showmagnet.ui.base.ViewEvent
 import com.example.showmagnet.ui.base.ViewState
+import com.example.showmagnet.ui.utils.NetworkStatus
 
 class HomeContract {
     sealed class Event : ViewEvent {
@@ -21,6 +22,7 @@ class HomeContract {
 
     data class State(
         val loading: Boolean = true,
+        val connected: NetworkStatus = NetworkStatus.Unknown,
         val trending: List<Show> = emptyList(),
         val popular: List<Show> = emptyList(),
         val upcoming: List<Show> = emptyList(),

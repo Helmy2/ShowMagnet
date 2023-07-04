@@ -1,11 +1,15 @@
 package com.example.showmagnet.di
 
+import android.content.Context
 import com.example.showmagnet.common.Constants.BASE_URL
 import com.example.showmagnet.data.source.remote.AuthorizationInterceptor
 import com.example.showmagnet.data.source.remote.api.HomeApi
+import com.example.showmagnet.ui.utils.NetworkConnectivityService
+import com.example.showmagnet.ui.utils.NetworkConnectivityServiceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -40,4 +44,11 @@ object NetworkModule {
     @Singleton
     fun provideHomeApi(retrofit: Retrofit): HomeApi =
         retrofit.create(HomeApi::class.java)
+
+
+    @Provides
+    @Singleton
+    fun provideNetworkConnectivityService(
+        @ApplicationContext context: Context
+    ): NetworkConnectivityService = NetworkConnectivityServiceImpl(context)
 }

@@ -25,18 +25,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.placeholder
+import com.google.accompanist.placeholder.material.shimmer
 
 @Composable
 fun MovieItem(
     url: String,
     title: String,
     rating: Float,
+    loading: Boolean,
     onItemClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val painter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(context).data(url).crossfade(true).build()
+        model = ImageRequest.Builder(context).data(url)
+            .build()
     )
 
     Card(modifier = modifier
@@ -49,10 +54,14 @@ fun MovieItem(
             Image(
                 painter = painter,
                 contentDescription = title,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(.7f),
-                contentScale = ContentScale.Crop
+                    .aspectRatio(.7f)
+                    .placeholder(
+                        visible = loading,
+                        highlight = PlaceholderHighlight.shimmer()
+                    ),
             )
             Text(
                 text = title,
@@ -60,11 +69,21 @@ fun MovieItem(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(
-                        start = 16.dp, end = 16.dp, top = 16.dp
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                    .placeholder(
+                        visible = loading,
+                        highlight = PlaceholderHighlight.shimmer()
                     )
             )
-            RatingbarFeild(rating, Modifier.padding(vertical = 8.dp, horizontal = 16.dp))
+            RatingbarFeild(
+                rating,
+                Modifier
+                    .padding(vertical = 8.dp, horizontal = 16.dp)
+                    .placeholder(
+                        visible = loading,
+                        highlight = PlaceholderHighlight.shimmer()
+                    )
+            )
         }
     }
 
