@@ -8,4 +8,8 @@ sealed class AppDestinations(val route: String) {
     object SignUp : AppDestinations("SignUp")
     object Home : AppDestinations("Home")
     object Onboarding : AppDestinations("Onboarding")
+
+    object Movie : AppDestinations("Movie/{id}") {
+        fun routeWithID(id: Int) = "Movie/$id"
+    }
 }

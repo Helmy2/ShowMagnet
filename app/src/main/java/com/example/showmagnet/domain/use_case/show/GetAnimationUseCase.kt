@@ -1,12 +1,12 @@
 package com.example.showmagnet.domain.use_case.show
 
 import com.example.showmagnet.domain.model.MediaType
-import com.example.showmagnet.domain.repository.HomeRepository
+import com.example.showmagnet.domain.repository.ShowRepository
 import javax.inject.Inject
 
 class GetAnimationUseCase @Inject constructor(
-    private val homeRepository: HomeRepository
+    private val showRepository: ShowRepository
 ) {
     suspend operator fun invoke(mediaType: MediaType) =
-        homeRepository.getAnimation(mediaType)
+        showRepository.getAnimation(mediaType)
 }

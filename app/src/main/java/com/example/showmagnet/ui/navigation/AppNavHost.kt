@@ -32,8 +32,21 @@ fun AppNavHost(isUserSingedIn: Boolean) {
             navController.navigateToSignIn()
         }
 
-        homeScreen()
+        homeScreen(
+            onNavigateToMovie = {
+                navController.navigateToMovie(it)
+            },
+            onNavigateToTv = {}
+        )
 
+        movieScreen()
+
+    }
+}
+
+fun NavController.navigateToMovie(id: Int) {
+    this.navigate(AppDestinations.Movie.routeWithID(id)) {
+        launchSingleTop = true
     }
 }
 

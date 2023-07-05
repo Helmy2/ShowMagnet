@@ -1,16 +1,16 @@
 package com.example.showmagnet.data.repository
 
-import com.example.showmagnet.data.source.remote.api.HomeApi
+import com.example.showmagnet.data.source.remote.api.ShowApi
 import com.example.showmagnet.data.source.remote.model.toListShow
 import com.example.showmagnet.domain.model.MediaType
 import com.example.showmagnet.domain.model.Show
 import com.example.showmagnet.domain.model.TimeWindow
-import com.example.showmagnet.domain.repository.HomeRepository
+import com.example.showmagnet.domain.repository.ShowRepository
 import javax.inject.Inject
 
-class HomeRepositoryImpl @Inject constructor(
-    private val api: HomeApi,
-) : HomeRepository {
+class ShowRepositoryImpl @Inject constructor(
+    private val api: ShowApi,
+) : ShowRepository {
     override suspend fun getPopular(mediaType: MediaType): Result<List<Show>> = try {
         val response = when (mediaType) {
             MediaType.MOVIE -> api.getPopularMovies()

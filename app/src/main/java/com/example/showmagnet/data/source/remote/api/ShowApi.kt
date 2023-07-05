@@ -4,7 +4,7 @@ import com.example.showmagnet.data.source.remote.model.ShowResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 
-interface HomeApi {
+interface ShowApi {
     @GET("trending/all/{timeWindow}")
     suspend fun getTrending(@Path("timeWindow") timeWindow: String): ShowResponse
 

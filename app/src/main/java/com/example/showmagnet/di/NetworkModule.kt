@@ -3,7 +3,8 @@ package com.example.showmagnet.di
 import android.content.Context
 import com.example.showmagnet.common.Constants.BASE_URL
 import com.example.showmagnet.data.source.remote.AuthorizationInterceptor
-import com.example.showmagnet.data.source.remote.api.HomeApi
+import com.example.showmagnet.data.source.remote.api.MovieDetailsApi
+import com.example.showmagnet.data.source.remote.api.ShowApi
 import com.example.showmagnet.ui.utils.NetworkConnectivityService
 import com.example.showmagnet.ui.utils.NetworkConnectivityServiceImpl
 import dagger.Module
@@ -42,9 +43,13 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideHomeApi(retrofit: Retrofit): HomeApi =
-        retrofit.create(HomeApi::class.java)
+    fun provideShowApi(retrofit: Retrofit): ShowApi =
+        retrofit.create(ShowApi::class.java)
 
+    @Provides
+    @Singleton
+    fun provideMovieDetailsApi(retrofit: Retrofit): MovieDetailsApi =
+        retrofit.create(MovieDetailsApi::class.java)
 
     @Provides
     @Singleton

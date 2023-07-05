@@ -4,7 +4,7 @@ import com.example.showmagnet.domain.model.MediaType
 import com.example.showmagnet.domain.model.Show
 import com.example.showmagnet.domain.model.TimeWindow
 
-interface HomeRepository {
+interface ShowRepository {
 
     suspend fun getPopular(mediaType: MediaType): Result<List<Show>>
     suspend fun getAnimation(mediaType: MediaType): Result<List<Show>>
