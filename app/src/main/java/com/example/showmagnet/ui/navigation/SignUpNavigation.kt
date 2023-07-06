@@ -19,7 +19,7 @@ fun NavGraphBuilder.signUpScreen(
             handleEvent = viewModel::setEvent
         ) {
             when (it) {
-                SignUpContract.Effect.Navigation.ToSignIn -> onNavigateToSignIn()
+                SignUpContract.Navigation.ToSignIn -> onNavigateToSignIn()
             }
         }
     }

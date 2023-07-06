@@ -2,7 +2,6 @@ package com.example.showmagnet.ui.home
 
 import androidx.lifecycle.viewModelScope
 import com.example.showmagnet.domain.model.MediaType
-import com.example.showmagnet.domain.model.Show
 import com.example.showmagnet.domain.model.TimeWindow
 import com.example.showmagnet.domain.use_case.GetNetworkConnectivityStateUseCase
 import com.example.showmagnet.domain.use_case.show.GetAnimationUseCase
@@ -31,13 +30,9 @@ class HomeViewModel @Inject constructor(
             is HomeContract.Event.AnimeMediaTypeChange -> updateAnimeMediaType(event.mediaType)
             is HomeContract.Event.PopularMediaTypeChange -> updatePopularMediaType(event.mediaType)
             is HomeContract.Event.TrendingTimeWindowChange -> updateTrendingTimeWindow(event.timeWindow)
-            is HomeContract.Event.Navigation.ToDigitalis -> handleNavigationToDigitalis(event.show)
         }
     }
 
-    private fun handleNavigationToDigitalis(show: Show) {
-        setEffect { HomeContract.Effect.Navigation.ToDigitalis(show) }
-    }
 
     private fun updateAnimeMediaType(mediaType: MediaType) = viewModelScope.launch {
         val result = getAnimationUseCase(mediaType)

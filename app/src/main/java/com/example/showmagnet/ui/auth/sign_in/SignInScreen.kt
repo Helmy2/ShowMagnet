@@ -72,7 +72,7 @@ fun SignInScreen(
     state: SignInContract.State,
     effect: Flow<SignInContract.Effect>,
     handleEvent: (SignInContract.Event) -> Unit,
-    onNavigationRequested: (SignInContract.Effect.Navigation) -> Unit
+    handleNavigation: (SignInContract.Navigation) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var passwordHidden by rememberSaveable { mutableStateOf(true) }
@@ -116,10 +116,6 @@ fun SignInScreen(
                             it.intentSender ?: return@collectLatest
                         ).build()
                     )
-                }
-
-                SignInContract.Effect.Navigation.ToSignUp -> {
-                    onNavigationRequested(SignInContract.Effect.Navigation.ToSignUp)
                 }
             }
         }
@@ -194,7 +190,7 @@ fun SignInScreen(
             )
             SignUpField(
                 Modifier,
-                onClick = { handleEvent(SignInContract.Event.Navigation.ToSignUp) })
+                onClick = { handleNavigation(SignInContract.Navigation.ToSignUp) })
             Spacer(modifier = Modifier.weight(1f))
 
         }

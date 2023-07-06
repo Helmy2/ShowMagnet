@@ -6,6 +6,8 @@ import com.google.gson.annotations.SerializedName
 data class ImageRemote(
     @SerializedName("file_path")
     val filePath: String,
+    @SerializedName("aspect_ratio")
+    val aspectRatio: Float
 )
 
-fun ImageRemote.toImage() = Image(url = filePath)
+fun ImageRemote.toImage() = Image(url = filePath, ratio = aspectRatio)

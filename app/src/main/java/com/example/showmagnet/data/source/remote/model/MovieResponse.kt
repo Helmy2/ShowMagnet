@@ -1,5 +1,6 @@
 package com.example.showmagnet.data.source.remote.model
 
+import com.example.showmagnet.domain.model.Image
 import com.example.showmagnet.domain.model.Movie
 import com.google.gson.annotations.SerializedName
 
@@ -33,8 +34,8 @@ fun MovieResponse.toMovie() = Movie(
     id = id,
     title = title,
     adult = adult ?: false,
-    backdropPath = backdropPath ?: "",
-    posterPath = posterPath ?: "",
+    backdropPath = Image(backdropPath),
+    posterPath = Image(posterPath),
     genres = genres.map { it.toGenre() },
     overview = overview ?: "",
     releaseDate = releaseDate ?: "",

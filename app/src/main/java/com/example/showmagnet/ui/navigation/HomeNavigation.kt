@@ -21,7 +21,7 @@ fun NavGraphBuilder.homeScreen(
             handleEvent = viewModel::setEvent,
         ) {
             when (it) {
-                is HomeContract.Effect.Navigation.ToDigitalis -> {
+                is HomeContract.Navigation.ToDigitalis -> {
                     when (it.show.type) {
                         MOVIE -> onNavigateToMovie(it.show.id)
                         TV -> onNavigateToTv(it.show.id)

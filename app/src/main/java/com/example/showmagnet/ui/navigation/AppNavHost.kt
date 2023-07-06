@@ -1,5 +1,6 @@
 package com.example.showmagnet.ui.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -18,36 +19,37 @@ fun AppNavHost(isUserSingedIn: Boolean) {
         navController = navController,
         startDestination = startDestination.route,
     ) {
-        onboardingScreen {
-            navController.navigateToSignIn()
-        }
-
-        signInScreen(
-            onNavigateToSignUp = {
-                navController.navigateToSignUp()
-            }
+        onboardingScreen(
+            onNavigateToSignIn = { navController.navigateToSignIn() }
         )
 
-        signUpScreen {
-            navController.navigateToSignIn()
-        }
+        signInScreen(
+            onNavigateToSignUp = { navController.navigateToSignUp() }
+        )
+
+        signUpScreen(
+            onNavigateToSignIn = { navController.navigateToSignIn() }
+        )
 
         homeScreen(
-            onNavigateToMovie = {
-                navController.navigateToMovie(it)
-            },
+            onNavigateToMovie = { navController.navigateToMovie(it) },
             onNavigateToTv = {}
         )
 
-        movieScreen()
+        movieScreen(
+            onNavigateToMovie = {
+                navController.navigateToMovie(it)
+                Log.d("TAG", "AppNavHost: $it")
+            },
+            onNavigateToTv = {},
+            onNavigateToPerson = {}
+        )
 
     }
 }
 
 fun NavController.navigateToMovie(id: Int) {
-    this.navigate(AppDestinations.Movie.routeWithID(id)) {
-        launchSingleTop = true
-    }
+    this.navigate(AppDestinations.Movie.routeWithID(id))
 }
 
 fun NavController.navigateToSignIn() {

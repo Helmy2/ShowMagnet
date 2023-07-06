@@ -32,7 +32,6 @@ class SignInViewModel
             is SignInContract.Event.SignInWithGoogle -> signInWithGoogle(event.intent)
             SignInContract.Event.SignInWithEmail -> signIn()
             SignInContract.Event.StartSignInWithGoogle -> startSignInWithGoogle()
-            SignInContract.Event.Navigation.ToSignUp -> navigateToSignUp()
         }
     }
 
@@ -80,9 +79,6 @@ class SignInViewModel
         }
     }
 
-    private fun navigateToSignUp() {
-        setEffect { SignInContract.Effect.Navigation.ToSignUp }
-    }
 
     private fun startSignInWithGoogle() {
         viewModelScope.launch(Dispatchers.IO) {

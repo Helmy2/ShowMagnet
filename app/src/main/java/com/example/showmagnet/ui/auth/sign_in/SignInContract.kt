@@ -14,10 +14,6 @@ class SignInContract {
         class SignInWithGoogle(val intent: Intent) : Event()
         class EmailChanged(val email: String) : Event()
         class PasswordChanged(val password: String) : Event()
-
-        sealed class Navigation : Event() {
-            object ToSignUp : Navigation()
-        }
     }
 
 
@@ -35,8 +31,9 @@ class SignInContract {
         class ShowErrorToast(val message: String) : Effect()
         class StartSignInWithGoogle(val intentSender: IntentSender?) : Effect()
 
-        sealed class Navigation : Effect() {
-            object ToSignUp : Navigation()
-        }
+    }
+
+    sealed class Navigation {
+        object ToSignUp : Navigation()
     }
 }

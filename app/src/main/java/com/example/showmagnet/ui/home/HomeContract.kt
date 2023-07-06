@@ -14,9 +14,6 @@ class HomeContract {
         class PopularMediaTypeChange(val mediaType: MediaType) : Event()
         class AnimeMediaTypeChange(val mediaType: MediaType) : Event()
 
-        sealed class Navigation : Event() {
-            class ToDigitalis(val show: Show) : Navigation()
-        }
     }
 
 
@@ -34,9 +31,9 @@ class HomeContract {
 
     sealed class Effect : ViewEffect {
         class ShowErrorToast(val message: String) : Effect()
+    }
 
-        sealed class Navigation : Effect() {
-            class ToDigitalis(val show: Show) : Navigation()
-        }
+    sealed class Navigation {
+        class ToDigitalis(val show: Show) : Navigation()
     }
 }

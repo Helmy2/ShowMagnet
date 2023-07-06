@@ -1,6 +1,7 @@
 package com.example.showmagnet.data.source.remote.model
 
 import com.example.showmagnet.domain.model.Cast
+import com.example.showmagnet.domain.model.Image
 import com.google.gson.annotations.SerializedName
 
 data class CastRemote(
@@ -14,6 +15,6 @@ data class CastRemote(
 fun CastRemote.toCast() = Cast(
     id = id,
     name = name,
-    profilePath = profilePath,
+    profilePath = Image(profilePath),
     character
 )

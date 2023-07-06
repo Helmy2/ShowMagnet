@@ -1,4 +1,4 @@
-package com.example.showmagnet.ui.home.components
+package com.example.showmagnet.ui.common
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Column
@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.example.showmagnet.domain.model.Show
+import com.example.showmagnet.ui.home.components.ChoiceField
 
 @Composable
 fun ShowsList(
@@ -49,11 +50,11 @@ fun ShowsList(
 
         Spacer(modifier = Modifier.height(8.dp))
         LazyRow {
-            items(count = maxOf(shows.size, 10)) { i ->
+            items(count = if (shows.isEmpty()) 10 else shows.size) { i ->
                 ShimmerListItem(
                     isLoading = loading || shows.isEmpty(),
                     contentAfterLoading = {
-                        MovieItem(
+                        ShowItem(
                             loading = false,
                             url = shows[i].posterPath,
                             title = shows[i].title,
@@ -63,7 +64,7 @@ fun ShowsList(
                         )
                     },
                     contentBeforeLoading = {
-                        MovieItem(
+                        ShowItem(
                             loading = true,
                             url = "",
                             title = "",

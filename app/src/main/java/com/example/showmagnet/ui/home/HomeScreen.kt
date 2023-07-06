@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.showmagnet.domain.model.MediaType
 import com.example.showmagnet.domain.model.TimeWindow
-import com.example.showmagnet.ui.home.components.ShowsList
+import com.example.showmagnet.ui.common.ShowsList
 import com.example.showmagnet.ui.utils.NetworkStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -33,7 +33,7 @@ fun HomeScreen(
     state: HomeContract.State,
     effect: Flow<HomeContract.Effect>,
     handleEvent: (HomeContract.Event) -> Unit,
-    onNavigationRequested: (HomeContract.Effect.Navigation) -> Unit
+    handleNavigation: (HomeContract.Navigation) -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -42,10 +42,6 @@ fun HomeScreen(
     LaunchedEffect(key1 = effect) {
         effect.collectLatest {
             when (it) {
-                is HomeContract.Effect.Navigation.ToDigitalis -> {
-                    onNavigationRequested(HomeContract.Effect.Navigation.ToDigitalis(it.show))
-                }
-
                 is HomeContract.Effect.ShowErrorToast -> {
                     scope.launch {
                         snackbarHostState.showSnackbar(
@@ -85,7 +81,7 @@ fun HomeScreen(
                     shows = state.upcoming,
                     title = "Upcoming",
                     loading = state.loading,
-                    onItemClick = { handleEvent(HomeContract.Event.Navigation.ToDigitalis(it)) }
+                    onItemClick = { handleNavigation(HomeContract.Navigation.ToDigitalis(it)) }
                 )
                 ShowsList(
                     shows = state.trending,
@@ -99,7 +95,7 @@ fun HomeScreen(
                             )
                         )
                     },
-                    onItemClick = { handleEvent(HomeContract.Event.Navigation.ToDigitalis(it)) },
+                    onItemClick = { handleNavigation(HomeContract.Navigation.ToDigitalis(it)) },
                     loading = state.loading
                 )
                 ShowsList(
@@ -114,7 +110,7 @@ fun HomeScreen(
                             )
                         )
                     },
-                    onItemClick = { handleEvent(HomeContract.Event.Navigation.ToDigitalis(it)) },
+                    onItemClick = { handleNavigation(HomeContract.Navigation.ToDigitalis(it)) },
                     loading = state.loading
                 )
                 ShowsList(
@@ -129,7 +125,7 @@ fun HomeScreen(
                             )
                         )
                     },
-                    onItemClick = { handleEvent(HomeContract.Event.Navigation.ToDigitalis(it)) },
+                    onItemClick = { handleNavigation(HomeContract.Navigation.ToDigitalis(it)) },
                     loading = state.loading
                 )
             }

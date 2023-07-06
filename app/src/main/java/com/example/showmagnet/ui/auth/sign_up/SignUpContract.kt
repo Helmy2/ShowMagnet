@@ -13,10 +13,6 @@ class SignUpContract {
         class EmailChanged(val email: String) : Event()
 
         class PasswordChanged(val password: String) : Event()
-
-        sealed class Navigation : Event() {
-            object ToSignIn : Navigation()
-        }
     }
 
     data class State(
@@ -47,8 +43,9 @@ class SignUpContract {
 
         class ShowErrorToast(val message: String) : Effect()
         class ShowSuccessToast(val message: String) : Effect()
-        sealed class Navigation : Effect() {
-            object ToSignIn : Navigation()
-        }
+    }
+
+    sealed class Navigation {
+        object ToSignIn : Navigation()
     }
 }

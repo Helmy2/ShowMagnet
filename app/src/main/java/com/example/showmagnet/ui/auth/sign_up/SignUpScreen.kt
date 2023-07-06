@@ -65,7 +65,7 @@ fun SignUpScreen(
     state: SignUpContract.State,
     effect: Flow<SignUpContract.Effect>,
     handleEvent: (SignUpContract.Event) -> Unit,
-    onNavigationRequested: (SignUpContract.Effect.Navigation) -> Unit
+    handleNavigation: (SignUpContract.Navigation) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -76,10 +76,6 @@ fun SignUpScreen(
     LaunchedEffect(key1 = effect) {
         effect.collectLatest {
             when (it) {
-                SignUpContract.Effect.Navigation.ToSignIn -> {
-                    onNavigationRequested(SignUpContract.Effect.Navigation.ToSignIn)
-                }
-
                 is SignUpContract.Effect.ShowSuccessToast -> {
                     scope.launch {
                         val snackbarResult = snackbarHostState.showSnackbar(
@@ -89,7 +85,7 @@ fun SignUpScreen(
                             withDismissAction = true
                         )
                         if (snackbarResult == SnackbarResult.ActionPerformed) {
-                            handleEvent(SignUpContract.Event.Navigation.ToSignIn)
+                            handleNavigation(SignUpContract.Navigation.ToSignIn)
                         }
                     }
                 }
@@ -165,7 +161,7 @@ fun SignUpScreen(
             ) {
                 Text(text = "Sign Up")
             }
-            SignInField(onClick = { handleEvent(SignUpContract.Event.Navigation.ToSignIn) })
+            SignInField(onClick = { handleNavigation(SignUpContract.Navigation.ToSignIn) })
             Spacer(modifier = Modifier.weight(1f))
         }
     }

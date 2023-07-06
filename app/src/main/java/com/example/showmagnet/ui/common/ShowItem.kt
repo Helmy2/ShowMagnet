@@ -1,4 +1,4 @@
-package com.example.showmagnet.ui.home.components
+package com.example.showmagnet.ui.common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -25,12 +25,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.example.showmagnet.ui.home.components.Ratingbar
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
 
 @Composable
-fun MovieItem(
+fun ShowItem(
     url: String,
     title: String,
     rating: Float,

@@ -26,7 +26,6 @@ class SignUpViewModel
             is SignUpContract.Event.PasswordChanged -> updatePassword(event.password)
 
             SignUpContract.Event.SignUP -> signUp()
-            SignUpContract.Event.Navigation.ToSignIn -> navigate()
         }
     }
 
@@ -64,9 +63,5 @@ class SignUpViewModel
                 setState { copy(loading = false) }
             }
         }
-    }
-
-    private fun navigate() {
-        setEffect { Effect.Navigation.ToSignIn }
     }
 }
