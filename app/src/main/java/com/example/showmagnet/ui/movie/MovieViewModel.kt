@@ -49,8 +49,14 @@ class MovieViewModel @Inject constructor(
 
     private fun updateMovieDetails() = viewModelScope.launch {
         val movieResult = getMovieDetailsUseCase(id)
-        if (movieResult.isFailure)
+        if (movieResult.isFailure) {
+            setEffect {
+                MovieContract.Effect.ShowErrorToast(
+                    movieResult.exceptionOrNull()?.localizedMessage ?: ""
+                )
+            }
             return@launch
+        }
         setState { copy(movie = movieResult.getOrNull()) }
 
         val cast = getCastUseCase(id)

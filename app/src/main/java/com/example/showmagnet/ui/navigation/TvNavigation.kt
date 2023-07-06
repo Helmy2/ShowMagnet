@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.showmagnet.ui.tv.TvContract
 import com.example.showmagnet.ui.tv.TvScreen
 import com.example.showmagnet.ui.tv.TvViewModel
 
@@ -18,6 +19,16 @@ fun NavGraphBuilder.tvScreen(
         arguments = listOf(navArgument("id") { type = NavType.IntType })
     ) {
         val viewModel = hiltViewModel<TvViewModel>()
-        TvScreen()
+        TvScreen(
+            state = viewModel.viewState.value,
+            effect = viewModel.effect,
+            handleEvent = viewModel::setEvent
+        ) {
+            when (it) {
+                is TvContract.Navigation.ToMovie -> onNavigateToMovie(it.id)
+                is TvContract.Navigation.ToPerson -> onNavigateToPerson(it.id)
+                is TvContract.Navigation.ToTv -> onNavigateToTv(it.id)
+            }
+        }
     }
 }

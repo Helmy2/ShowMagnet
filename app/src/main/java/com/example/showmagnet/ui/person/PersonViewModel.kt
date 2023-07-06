@@ -48,8 +48,14 @@ class PersonViewModel @Inject constructor(
 
     private suspend fun updatePersonDetails() {
         val personResult = getPersonDetailsUseCase(id)
-        if (personResult.isFailure)
+        if (personResult.isFailure) {
+            setEffect {
+                PersonContract.Effect.ShowErrorToast(
+                    personResult.exceptionOrNull()?.localizedMessage ?: ""
+                )
+            }
             return
+        }
         setState { copy(person = personResult.getOrNull()) }
 
         val personImages = getPersonImagesUseCase(id)

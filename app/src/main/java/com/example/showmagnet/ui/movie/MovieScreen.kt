@@ -5,9 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -35,19 +31,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.showmagnet.domain.model.Genre
 import com.example.showmagnet.domain.model.Movie
-import com.example.showmagnet.ui.common.Chip
 import com.example.showmagnet.ui.common.ImageList
+import com.example.showmagnet.ui.common.InformationFeild
 import com.example.showmagnet.ui.common.ShowsList
-import com.example.showmagnet.ui.home.components.Ratingbar
-import com.example.showmagnet.ui.movie.components.CastList
 import com.example.showmagnet.ui.common.utils.NetworkStatus
 import com.example.showmagnet.ui.common.utils.toHourFormat
-import com.example.showmagnet.ui.common.utils.toYearFormat
+import com.example.showmagnet.ui.movie.components.CastList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -186,51 +178,6 @@ private fun MovieDetailsFeild(
                 .padding(horizontal = 16.dp)
                 .align(Alignment.BottomCenter)
         )
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun InformationFeild(
-    title: String,
-    runtime: String,
-    voteAverage: Float,
-    genres: List<Genre>,
-    releaseDate: String,
-    onGenreClick: (id: Int) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Row(
-            modifier = Modifier.align(Alignment.End),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Ratingbar(rating = voteAverage, modifier = Modifier.width(80.dp))
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = voteAverage.toString(), style = MaterialTheme.typography.titleMedium)
-        }
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium.copy(fontSize = 25.sp),
-            maxLines = 2
-        )
-        FlowRow {
-            Text(text = runtime, modifier = Modifier.padding(4.dp))
-            Chip(
-                text = releaseDate.toYearFormat(),
-                onItemClick = {},
-                modifier = Modifier.padding(4.dp)
-            )
-            genres.forEach {
-                Chip(
-                    text = it.name,
-                    onItemClick = { onGenreClick(it.id) },
-                    modifier = Modifier.padding(4.dp)
-                )
-            }
-        }
     }
 }
 

@@ -4,11 +4,11 @@ import com.example.showmagnet.data.source.remote.api.TvApi
 import com.example.showmagnet.data.source.remote.model.show.toShow
 import com.example.showmagnet.data.source.remote.model.toCast
 import com.example.showmagnet.data.source.remote.model.toImage
-import com.example.showmagnet.data.source.remote.model.tv.toSeason
+import com.example.showmagnet.data.source.remote.model.tv.toEpisode
 import com.example.showmagnet.data.source.remote.model.tv.toTv
 import com.example.showmagnet.domain.model.Cast
+import com.example.showmagnet.domain.model.Episode
 import com.example.showmagnet.domain.model.Image
-import com.example.showmagnet.domain.model.Season
 import com.example.showmagnet.domain.model.Show
 import com.example.showmagnet.domain.model.Tv
 import com.example.showmagnet.domain.repository.TvDetailsRepository
@@ -25,8 +25,9 @@ class TvDetailsRepositoryImpl @Inject constructor(
         Result.failure(e)
     }
 
-    override suspend fun getSeason(id: Int, seasonNumber: Int): Result<Season> = try {
-        val response = api.getSeason(id, seasonNumber).toSeason()
+    override suspend fun getSeason(id: Int, seasonNumber: Int): Result<List<Episode>> = try {
+        val response = api.getSeason(id, seasonNumber).episodes.filter { it.voteAverage != 0.0 }
+            .map { it.toEpisode() }
         Result.success(response)
     } catch (e: Exception) {
         e.printStackTrace()

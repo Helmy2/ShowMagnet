@@ -35,7 +35,7 @@ fun ExpandableCard(
     var expanded by remember { mutableStateOf(false) }
     val rotateAnimation by animateFloatAsState(if (expanded) 180f else 0f, label = "")
 
-    Column {
+    Column(modifier) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -58,7 +58,7 @@ fun ExpandableCard(
         }
 
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .clickable { expanded = !expanded }
                 .animateContentSize()
         ) {

@@ -17,7 +17,7 @@ sealed class AppDestinations(val route: String) {
         fun routeWithID(id: Int) = "Person/$id"
     }
 
-    object Tv : AppDestinations("Person/{id}") {
-        fun routeWithID(id: Int) = "Person/$id"
+    object Tv : AppDestinations("Tv/{id}") {
+        fun routeWithID(id: Int) = "Tv/$id"
     }
 }
