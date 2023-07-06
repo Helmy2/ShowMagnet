@@ -1,8 +1,10 @@
 package com.example.showmagnet.di
 
 import com.example.showmagnet.data.repository.MovieDetailsRepositoryImpl
+import com.example.showmagnet.data.repository.PersonRepositoryImpl
 import com.example.showmagnet.data.repository.ShowRepositoryImpl
 import com.example.showmagnet.domain.repository.MovieDetailsRepository
+import com.example.showmagnet.domain.repository.PersonRepository
 import com.example.showmagnet.domain.repository.ShowRepository
 import dagger.Binds
 import dagger.Module
@@ -25,4 +27,10 @@ abstract class RepositoryModule {
     abstract fun provideMovieDetailsRepository(
         movieDetailsRepositoryImpl: MovieDetailsRepositoryImpl
     ): MovieDetailsRepository
+
+    @Binds
+    @Singleton
+    abstract fun providePersonDetailsRepository(
+        personRepositoryImpl: PersonRepositoryImpl
+    ): PersonRepository
 }

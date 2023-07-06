@@ -1,7 +1,7 @@
 package com.example.showmagnet.domain.repository
 
-import com.example.showmagnet.domain.model.UserData
-import com.example.showmagnet.domain.model.UserPreferences
+import com.example.showmagnet.domain.model.user.UserData
+import com.example.showmagnet.domain.model.user.UserPreferences
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {

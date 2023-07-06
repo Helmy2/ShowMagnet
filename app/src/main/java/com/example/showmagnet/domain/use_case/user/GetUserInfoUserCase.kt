@@ -1,6 +1,6 @@
 package com.example.showmagnet.domain.use_case.user
 
-import com.example.showmagnet.domain.model.UserData
+import com.example.showmagnet.domain.model.user.UserData
 import com.example.showmagnet.domain.repository.UserRepository
 import javax.inject.Inject
 

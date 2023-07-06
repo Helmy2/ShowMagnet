@@ -1,7 +1,7 @@
 package com.example.showmagnet.data.repository
 
-import com.example.showmagnet.domain.model.UserData
-import com.example.showmagnet.domain.model.UserPreferences
+import com.example.showmagnet.domain.model.user.UserData
+import com.example.showmagnet.domain.model.user.UserPreferences
 import com.example.showmagnet.domain.repository.UserRepository
 import com.example.showmagnet.domain.source.preference.UserPreferencesManager
 import com.google.firebase.auth.FirebaseAuth

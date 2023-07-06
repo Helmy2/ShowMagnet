@@ -1,7 +1,7 @@
 package com.example.showmagnet.data.repository
 
 import com.example.showmagnet.data.source.remote.api.ShowApi
-import com.example.showmagnet.data.source.remote.model.toListShow
+import com.example.showmagnet.data.source.remote.model.toShow
 import com.example.showmagnet.domain.model.MediaType
 import com.example.showmagnet.domain.model.Show
 import com.example.showmagnet.domain.model.TimeWindow
@@ -16,7 +16,7 @@ class ShowRepositoryImpl @Inject constructor(
             MediaType.MOVIE -> api.getPopularMovies()
             MediaType.TV -> api.getPopularTv()
         }
-        Result.success(response.toListShow(mediaType))
+        Result.success(response.shows.map { it.toShow(mediaType) })
     } catch (e: Exception) {
         e.printStackTrace()
         Result.failure(e)
@@ -25,7 +25,7 @@ class ShowRepositoryImpl @Inject constructor(
     override suspend fun getUpcoming(): Result<List<Show>> = try {
         val response = api.getUpcomingMovie()
 
-        Result.success(response.toListShow(MediaType.MOVIE))
+        Result.success(response.shows.map { it.toShow(MediaType.MOVIE) })
     } catch (e: Exception) {
         e.printStackTrace()
         Result.failure(e)
@@ -36,7 +36,7 @@ class ShowRepositoryImpl @Inject constructor(
             MediaType.MOVIE -> api.getAnimationMovies()
             MediaType.TV -> api.getAnimationTv()
         }
-        Result.success(response.toListShow(mediaType))
+        Result.success(response.shows.map { it.toShow(mediaType) })
     } catch (e: Exception) {
         e.printStackTrace()
         Result.failure(e)
@@ -44,7 +44,7 @@ class ShowRepositoryImpl @Inject constructor(
 
     override suspend fun getTrending(timeWindow: TimeWindow): Result<List<Show>> = try {
         val response = api.getTrending(timeWindow.value)
-        Result.success(response.toListShow())
+        Result.success(response.shows.map { it.toShow() })
     } catch (e: Exception) {
         e.printStackTrace()
         Result.failure(e)

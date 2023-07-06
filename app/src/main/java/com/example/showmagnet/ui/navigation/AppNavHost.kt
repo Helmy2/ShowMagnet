@@ -1,6 +1,5 @@
 package com.example.showmagnet.ui.navigation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -37,16 +36,23 @@ fun AppNavHost(isUserSingedIn: Boolean) {
         )
 
         movieScreen(
-            onNavigateToMovie = {
-                navController.navigateToMovie(it)
-                Log.d("TAG", "AppNavHost: $it")
-            },
+            onNavigateToMovie = { navController.navigateToMovie(it) },
             onNavigateToTv = {},
-            onNavigateToPerson = {}
+            onNavigateToPerson = { navController.navigateToPerson(it) }
+        )
+
+        personScreen(
+            onNavigateToMovie = { navController.navigateToMovie(it) },
+            onNavigateToTv = {}
         )
 
     }
 }
+
+fun NavController.navigateToPerson(id: Int) {
+    this.navigate(AppDestinations.Person.routeWithID(id))
+}
+
 
 fun NavController.navigateToMovie(id: Int) {
     this.navigate(AppDestinations.Movie.routeWithID(id))

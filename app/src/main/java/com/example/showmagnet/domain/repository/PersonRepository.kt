@@ -1,0 +1,15 @@
+package com.example.showmagnet.domain.repository
+
+import com.example.showmagnet.domain.model.Image
+import com.example.showmagnet.domain.model.Show
+import com.example.showmagnet.domain.model.person.PersonDetails
+
+interface PersonRepository {
+    suspend fun getPersonDetails(id: Int): Result<PersonDetails>
+
+    suspend fun getImages(id: Int): Result<List<Image>>
+
+    suspend fun getMovieCredits(id: Int): Result<List<Show>>
+
+    suspend fun getTvCredits(id: Int): Result<List<Show>>
+}

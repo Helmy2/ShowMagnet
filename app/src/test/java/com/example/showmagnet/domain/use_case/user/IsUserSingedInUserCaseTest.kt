@@ -1,7 +1,7 @@
 package com.example.showmagnet.domain.use_case.user
 
 import com.example.showmagnet.MainDispatcherRule
-import com.example.showmagnet.domain.model.UserPreferences
+import com.example.showmagnet.domain.model.user.UserPreferences
 import com.example.showmagnet.domain.repository.UserRepository
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.last

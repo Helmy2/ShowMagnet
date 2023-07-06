@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.showmagnet.common.Constants.BASE_URL
 import com.example.showmagnet.data.source.remote.AuthorizationInterceptor
 import com.example.showmagnet.data.source.remote.api.MovieDetailsApi
+import com.example.showmagnet.data.source.remote.api.PersonApi
 import com.example.showmagnet.data.source.remote.api.ShowApi
 import com.example.showmagnet.ui.utils.NetworkConnectivityService
 import com.example.showmagnet.ui.utils.NetworkConnectivityServiceImpl
@@ -50,6 +51,11 @@ object NetworkModule {
     @Singleton
     fun provideMovieDetailsApi(retrofit: Retrofit): MovieDetailsApi =
         retrofit.create(MovieDetailsApi::class.java)
+
+    @Provides
+    @Singleton
+    fun providePersonApi(retrofit: Retrofit): PersonApi =
+        retrofit.create(PersonApi::class.java)
 
     @Provides
     @Singleton

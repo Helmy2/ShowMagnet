@@ -56,7 +56,7 @@ fun ShowsList(
                     contentAfterLoading = {
                         ShowItem(
                             loading = false,
-                            url = shows[i].posterPath,
+                            url = shows[i].posterPath.baseUrl,
                             title = shows[i].title,
                             rating = shows[i].voteAverage.toFloat(),
                             onItemClick = { onItemClick(shows[i]) },
