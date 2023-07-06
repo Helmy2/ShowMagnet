@@ -1,5 +1,7 @@
-package com.example.showmagnet.data.source.remote.model
+package com.example.showmagnet.data.source.remote.model.movie
 
+import com.example.showmagnet.data.source.remote.model.GenreRemote
+import com.example.showmagnet.data.source.remote.model.toGenre
 import com.example.showmagnet.domain.model.Image
 import com.example.showmagnet.domain.model.Movie
 import com.google.gson.annotations.SerializedName

@@ -32,21 +32,31 @@ fun AppNavHost(isUserSingedIn: Boolean) {
 
         homeScreen(
             onNavigateToMovie = { navController.navigateToMovie(it) },
-            onNavigateToTv = {}
+            onNavigateToTv = { navController.navigateToTv(it) }
         )
 
         movieScreen(
             onNavigateToMovie = { navController.navigateToMovie(it) },
-            onNavigateToTv = {},
+            onNavigateToTv = { navController.navigateToTv(it) },
             onNavigateToPerson = { navController.navigateToPerson(it) }
         )
 
         personScreen(
             onNavigateToMovie = { navController.navigateToMovie(it) },
-            onNavigateToTv = {}
+            onNavigateToTv = { navController.navigateToTv(it) }
+        )
+
+        tvScreen(
+            onNavigateToMovie = { navController.navigateToMovie(it) },
+            onNavigateToTv = { navController.navigateToTv(it) },
+            onNavigateToPerson = { navController.navigateToPerson(it) }
         )
 
     }
+}
+
+fun NavController.navigateToTv(id: Int) {
+    this.navigate(AppDestinations.Tv.routeWithID(id))
 }
 
 fun NavController.navigateToPerson(id: Int) {

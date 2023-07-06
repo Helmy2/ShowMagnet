@@ -3,10 +3,10 @@ package com.example.showmagnet.ui.home
 import com.example.showmagnet.domain.model.MediaType
 import com.example.showmagnet.domain.model.Show
 import com.example.showmagnet.domain.model.TimeWindow
-import com.example.showmagnet.ui.base.ViewEffect
-import com.example.showmagnet.ui.base.ViewEvent
-import com.example.showmagnet.ui.base.ViewState
-import com.example.showmagnet.ui.utils.NetworkStatus
+import com.example.showmagnet.ui.common.base.ViewEffect
+import com.example.showmagnet.ui.common.base.ViewEvent
+import com.example.showmagnet.ui.common.base.ViewState
+import com.example.showmagnet.ui.common.utils.NetworkStatus
 
 class HomeContract {
     sealed class Event : ViewEvent {

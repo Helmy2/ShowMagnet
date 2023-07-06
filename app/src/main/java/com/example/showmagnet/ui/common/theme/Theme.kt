@@ -1,4 +1,4 @@
-package com.example.showmagnet.ui.theme
+package com.example.showmagnet.ui.common.theme
 
 import android.app.Activity
 import android.os.Build

@@ -1,4 +1,4 @@
-package com.example.showmagnet.ui.base
+package com.example.showmagnet.ui.common.base
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State

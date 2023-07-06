@@ -1,4 +1,4 @@
-package com.example.showmagnet.data.source.remote.model
+package com.example.showmagnet.data.source.remote.model.show
 
 import com.google.gson.annotations.SerializedName
 

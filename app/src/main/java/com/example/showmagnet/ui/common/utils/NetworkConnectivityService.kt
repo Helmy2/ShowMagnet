@@ -1,4 +1,4 @@
-package com.example.showmagnet.ui.utils
+package com.example.showmagnet.ui.common.utils
 
 import android.content.Context
 import android.net.ConnectivityManager

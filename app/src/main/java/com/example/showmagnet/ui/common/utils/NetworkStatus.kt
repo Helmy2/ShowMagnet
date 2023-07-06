@@ -1,4 +1,4 @@
-package com.example.showmagnet.ui.utils
+package com.example.showmagnet.ui.common.utils
 
 sealed class NetworkStatus {
     object Unknown : NetworkStatus()

@@ -2,13 +2,13 @@ package com.example.showmagnet.data.source.remote.api
 
 import com.example.showmagnet.data.source.remote.model.CollectionResponse
 import com.example.showmagnet.data.source.remote.model.CreditsResponse
-import com.example.showmagnet.data.source.remote.model.MovieImagesResponse
-import com.example.showmagnet.data.source.remote.model.MovieResponse
-import com.example.showmagnet.data.source.remote.model.ShowResponse
+import com.example.showmagnet.data.source.remote.model.movie.ImagesResponse
+import com.example.showmagnet.data.source.remote.model.movie.MovieResponse
+import com.example.showmagnet.data.source.remote.model.show.ShowResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 
-interface MovieDetailsApi {
+interface MovieApi {
     @GET("movie/{id}")
     suspend fun getMovieDetails(@Path("id") id: Int): MovieResponse
 
@@ -22,5 +22,5 @@ interface MovieDetailsApi {
     suspend fun getMovieCollection(@Path("id") id: Int): CollectionResponse
 
     @GET("movie/{id}/images")
-    suspend fun getMovieImages(@Path("id") id: Int): MovieImagesResponse
+    suspend fun getMovieImages(@Path("id") id: Int): ImagesResponse
 }

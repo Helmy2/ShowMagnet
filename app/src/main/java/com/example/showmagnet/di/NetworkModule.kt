@@ -3,11 +3,12 @@ package com.example.showmagnet.di
 import android.content.Context
 import com.example.showmagnet.common.Constants.BASE_URL
 import com.example.showmagnet.data.source.remote.AuthorizationInterceptor
-import com.example.showmagnet.data.source.remote.api.MovieDetailsApi
+import com.example.showmagnet.data.source.remote.api.MovieApi
 import com.example.showmagnet.data.source.remote.api.PersonApi
 import com.example.showmagnet.data.source.remote.api.ShowApi
-import com.example.showmagnet.ui.utils.NetworkConnectivityService
-import com.example.showmagnet.ui.utils.NetworkConnectivityServiceImpl
+import com.example.showmagnet.data.source.remote.api.TvApi
+import com.example.showmagnet.ui.common.utils.NetworkConnectivityService
+import com.example.showmagnet.ui.common.utils.NetworkConnectivityServiceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -49,13 +50,18 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideMovieDetailsApi(retrofit: Retrofit): MovieDetailsApi =
-        retrofit.create(MovieDetailsApi::class.java)
+    fun provideMovieDetailsApi(retrofit: Retrofit): MovieApi =
+        retrofit.create(MovieApi::class.java)
 
     @Provides
     @Singleton
     fun providePersonApi(retrofit: Retrofit): PersonApi =
         retrofit.create(PersonApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideTvApi(retrofit: Retrofit): TvApi =
+        retrofit.create(TvApi::class.java)
 
     @Provides
     @Singleton

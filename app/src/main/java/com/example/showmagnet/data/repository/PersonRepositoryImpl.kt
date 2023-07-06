@@ -3,7 +3,7 @@ package com.example.showmagnet.data.repository
 import com.example.showmagnet.data.source.remote.api.PersonApi
 import com.example.showmagnet.data.source.remote.model.person.toPersonDetails
 import com.example.showmagnet.data.source.remote.model.toImage
-import com.example.showmagnet.data.source.remote.model.toShow
+import com.example.showmagnet.data.source.remote.model.show.toShow
 import com.example.showmagnet.domain.model.Image
 import com.example.showmagnet.domain.model.MediaType
 import com.example.showmagnet.domain.model.Show

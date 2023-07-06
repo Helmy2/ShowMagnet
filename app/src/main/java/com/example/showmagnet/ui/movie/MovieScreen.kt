@@ -45,9 +45,9 @@ import com.example.showmagnet.ui.common.ImageList
 import com.example.showmagnet.ui.common.ShowsList
 import com.example.showmagnet.ui.home.components.Ratingbar
 import com.example.showmagnet.ui.movie.components.CastList
-import com.example.showmagnet.ui.utils.NetworkStatus
-import com.example.showmagnet.ui.utils.toHourFormat
-import com.example.showmagnet.ui.utils.toYearFormat
+import com.example.showmagnet.ui.common.utils.NetworkStatus
+import com.example.showmagnet.ui.common.utils.toHourFormat
+import com.example.showmagnet.ui.common.utils.toYearFormat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

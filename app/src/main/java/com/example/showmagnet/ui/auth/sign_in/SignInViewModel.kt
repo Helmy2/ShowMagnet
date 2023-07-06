@@ -6,7 +6,7 @@ import com.example.showmagnet.domain.use_case.auth.GetGoogleIntentUseCase
 import com.example.showmagnet.domain.use_case.auth.ResetPasswordUseCase
 import com.example.showmagnet.domain.use_case.auth.SignInWithEmailUseCase
 import com.example.showmagnet.domain.use_case.auth.SignInWithGoogleUseCase
-import com.example.showmagnet.ui.base.BaseViewModel
+import com.example.showmagnet.ui.common.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

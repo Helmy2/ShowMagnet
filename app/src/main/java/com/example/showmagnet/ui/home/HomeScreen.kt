@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.example.showmagnet.domain.model.MediaType
 import com.example.showmagnet.domain.model.TimeWindow
 import com.example.showmagnet.ui.common.ShowsList
-import com.example.showmagnet.ui.utils.NetworkStatus
+import com.example.showmagnet.ui.common.utils.NetworkStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

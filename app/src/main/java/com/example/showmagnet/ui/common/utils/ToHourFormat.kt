@@ -1,4 +1,4 @@
-package com.example.showmagnet.ui.utils
+package com.example.showmagnet.ui.common.utils
 
 fun Int.toHourFormat(): String {
     var minute = this

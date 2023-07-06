@@ -1,4 +1,4 @@
-package com.example.showmagnet.ui.main
+package com.example.showmagnet.ui.common.main
 
 import android.os.Bundle
 import android.view.View
@@ -15,7 +15,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.example.showmagnet.ui.navigation.AppNavHost
 import com.example.showmagnet.ui.navigation.AppNavViewModel
-import com.example.showmagnet.ui.theme.ShowMagnetTheme
+import com.example.showmagnet.ui.common.theme.ShowMagnetTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 

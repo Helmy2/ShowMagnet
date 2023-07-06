@@ -1,7 +1,7 @@
 package com.example.showmagnet.domain.use_case
 
-import com.example.showmagnet.ui.utils.NetworkConnectivityService
-import com.example.showmagnet.ui.utils.NetworkStatus
+import com.example.showmagnet.ui.common.utils.NetworkConnectivityService
+import com.example.showmagnet.ui.common.utils.NetworkStatus
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package com.example.showmagnet.data.source.remote.model
+package com.example.showmagnet.data.source.remote.model.show
 
 import com.example.showmagnet.domain.model.Image
 import com.example.showmagnet.domain.model.MediaType

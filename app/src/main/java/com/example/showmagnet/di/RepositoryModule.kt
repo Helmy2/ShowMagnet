@@ -3,9 +3,11 @@ package com.example.showmagnet.di
 import com.example.showmagnet.data.repository.MovieDetailsRepositoryImpl
 import com.example.showmagnet.data.repository.PersonRepositoryImpl
 import com.example.showmagnet.data.repository.ShowRepositoryImpl
+import com.example.showmagnet.data.repository.TvDetailsRepositoryImpl
 import com.example.showmagnet.domain.repository.MovieDetailsRepository
 import com.example.showmagnet.domain.repository.PersonRepository
 import com.example.showmagnet.domain.repository.ShowRepository
+import com.example.showmagnet.domain.repository.TvDetailsRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -33,4 +35,10 @@ abstract class RepositoryModule {
     abstract fun providePersonDetailsRepository(
         personRepositoryImpl: PersonRepositoryImpl
     ): PersonRepository
+
+    @Binds
+    @Singleton
+    abstract fun provideTvDetailsRepository(
+        tvDetailsRepositoryImpl: TvDetailsRepositoryImpl
+    ): TvDetailsRepository
 }

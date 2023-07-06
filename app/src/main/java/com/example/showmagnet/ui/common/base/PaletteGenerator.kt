@@ -1,4 +1,4 @@
-package com.example.showmagnet.ui.base
+package com.example.showmagnet.ui.common.base
 
 import android.graphics.Color.parseColor
 import androidx.compose.ui.graphics.Color

@@ -1,7 +1,7 @@
 package com.example.showmagnet.data.repository
 
 import com.example.showmagnet.data.source.remote.api.ShowApi
-import com.example.showmagnet.data.source.remote.model.toShow
+import com.example.showmagnet.data.source.remote.model.show.toShow
 import com.example.showmagnet.domain.model.MediaType
 import com.example.showmagnet.domain.model.Show
 import com.example.showmagnet.domain.model.TimeWindow

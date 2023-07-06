@@ -28,7 +28,7 @@ import com.example.showmagnet.ui.common.ExpandableCard
 import com.example.showmagnet.ui.common.ImageList
 import com.example.showmagnet.ui.common.InfoCard
 import com.example.showmagnet.ui.common.ShowsList
-import com.example.showmagnet.ui.utils.NetworkStatus
+import com.example.showmagnet.ui.common.utils.NetworkStatus
 import kotlinx.coroutines.flow.Flow
 
 @Composable

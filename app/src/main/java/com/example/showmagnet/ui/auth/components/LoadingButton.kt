@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import com.example.showmagnet.ui.base.TestTage
+import com.example.showmagnet.ui.common.base.TestTage
 
 @Composable
 fun LoadingButton(

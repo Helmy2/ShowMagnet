@@ -1,22 +1,32 @@
 package com.example.showmagnet.data.repository
 
-import com.example.showmagnet.data.source.remote.api.MovieApi
-import com.example.showmagnet.data.source.remote.model.movie.toMovie
+import com.example.showmagnet.data.source.remote.api.TvApi
 import com.example.showmagnet.data.source.remote.model.show.toShow
 import com.example.showmagnet.data.source.remote.model.toCast
 import com.example.showmagnet.data.source.remote.model.toImage
+import com.example.showmagnet.data.source.remote.model.tv.toSeason
+import com.example.showmagnet.data.source.remote.model.tv.toTv
 import com.example.showmagnet.domain.model.Cast
 import com.example.showmagnet.domain.model.Image
-import com.example.showmagnet.domain.model.Movie
+import com.example.showmagnet.domain.model.Season
 import com.example.showmagnet.domain.model.Show
-import com.example.showmagnet.domain.repository.MovieDetailsRepository
+import com.example.showmagnet.domain.model.Tv
+import com.example.showmagnet.domain.repository.TvDetailsRepository
 import javax.inject.Inject
 
-class MovieDetailsRepositoryImpl @Inject constructor(
-    private val api: MovieApi,
-) : MovieDetailsRepository {
-    override suspend fun getMovieDetails(id: Int): Result<Movie> = try {
-        val response = api.getMovieDetails(id).toMovie()
+class TvDetailsRepositoryImpl @Inject constructor(
+    private val api: TvApi,
+) : TvDetailsRepository {
+    override suspend fun getDetails(id: Int): Result<Tv> = try {
+        val response = api.getDetails(id).toTv()
+        Result.success(response)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Result.failure(e)
+    }
+
+    override suspend fun getSeason(id: Int, seasonNumber: Int): Result<Season> = try {
+        val response = api.getSeason(id, seasonNumber).toSeason()
         Result.success(response)
     } catch (e: Exception) {
         e.printStackTrace()
@@ -25,28 +35,16 @@ class MovieDetailsRepositoryImpl @Inject constructor(
 
     override suspend fun getCast(id: Int): Result<List<Cast>> = try {
         val response =
-            api.getMovieCast(id).cast.filter { it.profilePath != null }.map { it.toCast() }
+            api.getCast(id).cast.filter { it.profilePath != null }.map { it.toCast() }
         Result.success(response)
     } catch (e: Exception) {
         e.printStackTrace()
         Result.failure(e)
     }
 
-    override suspend fun getCollection(id: Int): Result<List<Show>> = try {
-        val response =
-            api.getMovieCollection(id).shows?.filter { it.posterPath != null }?.map { it.toShow() }
-
-        if (response == null)
-            Result.failure(Exception("Response is null"))
-        else
-            Result.success(response)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Result.failure(e)
-    }
 
     override suspend fun getImages(id: Int): Result<List<Image>> = try {
-        val response = api.getMovieImages(id)
+        val response = api.getImages(id)
         val result = (response.backdrops + response.posters).map { it.toImage() }
         Result.success(result)
     } catch (e: Exception) {
@@ -55,7 +53,7 @@ class MovieDetailsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getRecommendations(id: Int): Result<List<Show>> = try {
-        val response = api.getMovieRecommendations(id).shows.filter { it.posterPath != null }
+        val response = api.getRecommendations(id).shows.filter { it.posterPath != null }
             .map { it.toShow() }
         Result.success(response)
     } catch (e: Exception) {

@@ -1,6 +1,6 @@
 package com.example.showmagnet.data.source.remote.api
 
-import com.example.showmagnet.data.source.remote.model.ShowResponse
+import com.example.showmagnet.data.source.remote.model.show.ShowResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 

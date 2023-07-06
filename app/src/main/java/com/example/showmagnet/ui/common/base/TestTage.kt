@@ -1,4 +1,4 @@
-package com.example.showmagnet.ui.base
+package com.example.showmagnet.ui.common.base
 
 object TestTage {
     const val NAME_TEXT_FIELD_TAGE = "NameTextField"

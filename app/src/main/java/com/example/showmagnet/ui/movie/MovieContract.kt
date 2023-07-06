@@ -4,10 +4,10 @@ import com.example.showmagnet.domain.model.Cast
 import com.example.showmagnet.domain.model.Image
 import com.example.showmagnet.domain.model.Movie
 import com.example.showmagnet.domain.model.Show
-import com.example.showmagnet.ui.base.ViewEffect
-import com.example.showmagnet.ui.base.ViewEvent
-import com.example.showmagnet.ui.base.ViewState
-import com.example.showmagnet.ui.utils.NetworkStatus
+import com.example.showmagnet.ui.common.base.ViewEffect
+import com.example.showmagnet.ui.common.base.ViewEvent
+import com.example.showmagnet.ui.common.base.ViewState
+import com.example.showmagnet.ui.common.utils.NetworkStatus
 
 class MovieContract {
     sealed class Event : ViewEvent {

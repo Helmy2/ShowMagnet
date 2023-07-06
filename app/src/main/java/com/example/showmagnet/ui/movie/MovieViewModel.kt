@@ -8,8 +8,8 @@ import com.example.showmagnet.domain.use_case.movie.GetCollectionUseCase
 import com.example.showmagnet.domain.use_case.movie.GetImagesUseCase
 import com.example.showmagnet.domain.use_case.movie.GetMovieDetailsUseCase
 import com.example.showmagnet.domain.use_case.movie.GetRecommendationsUseCase
-import com.example.showmagnet.ui.base.BaseViewModel
-import com.example.showmagnet.ui.utils.NetworkStatus
+import com.example.showmagnet.ui.common.base.BaseViewModel
+import com.example.showmagnet.ui.common.utils.NetworkStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

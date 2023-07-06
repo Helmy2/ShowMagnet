@@ -8,11 +8,11 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.example.showmagnet.ui.assertTextFeildIsVariableAndHasValueWithTage
-import com.example.showmagnet.ui.base.TestTage.EMAIL_TEXT_FIELD_TAGE
-import com.example.showmagnet.ui.base.TestTage.LOADING
-import com.example.showmagnet.ui.base.TestTage.NAME_TEXT_FIELD_TAGE
-import com.example.showmagnet.ui.base.TestTage.PASSWORD_TEXT_FIELD_TAGE
-import com.example.showmagnet.ui.theme.ShowMagnetTheme
+import com.example.showmagnet.ui.common.base.TestTage.EMAIL_TEXT_FIELD_TAGE
+import com.example.showmagnet.ui.common.base.TestTage.LOADING
+import com.example.showmagnet.ui.common.base.TestTage.NAME_TEXT_FIELD_TAGE
+import com.example.showmagnet.ui.common.base.TestTage.PASSWORD_TEXT_FIELD_TAGE
+import com.example.showmagnet.ui.common.theme.ShowMagnetTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
