@@ -2,22 +2,20 @@ package com.example.showmagnet.ui.person
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.example.showmagnet.domain.use_case.GetNetworkConnectivityStateUseCase
+import com.example.showmagnet.domain.model.NetworkUnavailableException
 import com.example.showmagnet.domain.use_case.person.GetPersonDetailsUseCase
 import com.example.showmagnet.domain.use_case.person.GetPersonImagesUseCase
 import com.example.showmagnet.domain.use_case.person.GetPersonMovieCreditsUseCase
 import com.example.showmagnet.domain.use_case.person.GetPersonTvCreditsUseCase
-import com.example.showmagnet.ui.common.base.BaseViewModel
-import com.example.showmagnet.ui.common.utils.NetworkStatus
+import com.example.showmagnet.ui.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PersonViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    val getNetworkConnectivityStateUseCase: GetNetworkConnectivityStateUseCase,
     val getPersonImagesUseCase: GetPersonImagesUseCase,
     val getPersonDetailsUseCase: GetPersonDetailsUseCase,
     val getPersonMovieCreditsUseCase: GetPersonMovieCreditsUseCase,
@@ -28,43 +26,62 @@ class PersonViewModel @Inject constructor(
     override fun setInitialState() = PersonContract.State()
 
     override fun handleEvents(event: PersonContract.Event) {
-
+        when (event) {
+            PersonContract.Event.Refresh -> refresh()
+        }
     }
 
     init {
-        viewModelScope.launch {
-            getNetworkConnectivityStateUseCase().collectLatest { state ->
-                if (
-                    state == NetworkStatus.Connected
-                ) {
-                    setState { copy(loading = true, connected = state) }
-                    updatePersonDetails()
-                    setState { copy(loading = false) }
-                } else
-                    setState { copy(connected = state) }
-            }
-        }
+        refresh()
     }
 
-    private suspend fun updatePersonDetails() {
+    private fun refresh() = viewModelScope.launch {
+        setState { copy(loading = true) }
+
         val personResult = getPersonDetailsUseCase(id)
+
         if (personResult.isFailure) {
-            setEffect {
-                PersonContract.Effect.ShowErrorToast(
-                    personResult.exceptionOrNull()?.localizedMessage ?: ""
-                )
+            if (personResult.exceptionOrNull() is NetworkUnavailableException) setState {
+                copy( loading = false,connected = false)
             }
-            return
+            else {
+                setEffect {
+                    PersonContract.Effect.ShowErrorToast(
+                        personResult.exceptionOrNull()?.localizedMessage ?: ""
+                    )
+                }
+            }
+            return@launch
         }
-        setState { copy(person = personResult.getOrNull()) }
+
+        setState {
+            copy(
+                person = personResult.getOrNull(), connected = true, loading = false
+            )
+        }
 
         val personImages = getPersonImagesUseCase(id)
-        setState { copy(imageList = personImages.getOrNull()) }
+        setState {
+            copy(
+                imageList = personImages.getOrNull(), connected = true, loading = false
+            )
+        }
 
         val personMovieCredits = getPersonMovieCreditsUseCase(id)
-        setState { copy(movieCredits = personMovieCredits.getOrNull()) }
+        setState {
+            copy(
+                movieCredits = personMovieCredits.getOrNull(), connected = true, loading = false
+            )
+        }
 
         val personTvCredits = getPersonTvCreditsUseCase(id)
-        setState { copy(tvCredits = personTvCredits.getOrNull()) }
+        setState {
+            copy(
+                tvCredits = personTvCredits.getOrNull(), connected = true, loading = false
+            )
+        }
+
+        delay(500)
+        setState { copy(loading = false) }
     }
 }

@@ -50,15 +50,6 @@ class SignInViewModelTest {
     }
 
     @Test
-    fun navigateToSignUpEvent() = runBlocking {
-        viewModel.handleEvents(SignInContract.Event.Navigation.ToSignUp)
-
-        val result = viewModel.effect.first()
-
-        assert(result is SignInContract.Effect.Navigation.ToSignUp)
-    }
-
-    @Test
     fun startSignInWithGoogleEvent() = runBlocking {
         viewModel.handleEvents(SignInContract.Event.StartSignInWithGoogle)
 

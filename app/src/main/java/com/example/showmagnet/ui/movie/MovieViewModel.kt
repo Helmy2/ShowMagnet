@@ -2,23 +2,21 @@ package com.example.showmagnet.ui.movie
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.example.showmagnet.domain.use_case.GetNetworkConnectivityStateUseCase
+import com.example.showmagnet.domain.model.NetworkUnavailableException
 import com.example.showmagnet.domain.use_case.movie.GetCastUseCase
 import com.example.showmagnet.domain.use_case.movie.GetCollectionUseCase
 import com.example.showmagnet.domain.use_case.movie.GetImagesUseCase
 import com.example.showmagnet.domain.use_case.movie.GetMovieDetailsUseCase
 import com.example.showmagnet.domain.use_case.movie.GetRecommendationsUseCase
-import com.example.showmagnet.ui.common.base.BaseViewModel
-import com.example.showmagnet.ui.common.utils.NetworkStatus
+import com.example.showmagnet.ui.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MovieViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    val getNetworkConnectivityStateUseCase: GetNetworkConnectivityStateUseCase,
     val getMovieDetailsUseCase: GetMovieDetailsUseCase,
     val getCastUseCase: GetCastUseCase,
     val getCollectionUseCase: GetCollectionUseCase,
@@ -29,49 +27,71 @@ class MovieViewModel @Inject constructor(
 
     override fun setInitialState() = MovieContract.State()
     override fun handleEvents(event: MovieContract.Event) {
-
+        when (event) {
+            MovieContract.Event.Refresh -> refresh()
+        }
     }
 
     init {
-        viewModelScope.launch {
-            getNetworkConnectivityStateUseCase().collectLatest { state ->
-                if (
-                    state == NetworkStatus.Connected
-                ) {
-                    setState { copy(loading = true, connected = state) }
-                    updateMovieDetails()
-                    setState { copy(loading = false) }
-                } else
-                    setState { copy(connected = state) }
-            }
-        }
+        refresh()
     }
 
-    private fun updateMovieDetails() = viewModelScope.launch {
+    private fun refresh() = viewModelScope.launch {
+        setState { copy(loading = true) }
+
         val movieResult = getMovieDetailsUseCase(id)
         if (movieResult.isFailure) {
-            setEffect {
-                MovieContract.Effect.ShowErrorToast(
-                    movieResult.exceptionOrNull()?.localizedMessage ?: ""
-                )
+            if (movieResult.exceptionOrNull() is NetworkUnavailableException) setState {
+                copy( loading = false,connected = false)
+            }
+            else {
+                setEffect {
+                    MovieContract.Effect.ShowErrorToast(
+                        movieResult.exceptionOrNull()?.localizedMessage ?: ""
+                    )
+                }
             }
             return@launch
         }
-        setState { copy(movie = movieResult.getOrNull()) }
+
+        setState {
+            copy(
+                movie = movieResult.getOrNull(), connected = true, loading = false
+            )
+        }
 
         val cast = getCastUseCase(id)
-        setState { copy(castList = cast.getOrNull()) }
+        setState {
+            copy(
+                castList = cast.getOrNull(), connected = true, loading = false
+            )
+        }
 
         movieResult.getOrNull()?.collectionId?.let {
             val collection = getCollectionUseCase(it)
-            setState { copy(collection = collection.getOrNull()) }
+            setState {
+                copy(
+                    collection = collection.getOrNull(), connected = true, loading = false
+                )
+            }
         }
 
         val images = getImagesUseCase(id)
-        setState { copy(imageList = images.getOrNull()) }
+        setState {
+            copy(
+                imageList = images.getOrNull(), connected = true, loading = false
+            )
+        }
 
         val recommendations = getRecommendationsUseCase(id)
-        setState { copy(recommendations = recommendations.getOrNull()) }
+        setState {
+            copy(
+                recommendations = recommendations.getOrNull(), connected = true, loading = false
+            )
+        }
+
+        delay(500)
+        setState { copy(loading = false) }
     }
 
 

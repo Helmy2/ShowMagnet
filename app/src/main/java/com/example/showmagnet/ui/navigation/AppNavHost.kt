@@ -4,6 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.example.showmagnet.ui.navigation.component.homeScreen
+import com.example.showmagnet.ui.navigation.component.movieScreen
+import com.example.showmagnet.ui.navigation.component.onboardingScreen
+import com.example.showmagnet.ui.navigation.component.personScreen
+import com.example.showmagnet.ui.navigation.component.signInScreen
+import com.example.showmagnet.ui.navigation.component.signUpScreen
+import com.example.showmagnet.ui.navigation.component.tvScreen
 
 @Composable
 fun AppNavHost(isUserSingedIn: Boolean) {

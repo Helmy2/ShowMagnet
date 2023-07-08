@@ -5,7 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,15 +52,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.showmagnet.domain.model.Episode
-import com.example.showmagnet.domain.model.MediaType
-import com.example.showmagnet.domain.model.Tv
-import com.example.showmagnet.ui.common.ImageList
-import com.example.showmagnet.ui.common.InformationFeild
-import com.example.showmagnet.ui.common.RatingbarFeild
-import com.example.showmagnet.ui.common.ShowsList
-import com.example.showmagnet.ui.common.utils.NetworkStatus
-import com.example.showmagnet.ui.movie.components.CastList
+import com.example.showmagnet.domain.model.common.MediaType
+import com.example.showmagnet.domain.model.tv.Episode
+import com.example.showmagnet.domain.model.tv.Tv
+import com.example.showmagnet.ui.common.ui.CastList
+import com.example.showmagnet.ui.common.ui.ConnectedAndLoadingFeild
+import com.example.showmagnet.ui.common.ui.ImageList
+import com.example.showmagnet.ui.common.ui.InformationFeild
+import com.example.showmagnet.ui.common.ui.RatingbarFeild
+import com.example.showmagnet.ui.common.ui.ShowsList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -89,53 +91,55 @@ fun TvScreen(
     }
 
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) {
-        if (state.connected == NetworkStatus.Disconnected && state.tv == null) Box(
-            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+        ConnectedAndLoadingFeild(
+            connected = state.connected,
+            loading = state.loading,
+            onRefresh = { handleEvent(TvContract.Event.Refresh) }
         ) {
-            Text(text = "No Internet Connection", style = MaterialTheme.typography.titleLarge)
-        }
-        else Column(
-            modifier = Modifier.verticalScroll(state = rememberScrollState(), enabled = true),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            if (state.tv != null) {
-                TvDetailsFeild(state.tv, {})
-            }
-            if (!state.castList.isNullOrEmpty()) {
-                CastList(
-                    state.castList,
-                    { handleNavigation(TvContract.Navigation.ToPerson(it)) },
-                    Modifier.padding(horizontal = 16.dp)
-                )
-            }
-            if (!state.episodeList.isNullOrEmpty()) {
-                SeasonFeild(
-                    state.episodeList,
-                    numberOfSeasons = state.tv?.numberOfSeasons ?: 1,
-                    numberOfSeasonsChange = { handleEvent(TvContract.Event.ChangeNumberOfSeasons(it)) },
-                    Modifier.padding(horizontal = 16.dp)
-                )
-            }
-            if (!state.imageList.isNullOrEmpty()) {
-                ImageList(
-                    state.imageList,
-                    "Images",
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                )
-            }
-            if (!state.recommendations.isNullOrEmpty()) {
-                ShowsList(
-                    shows = state.recommendations,
-                    title = "Recommendations",
-                    loading = false,
-                    onItemClick = {
-                        when (it.type) {
-                            MediaType.MOVIE -> handleNavigation(TvContract.Navigation.ToMovie(it.id))
-                            MediaType.TV -> handleNavigation(TvContract.Navigation.ToTv(it.id))
+            Column(
+                modifier = Modifier.verticalScroll(state = rememberScrollState(), enabled = true),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                if (state.tv != null) {
+                    TvDetailsFeild(state.tv, {})
+                }
+                if (!state.castList.isNullOrEmpty()) {
+                    CastList(
+                        state.castList,
+                    ) { handleNavigation(TvContract.Navigation.ToPerson(it)) }
+                }
+                if (!state.episodeList.isNullOrEmpty()) {
+                    SeasonFeild(
+                        state.episodeList,
+                        numberOfSeasons = state.tv?.numberOfSeasons ?: 1,
+                        numberOfSeasonsChange = {
+                            handleEvent(
+                                TvContract.Event.ChangeNumberOfSeasons(
+                                    it
+                                )
+                            )
                         }
-                    },
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
+                    )
+                }
+                if (!state.imageList.isNullOrEmpty()) {
+                    ImageList(
+                        state.imageList,
+                        "Images",
+                    )
+                }
+                if (!state.recommendations.isNullOrEmpty()) {
+                    ShowsList(
+                        shows = state.recommendations,
+                        title = "Recommendations",
+                        loading = false,
+                        onItemClick = {
+                            when (it.type) {
+                                MediaType.MOVIE -> handleNavigation(TvContract.Navigation.ToMovie(it.id))
+                                MediaType.TV -> handleNavigation(TvContract.Navigation.ToTv(it.id))
+                            }
+                        },
+                    )
+                }
             }
         }
     }
@@ -153,7 +157,9 @@ private fun SeasonFeild(
     var selectedIndex by remember { mutableStateOf(1) }
     Column(modifier) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -187,20 +193,22 @@ private fun SeasonFeild(
                 }
             }
         }
+        Spacer(modifier = Modifier.height(8.dp))
 
-        LazyRow {
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 8.dp),
+        ) {
             items(episodeList) {
                 EpisodeItem(
-                    episode = it, modifier = Modifier.padding(horizontal = 4.dp)
+                    episode = it, modifier = Modifier.padding(horizontal = 8.dp)
                 )
             }
         }
     }
-
 }
 
 @Composable
-fun EpisodeItem(episode: Episode, modifier: Modifier = Modifier) {
+private fun EpisodeItem(episode: Episode, modifier: Modifier = Modifier) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     Card(
@@ -281,7 +289,7 @@ private fun TvDetailsFeild(
         InformationFeild(
             title = tv.name,
             releaseDate = tv.firstAirDate ?: "",
-            voteAverage = tv.voteAverage?.toFloat() ?: 0f,
+            voteAverage = tv.voteAverage,
             onGenreClick = onGenreClick,
             genres = tv.genres,
             modifier = Modifier

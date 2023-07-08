@@ -4,7 +4,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.showmagnet.domain.source.preference.UserPreferencesManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first

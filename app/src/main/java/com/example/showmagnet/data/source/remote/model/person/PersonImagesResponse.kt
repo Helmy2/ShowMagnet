@@ -1,7 +1,8 @@
 package com.example.showmagnet.data.source.remote.model.person
 
-import com.example.showmagnet.data.source.remote.model.ImageRemote
+import com.example.showmagnet.data.source.remote.model.common.ImageDto
+import com.google.gson.annotations.SerializedName
 
 data class PersonImagesResponse(
-    val profiles: List<ImageRemote>
+    @SerializedName("profiles") val profiles: List<ImageDto?>?
 )

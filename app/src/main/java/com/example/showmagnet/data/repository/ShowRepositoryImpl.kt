@@ -1,10 +1,10 @@
 package com.example.showmagnet.data.repository
 
+import com.example.showmagnet.data.mapper.toDomain
 import com.example.showmagnet.data.source.remote.api.ShowApi
-import com.example.showmagnet.data.source.remote.model.show.toShow
-import com.example.showmagnet.domain.model.MediaType
-import com.example.showmagnet.domain.model.Show
-import com.example.showmagnet.domain.model.TimeWindow
+import com.example.showmagnet.domain.model.common.MediaType
+import com.example.showmagnet.domain.model.common.Show
+import com.example.showmagnet.domain.model.common.TimeWindow
 import com.example.showmagnet.domain.repository.ShowRepository
 import javax.inject.Inject
 
@@ -16,7 +16,14 @@ class ShowRepositoryImpl @Inject constructor(
             MediaType.MOVIE -> api.getPopularMovies()
             MediaType.TV -> api.getPopularTv()
         }
-        Result.success(response.shows.map { it.toShow(mediaType) })
+        val result = response.shows?.filterNotNull()?.map { it.toDomain(mediaType) }
+
+        if (result == null) {
+            Result.failure(Exception("Something went wrong"))
+        } else {
+            Result.success(result)
+        }
+
     } catch (e: Exception) {
         e.printStackTrace()
         Result.failure(e)
@@ -24,8 +31,16 @@ class ShowRepositoryImpl @Inject constructor(
 
     override suspend fun getUpcoming(): Result<List<Show>> = try {
         val response = api.getUpcomingMovie()
+        val result = response.shows?.filterNotNull()?.map { it.toDomain(MediaType.MOVIE) }
 
-        Result.success(response.shows.map { it.toShow(MediaType.MOVIE) })
+        Result.success(result)
+
+        if (result == null) {
+            Result.failure(Exception("Something went wrong"))
+        } else {
+            Result.success(result)
+        }
+
     } catch (e: Exception) {
         e.printStackTrace()
         Result.failure(e)
@@ -36,7 +51,13 @@ class ShowRepositoryImpl @Inject constructor(
             MediaType.MOVIE -> api.getAnimationMovies()
             MediaType.TV -> api.getAnimationTv()
         }
-        Result.success(response.shows.map { it.toShow(mediaType) })
+        val result = response.shows?.filterNotNull()?.map { it.toDomain(mediaType) }
+
+        if (result == null) {
+            Result.failure(Exception("Something went wrong"))
+        } else {
+            Result.success(result)
+        }
     } catch (e: Exception) {
         e.printStackTrace()
         Result.failure(e)
@@ -44,7 +65,14 @@ class ShowRepositoryImpl @Inject constructor(
 
     override suspend fun getTrending(timeWindow: TimeWindow): Result<List<Show>> = try {
         val response = api.getTrending(timeWindow.value)
-        Result.success(response.shows.map { it.toShow() })
+
+        val result = response.shows?.filterNotNull()?.map { it.toDomain() }
+
+        if (result == null) {
+            Result.failure(Exception("Something went wrong"))
+        } else {
+            Result.success(result)
+        }
     } catch (e: Exception) {
         e.printStackTrace()
         Result.failure(e)

@@ -3,9 +3,9 @@ package com.example.showmagnet.di
 import android.content.Context
 import com.example.showmagnet.data.repository.AuthRepositoryImpl
 import com.example.showmagnet.data.repository.UserRepositoryImpl
+import com.example.showmagnet.data.source.preference.UserPreferencesManager
 import com.example.showmagnet.domain.repository.AuthRepository
 import com.example.showmagnet.domain.repository.UserRepository
-import com.example.showmagnet.domain.source.preference.UserPreferencesManager
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth

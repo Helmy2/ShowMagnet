@@ -53,7 +53,7 @@ import com.example.showmagnet.ui.auth.components.EmailTextField
 import com.example.showmagnet.ui.auth.components.LoadingButton
 import com.example.showmagnet.ui.auth.components.SignTextFiled
 import com.example.showmagnet.ui.auth.components.TitleField
-import com.example.showmagnet.ui.common.base.TestTage
+import com.example.showmagnet.ui.common.utils.TestTage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

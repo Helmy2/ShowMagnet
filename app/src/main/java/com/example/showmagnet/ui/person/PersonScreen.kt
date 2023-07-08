@@ -1,12 +1,10 @@
 package com.example.showmagnet.ui.person
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,8 +12,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -24,12 +28,14 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.showmagnet.domain.model.person.PersonDetails
-import com.example.showmagnet.ui.common.ExpandableCard
-import com.example.showmagnet.ui.common.ImageList
-import com.example.showmagnet.ui.common.InfoCard
-import com.example.showmagnet.ui.common.ShowsList
-import com.example.showmagnet.ui.common.utils.NetworkStatus
+import com.example.showmagnet.ui.common.ui.ConnectedAndLoadingFeild
+import com.example.showmagnet.ui.common.ui.ExpandableCard
+import com.example.showmagnet.ui.common.ui.FlowCard
+import com.example.showmagnet.ui.common.ui.ImageList
+import com.example.showmagnet.ui.common.ui.ShowsList
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @Composable
 fun PersonScreen(
@@ -38,14 +44,29 @@ fun PersonScreen(
     handleEvent: (PersonContract.Event) -> Unit,
     handleNavigation: (PersonContract.Navigation) -> Unit
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-    Scaffold { padding ->
-        if (state.connected == NetworkStatus.Disconnected && state.person == null) Box(
-            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-        ) {
-            Text(text = "No Internet Connection", style = MaterialTheme.typography.titleLarge)
+    LaunchedEffect(key1 = effect) {
+        effect.collectLatest {
+            when (it) {
+                is PersonContract.Effect.ShowErrorToast -> {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = it.message, duration = SnackbarDuration.Short
+                        )
+                    }
+                }
+            }
         }
-        else {
+    }
+
+    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
+        ConnectedAndLoadingFeild(
+            connected = state.connected,
+            loading = state.loading,
+            onRefresh = { handleEvent(PersonContract.Event.Refresh) }
+        ) {
             Column(
                 modifier = Modifier
                     .padding(top = 16.dp)
@@ -61,7 +82,6 @@ fun PersonScreen(
                     ImageList(
                         imageList = state.imageList,
                         title = "Images",
-                        modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 }
                 if (!state.movieCredits.isNullOrEmpty()) {
@@ -70,7 +90,6 @@ fun PersonScreen(
                         shows = state.movieCredits,
                         loading = false,
                         onItemClick = { handleNavigation(PersonContract.Navigation.ToMovie(it.id)) },
-                        modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 }
                 if (!state.tvCredits.isNullOrEmpty()) {
@@ -79,15 +98,14 @@ fun PersonScreen(
                         shows = state.tvCredits,
                         loading = false,
                         onItemClick = { handleNavigation(PersonContract.Navigation.ToTv(it.id)) },
-                        modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 }
             }
         }
-
     }
 
 }
+
 
 @Composable
 private fun PersonInf(
@@ -119,9 +137,9 @@ private fun PersonInf(
                     text = person.name,
                     style = MaterialTheme.typography.titleLarge,
                 )
-                InfoCard(title = "Known For", body = person.knownForDepartment)
-                InfoCard(title = "Popularity", body = person.popularity.toString())
-                InfoCard(title = "Birthday", body = person.birthDay)
+                FlowCard(title = "Known For", body = person.knownForDepartment)
+                FlowCard(title = "Popularity", body = person.popularity.toString())
+                FlowCard(title = "Birthday", body = person.birthDay)
             }
 
         }

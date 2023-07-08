@@ -2,23 +2,21 @@ package com.example.showmagnet.ui.tv
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.example.showmagnet.domain.use_case.GetNetworkConnectivityStateUseCase
+import com.example.showmagnet.domain.model.NetworkUnavailableException
 import com.example.showmagnet.domain.use_case.tv.GetTvCastUseCase
 import com.example.showmagnet.domain.use_case.tv.GetTvDetailsUseCase
 import com.example.showmagnet.domain.use_case.tv.GetTvImagesUseCase
 import com.example.showmagnet.domain.use_case.tv.GetTvRecommendationsUseCase
 import com.example.showmagnet.domain.use_case.tv.GetTvSeasonUseCase
-import com.example.showmagnet.ui.common.base.BaseViewModel
-import com.example.showmagnet.ui.common.utils.NetworkStatus
+import com.example.showmagnet.ui.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class TvViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    val getNetworkConnectivityStateUseCase: GetNetworkConnectivityStateUseCase,
     val getTvDetailsUseCase: GetTvDetailsUseCase,
     val getTvCastUseCase: GetTvCastUseCase,
     val getTvImagesUseCase: GetTvImagesUseCase,
@@ -32,6 +30,7 @@ class TvViewModel @Inject constructor(
     override fun handleEvents(event: TvContract.Event) {
         when (event) {
             is TvContract.Event.ChangeNumberOfSeasons -> updateSeasons(event.number)
+            TvContract.Event.Refresh -> refresh()
         }
     }
 
@@ -41,37 +40,63 @@ class TvViewModel @Inject constructor(
     }
 
     init {
-        viewModelScope.launch {
-            getNetworkConnectivityStateUseCase().collectLatest { state ->
-                if (
-                    state == NetworkStatus.Connected
-                ) {
-                    setState { copy(loading = true, connected = state) }
-                    updateTvDetails()
-                    setState { copy(loading = false) }
-                } else
-                    setState { copy(connected = state) }
-            }
-        }
+        refresh()
     }
 
-    private suspend fun updateTvDetails() {
+    private fun refresh() = viewModelScope.launch {
+        setState { copy(loading = true) }
+
         val tvResult = getTvDetailsUseCase(id)
 
-        setState { copy(tv = tvResult.getOrNull()) }
+        if (tvResult.isFailure) {
+            if (tvResult.exceptionOrNull() is NetworkUnavailableException) setState {
+                copy(loading = false, connected = false)
+            }
+            else {
+                setEffect {
+                    TvContract.Effect.ShowErrorToast(
+                        tvResult.exceptionOrNull()?.localizedMessage ?: ""
+                    )
+                }
+            }
+            return@launch
+        }
+
+        setState {
+            copy(
+                tv = tvResult.getOrNull(), loading = false, connected = true,
+            )
+        }
 
         val cast = getTvCastUseCase(id)
         setState { copy(castList = cast.getOrNull()) }
 
         val seasons = getTvSeasonUseCase(id, 1)
-        setState { copy(episodeList = seasons.getOrNull()) }
+        setState {
+            copy(
+                episodeList = seasons.getOrNull(), connected = true,
+                loading = false
+            )
+        }
 
         val images = getTvImagesUseCase(id)
-        setState { copy(imageList = images.getOrNull()) }
+        setState {
+            copy(
+                imageList = images.getOrNull(), connected = true,
+                loading = false
+            )
+        }
 
         val recommendations = getTvRecommendationsUseCase(id)
-        setState { copy(recommendations = recommendations.getOrNull()) }
+        setState {
+            copy(
+                recommendations = recommendations.getOrNull(), connected = true,
+                loading = false
+            )
+        }
 
+        delay(500)
+        setState { copy(loading = false) }
     }
 
 

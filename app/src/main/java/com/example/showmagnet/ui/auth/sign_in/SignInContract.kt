@@ -2,9 +2,9 @@ package com.example.showmagnet.ui.auth.sign_in
 
 import android.content.Intent
 import android.content.IntentSender
-import com.example.showmagnet.ui.common.base.ViewEffect
-import com.example.showmagnet.ui.common.base.ViewEvent
-import com.example.showmagnet.ui.common.base.ViewState
+import com.example.showmagnet.ui.common.ViewEffect
+import com.example.showmagnet.ui.common.ViewEvent
+import com.example.showmagnet.ui.common.ViewState
 
 class SignInContract {
     sealed class Event : ViewEvent {

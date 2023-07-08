@@ -1,52 +1,24 @@
 package com.example.showmagnet.data.source.remote.model.movie
 
-import com.example.showmagnet.data.source.remote.model.GenreRemote
-import com.example.showmagnet.data.source.remote.model.toGenre
-import com.example.showmagnet.domain.model.Image
-import com.example.showmagnet.domain.model.Movie
+import com.example.showmagnet.data.source.remote.model.common.GenreDto
 import com.google.gson.annotations.SerializedName
 
 data class MovieResponse(
-    val id: Int,
-    @SerializedName("title")
-    val title: String,
-    @SerializedName("adult")
-    val adult: Boolean?,
-    @SerializedName("backdrop_path")
-    val backdropPath: String?,
-    @SerializedName("poster_path")
-    val posterPath: String?,
-    @SerializedName("belongs_to_collection")
-    val belongsToCollection: BelongsToCollectionRemote?,
-    @SerializedName("genres")
-    val genres: List<GenreRemote>,
-    @SerializedName("overview")
-    val overview: String?,
-    @SerializedName("release_date")
-    val releaseDate: String?,
-    @SerializedName("runtime")
-    val runtime: Int?,
-    @SerializedName("status")
-    val status: String?,
-    @SerializedName("vote_average")
-    val voteAverage: Double?
+    @SerializedName("id") val id: Int,
+    @SerializedName("title") val title: String?,
+    @SerializedName("adult") val adult: Boolean?,
+    @SerializedName("backdrop_path") val backdropPath: String?,
+    @SerializedName("poster_path") val posterPath: String?,
+    @SerializedName("belongs_to_collection") val belongsToCollection: BelongsToCollectionDto?,
+    @SerializedName("genres") val genres: List<GenreDto>,
+    @SerializedName("overview") val overview: String?,
+    @SerializedName("release_date") val releaseDate: String?,
+    @SerializedName("runtime") val runtime: Int?,
+    @SerializedName("status") val status: String?,
+    @SerializedName("vote_average") val voteAverage: Float?
 )
 
-fun MovieResponse.toMovie() = Movie(
-    id = id,
-    title = title,
-    adult = adult ?: false,
-    backdropPath = Image(backdropPath),
-    posterPath = Image(posterPath),
-    genres = genres.map { it.toGenre() },
-    overview = overview ?: "",
-    releaseDate = releaseDate ?: "",
-    runtime = runtime ?: 0,
-    status = status ?: "",
-    voteAverage = voteAverage ?: 0.0,
-    collectionName = belongsToCollection?.name,
-    collectionId = belongsToCollection?.id,
-)
+
 
 
 

@@ -1,6 +1,6 @@
 package com.example.showmagnet.domain.model.person
 
-import com.example.showmagnet.domain.model.Image
+import com.example.showmagnet.domain.model.common.Image
 
 data class PersonDetails(
     val name: String,
@@ -12,6 +12,6 @@ data class PersonDetails(
     val id: Int,
     val knownForDepartment: String,
     val placeOfBirth: String,
-    val popularity: Double,
+    val popularity: Float,
     val profilePath: Image
 )

@@ -1,5 +1,7 @@
 package com.example.showmagnet.data.source.remote.model.tv
 
+import com.google.gson.annotations.SerializedName
+
 data class SeasonResponse(
-    val episodes: List<EpisodeRemote>,
+    @SerializedName("episodes") val episodes: List<EpisodeRemote?>?,
 )

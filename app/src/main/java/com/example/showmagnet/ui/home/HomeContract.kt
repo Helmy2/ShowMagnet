@@ -1,25 +1,25 @@
 package com.example.showmagnet.ui.home
 
-import com.example.showmagnet.domain.model.MediaType
-import com.example.showmagnet.domain.model.Show
-import com.example.showmagnet.domain.model.TimeWindow
-import com.example.showmagnet.ui.common.base.ViewEffect
-import com.example.showmagnet.ui.common.base.ViewEvent
-import com.example.showmagnet.ui.common.base.ViewState
-import com.example.showmagnet.ui.common.utils.NetworkStatus
+import com.example.showmagnet.domain.model.common.MediaType
+import com.example.showmagnet.domain.model.common.Show
+import com.example.showmagnet.domain.model.common.TimeWindow
+import com.example.showmagnet.ui.common.ViewEffect
+import com.example.showmagnet.ui.common.ViewEvent
+import com.example.showmagnet.ui.common.ViewState
 
 class HomeContract {
     sealed class Event : ViewEvent {
         class TrendingTimeWindowChange(val timeWindow: TimeWindow) : Event()
         class PopularMediaTypeChange(val mediaType: MediaType) : Event()
         class AnimeMediaTypeChange(val mediaType: MediaType) : Event()
+        object Refresh : Event()
 
     }
 
 
     data class State(
-        val loading: Boolean = true,
-        val connected: NetworkStatus = NetworkStatus.Unknown,
+        val loading: Boolean = false,
+        val connected: Boolean = false,
         val trending: List<Show> = emptyList(),
         val popular: List<Show> = emptyList(),
         val upcoming: List<Show> = emptyList(),

@@ -8,8 +8,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.example.showmagnet.ui.assertTextFeildIsVariableAndHasValueWithTage
-import com.example.showmagnet.ui.common.base.TestTage
 import com.example.showmagnet.ui.common.theme.ShowMagnetTheme
+import com.example.showmagnet.ui.common.utils.TestTage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
@@ -169,15 +169,19 @@ class SignInScreenTest {
     fun navigateToSignUpEvent() {
         var isNavigationRequested = false
         runBlocking {
-            initScreenState(state = SignInContract.State(), effect = emptyFlow(), handleEvent = {
-                when (it) {
-                    SignInContract.Event.Navigation.ToSignUp -> {
-                        isNavigationRequested = true
-                    }
+            initScreenState(
+                state = SignInContract.State(),
+                effect = emptyFlow(),
+                handleEvent = {},
+                onNavigationRequested = {
+                    when (it) {
+                        SignInContract.Navigation.ToSignUp -> {
+                            isNavigationRequested = true
+                        }
 
-                    else -> {}
-                }
-            }, onNavigationRequested = {})
+                        else -> {}
+                    }
+                })
         }
         composeTestRule.onNodeWithText("Sign Up").performClick()
 
@@ -227,26 +231,11 @@ class SignInScreenTest {
         assert(isSignInRequested)
     }
 
-    @Test
-    fun navigateToSignUpEffect() {
-        var isNavigationRequested = false
-        runBlocking {
-            initScreenState(state = SignInContract.State(),
-                effect = flow { emit(SignInContract.Effect.Navigation.ToSignUp) },
-                handleEvent = {},
-                onNavigationRequested = {
-                    isNavigationRequested = true
-                })
-        }
-
-        assert(isNavigationRequested)
-    }
-
     private fun initScreenState(
         state: SignInContract.State,
         effect: Flow<SignInContract.Effect>,
         handleEvent: (SignInContract.Event) -> Unit,
-        onNavigationRequested: (SignInContract.Effect.Navigation) -> Unit
+        onNavigationRequested: (SignInContract.Navigation) -> Unit
     ) {
         composeTestRule.setContent {
             ShowMagnetTheme {

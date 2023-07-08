@@ -1,29 +1,31 @@
 package com.example.showmagnet.data.source.remote.api
 
-import com.example.showmagnet.data.source.remote.model.CreditsResponse
+import com.example.showmagnet.data.source.remote.ApiConstants
+import com.example.showmagnet.data.source.remote.ApiParameters
+import com.example.showmagnet.data.source.remote.model.common.CreditsResponse
+import com.example.showmagnet.data.source.remote.model.common.ShowResponse
 import com.example.showmagnet.data.source.remote.model.movie.ImagesResponse
-import com.example.showmagnet.data.source.remote.model.show.ShowResponse
 import com.example.showmagnet.data.source.remote.model.tv.SeasonResponse
 import com.example.showmagnet.data.source.remote.model.tv.TvResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface TvApi {
-    @GET("tv/{id}")
-    suspend fun getDetails(@Path("id") id: Int): TvResponse
+    @GET(ApiConstants.Tv.DETAILS_ENDPOINT)
+    suspend fun getDetails(@Path(ApiParameters.ID) id: Int): TvResponse
 
-    @GET("tv/{id}/credits")
-    suspend fun getCast(@Path("id") id: Int): CreditsResponse
+    @GET(ApiConstants.Tv.CREDITS_ENDPOINT)
+    suspend fun getCast(@Path(ApiParameters.ID) id: Int): CreditsResponse
 
-    @GET("tv/{id}/recommendations")
-    suspend fun getRecommendations(@Path("id") id: Int): ShowResponse
+    @GET(ApiConstants.Tv.RECOMMENDATIONS_ENDPOINT)
+    suspend fun getRecommendations(@Path(ApiParameters.ID) id: Int): ShowResponse
 
-    @GET("tv/{id}/images")
-    suspend fun getImages(@Path("id") id: Int): ImagesResponse
+    @GET(ApiConstants.Tv.IMAGES_ENDPOINT)
+    suspend fun getImages(@Path(ApiParameters.ID) id: Int): ImagesResponse
 
-    @GET("tv/{id}/season/{season_number}")
+    @GET(ApiConstants.Tv.SEASON_ENDPOINT)
     suspend fun getSeason(
-        @Path("id") id: Int,
-        @Path("season_number") seasonNumber: Int
+        @Path(ApiParameters.ID) id: Int,
+        @Path(ApiParameters.SEASON_NUMBER) seasonNumber: Int
     ): SeasonResponse
 }

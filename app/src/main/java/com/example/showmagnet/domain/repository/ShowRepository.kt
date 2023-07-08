@@ -1,8 +1,8 @@
 package com.example.showmagnet.domain.repository
 
-import com.example.showmagnet.domain.model.MediaType
-import com.example.showmagnet.domain.model.Show
-import com.example.showmagnet.domain.model.TimeWindow
+import com.example.showmagnet.domain.model.common.MediaType
+import com.example.showmagnet.domain.model.common.Show
+import com.example.showmagnet.domain.model.common.TimeWindow
 
 interface ShowRepository {
 

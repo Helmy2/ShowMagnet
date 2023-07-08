@@ -1,6 +1,6 @@
 package com.example.showmagnet.domain.use_case.show
 
-import com.example.showmagnet.domain.model.MediaType
+import com.example.showmagnet.domain.model.common.MediaType
 import com.example.showmagnet.domain.repository.ShowRepository
 import javax.inject.Inject
 

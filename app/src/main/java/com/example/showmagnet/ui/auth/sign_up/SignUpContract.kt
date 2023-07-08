@@ -1,8 +1,8 @@
 package com.example.showmagnet.ui.auth.sign_up
 
-import com.example.showmagnet.ui.common.base.ViewEffect
-import com.example.showmagnet.ui.common.base.ViewEvent
-import com.example.showmagnet.ui.common.base.ViewState
+import com.example.showmagnet.ui.common.ViewEffect
+import com.example.showmagnet.ui.common.ViewEvent
+import com.example.showmagnet.ui.common.ViewState
 
 class SignUpContract {
     sealed class Event : ViewEvent {

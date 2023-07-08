@@ -1,20 +1,19 @@
 package com.example.showmagnet.di
 
-import android.content.Context
-import com.example.showmagnet.common.Constants.BASE_URL
-import com.example.showmagnet.data.source.remote.AuthorizationInterceptor
+import com.example.showmagnet.data.source.remote.ApiConstants
 import com.example.showmagnet.data.source.remote.api.MovieApi
 import com.example.showmagnet.data.source.remote.api.PersonApi
 import com.example.showmagnet.data.source.remote.api.ShowApi
 import com.example.showmagnet.data.source.remote.api.TvApi
-import com.example.showmagnet.ui.common.utils.NetworkConnectivityService
-import com.example.showmagnet.ui.common.utils.NetworkConnectivityServiceImpl
+import com.example.showmagnet.data.source.remote.interceptors.AuthenticationInterceptor
+import com.example.showmagnet.data.source.remote.interceptors.LoggingInterceptor
+import com.example.showmagnet.data.source.remote.interceptors.NetworkStatusInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -29,19 +28,34 @@ object NetworkModule {
         okHttpClient: OkHttpClient
     ): Retrofit =
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(ApiConstants.BASE_ENDPOINT)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient =
+    fun provideOkHttpClient(
+        httpLoggingInterceptor: HttpLoggingInterceptor,
+        networkStatusInterceptor: NetworkStatusInterceptor,
+        authenticationInterceptor: AuthenticationInterceptor
+    ): OkHttpClient =
         OkHttpClient()
             .newBuilder()
-            .addInterceptor(AuthorizationInterceptor)
+            .addInterceptor(networkStatusInterceptor)
+            .addInterceptor(authenticationInterceptor)
+            .addInterceptor(httpLoggingInterceptor)
             .build()
 
+
+    @Provides
+    fun provideHttpLoggingInterceptor(loggingInterceptor: LoggingInterceptor): HttpLoggingInterceptor {
+        val interceptor = HttpLoggingInterceptor(loggingInterceptor)
+
+        interceptor.level = HttpLoggingInterceptor.Level.BODY
+
+        return interceptor
+    }
 
     @Provides
     @Singleton
@@ -62,10 +76,4 @@ object NetworkModule {
     @Singleton
     fun provideTvApi(retrofit: Retrofit): TvApi =
         retrofit.create(TvApi::class.java)
-
-    @Provides
-    @Singleton
-    fun provideNetworkConnectivityService(
-        @ApplicationContext context: Context
-    ): NetworkConnectivityService = NetworkConnectivityServiceImpl(context)
 }

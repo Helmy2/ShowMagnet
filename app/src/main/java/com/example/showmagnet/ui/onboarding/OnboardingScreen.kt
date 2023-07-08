@@ -43,8 +43,8 @@ import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
-import com.example.showmagnet.ui.common.base.PaletteColor
-import com.example.showmagnet.ui.common.base.PaletteGenerator.extractDomainSwatch
+import com.example.showmagnet.ui.common.utils.PaletteColor
+import com.example.showmagnet.ui.common.utils.PaletteGenerator.extractDomainSwatch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue

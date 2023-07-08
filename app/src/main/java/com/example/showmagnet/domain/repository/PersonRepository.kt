@@ -1,7 +1,7 @@
 package com.example.showmagnet.domain.repository
 
-import com.example.showmagnet.domain.model.Image
-import com.example.showmagnet.domain.model.Show
+import com.example.showmagnet.domain.model.common.Image
+import com.example.showmagnet.domain.model.common.Show
 import com.example.showmagnet.domain.model.person.PersonDetails
 
 interface PersonRepository {

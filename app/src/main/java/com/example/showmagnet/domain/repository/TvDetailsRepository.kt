@@ -1,10 +1,10 @@
 package com.example.showmagnet.domain.repository
 
-import com.example.showmagnet.domain.model.Cast
-import com.example.showmagnet.domain.model.Episode
-import com.example.showmagnet.domain.model.Image
-import com.example.showmagnet.domain.model.Show
-import com.example.showmagnet.domain.model.Tv
+import com.example.showmagnet.domain.model.common.Cast
+import com.example.showmagnet.domain.model.tv.Episode
+import com.example.showmagnet.domain.model.common.Image
+import com.example.showmagnet.domain.model.common.Show
+import com.example.showmagnet.domain.model.tv.Tv
 
 interface TvDetailsRepository {
     suspend fun getDetails(id: Int): Result<Tv>

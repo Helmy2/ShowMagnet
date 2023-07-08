@@ -1,9 +1,9 @@
 package com.example.showmagnet.domain.repository
 
-import com.example.showmagnet.domain.model.Cast
-import com.example.showmagnet.domain.model.Image
-import com.example.showmagnet.domain.model.Movie
-import com.example.showmagnet.domain.model.Show
+import com.example.showmagnet.domain.model.common.Cast
+import com.example.showmagnet.domain.model.common.Image
+import com.example.showmagnet.domain.model.movie.Movie
+import com.example.showmagnet.domain.model.common.Show
 
 interface MovieDetailsRepository {
     suspend fun getMovieDetails(id: Int): Result<Movie>

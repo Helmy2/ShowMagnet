@@ -8,13 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import com.example.showmagnet.ui.common.base.TestTage
+import com.example.showmagnet.ui.common.utils.TestTage
 
 @Composable
 fun LoadingButton(
-    enabled: Boolean,
-    loading: Boolean,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    loading: Boolean,
     onClick: () -> Unit,
     content: @Composable RowScope.() -> Unit,
 ) {

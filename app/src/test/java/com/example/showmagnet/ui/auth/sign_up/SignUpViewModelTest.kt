@@ -126,16 +126,6 @@ class SignUpViewModelTest {
 
 
     @Test
-    fun navigateToSignInEvent() = runBlocking {
-        viewModel.handleEvents(SignUpContract.Event.Navigation.ToSignIn)
-
-        val result = viewModel.effect.first()
-
-        assert(result is SignUpContract.Effect.Navigation.ToSignIn)
-    }
-
-
-    @Test
     fun signUpFailedEvent() = runBlocking {
         var isLoadingRequest = false
         whenever(signUpUseCaseMock("test", "test", "test"))

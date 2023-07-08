@@ -1,21 +1,21 @@
 package com.example.showmagnet.ui.person
 
-import com.example.showmagnet.domain.model.Image
-import com.example.showmagnet.domain.model.Show
+import com.example.showmagnet.domain.model.common.Image
+import com.example.showmagnet.domain.model.common.Show
 import com.example.showmagnet.domain.model.person.PersonDetails
-import com.example.showmagnet.ui.common.base.ViewEffect
-import com.example.showmagnet.ui.common.base.ViewEvent
-import com.example.showmagnet.ui.common.base.ViewState
-import com.example.showmagnet.ui.common.utils.NetworkStatus
+import com.example.showmagnet.ui.common.ViewEffect
+import com.example.showmagnet.ui.common.ViewEvent
+import com.example.showmagnet.ui.common.ViewState
 
 class PersonContract {
     sealed class Event : ViewEvent {
+        object Refresh : Event()
 
     }
 
     data class State(
         val loading: Boolean = true,
-        val connected: NetworkStatus = NetworkStatus.Unknown,
+        val connected: Boolean = false,
         val person: PersonDetails? = null,
         val movieCredits: List<Show>? = null,
         val tvCredits: List<Show>? = null,

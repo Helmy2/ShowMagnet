@@ -33,13 +33,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.showmagnet.domain.model.Movie
-import com.example.showmagnet.ui.common.ImageList
-import com.example.showmagnet.ui.common.InformationFeild
-import com.example.showmagnet.ui.common.ShowsList
-import com.example.showmagnet.ui.common.utils.NetworkStatus
+import com.example.showmagnet.domain.model.movie.Movie
+import com.example.showmagnet.ui.common.ui.CastList
+import com.example.showmagnet.ui.common.ui.ConnectedAndLoadingFeild
+import com.example.showmagnet.ui.common.ui.ImageList
+import com.example.showmagnet.ui.common.ui.InformationFeild
+import com.example.showmagnet.ui.common.ui.ShowsList
 import com.example.showmagnet.ui.common.utils.toHourFormat
-import com.example.showmagnet.ui.movie.components.CastList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -73,51 +73,48 @@ fun MovieScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) {
-        if (state.connected == NetworkStatus.Disconnected && state.movie == null) Box(
-            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+        ConnectedAndLoadingFeild(
+            connected = state.connected,
+            loading = state.loading,
+            onRefresh = { handleEvent(MovieContract.Event.Refresh) }
         ) {
-            Text(text = "No Internet Connection", style = MaterialTheme.typography.titleLarge)
-        }
-        else Column(
-            modifier = Modifier.verticalScroll(state = rememberScrollState(), enabled = true),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            if (state.movie != null) {
-                MovieDetailsFeild(state.movie, {})
-                StorylineFeild(
-                    state.movie.overview, modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            }
-            if (!state.castList.isNullOrEmpty()) {
-                CastList(
-                    state.castList, { handleNavigation(MovieContract.Navigation.ToPerson(it)) },
-                    Modifier.padding(horizontal = 16.dp)
-                )
-            }
-            if (!state.collection.isNullOrEmpty()) {
-                ShowsList(
-                    shows = state.collection,
-                    title = "Collection",
-                    loading = false,
-                    onItemClick = { handleNavigation(MovieContract.Navigation.ToDigitalis(it)) },
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                )
-            }
-            if (!state.imageList.isNullOrEmpty()) {
-                ImageList(
-                    state.imageList,
-                    "Images",
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                )
-            }
-            if (!state.recommendations.isNullOrEmpty()) {
-                ShowsList(
-                    shows = state.recommendations,
-                    title = "Recommendations",
-                    loading = false,
-                    onItemClick = { handleNavigation(MovieContract.Navigation.ToDigitalis(it)) },
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
+            Column(
+                modifier = Modifier.verticalScroll(state = rememberScrollState(), enabled = true),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                if (state.movie != null) {
+                    MovieDetailsFeild(state.movie, {})
+                    StorylineFeild(
+                        state.movie.overview, modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+                if (!state.castList.isNullOrEmpty()) {
+                    CastList(
+                        state.castList,
+                    ) { handleNavigation(MovieContract.Navigation.ToPerson(it)) }
+                }
+                if (!state.collection.isNullOrEmpty()) {
+                    ShowsList(
+                        shows = state.collection,
+                        title = "Collection",
+                        loading = false,
+                        onItemClick = { handleNavigation(MovieContract.Navigation.ToDigitalis(it)) },
+                    )
+                }
+                if (!state.imageList.isNullOrEmpty()) {
+                    ImageList(
+                        state.imageList,
+                        "Images",
+                    )
+                }
+                if (!state.recommendations.isNullOrEmpty()) {
+                    ShowsList(
+                        shows = state.recommendations,
+                        title = "Recommendations",
+                        loading = false,
+                        onItemClick = { handleNavigation(MovieContract.Navigation.ToDigitalis(it)) },
+                    )
+                }
             }
         }
     }
@@ -171,7 +168,7 @@ private fun MovieDetailsFeild(
             title = movie.title,
             runtime = movie.runtime.toHourFormat(),
             releaseDate = movie.releaseDate,
-            voteAverage = movie.voteAverage.toFloat(),
+            voteAverage = movie.voteAverage,
             onGenreClick = onGenreClick,
             genres = movie.genres,
             modifier = Modifier

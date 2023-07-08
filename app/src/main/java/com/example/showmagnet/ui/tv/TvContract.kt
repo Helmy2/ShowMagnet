@@ -1,23 +1,24 @@
 package com.example.showmagnet.ui.tv
 
-import com.example.showmagnet.domain.model.Cast
-import com.example.showmagnet.domain.model.Episode
-import com.example.showmagnet.domain.model.Image
-import com.example.showmagnet.domain.model.Show
-import com.example.showmagnet.domain.model.Tv
-import com.example.showmagnet.ui.common.base.ViewEffect
-import com.example.showmagnet.ui.common.base.ViewEvent
-import com.example.showmagnet.ui.common.base.ViewState
-import com.example.showmagnet.ui.common.utils.NetworkStatus
+import com.example.showmagnet.domain.model.common.Cast
+import com.example.showmagnet.domain.model.common.Image
+import com.example.showmagnet.domain.model.common.Show
+import com.example.showmagnet.domain.model.tv.Episode
+import com.example.showmagnet.domain.model.tv.Tv
+import com.example.showmagnet.ui.common.ViewEffect
+import com.example.showmagnet.ui.common.ViewEvent
+import com.example.showmagnet.ui.common.ViewState
 
 class TvContract {
     sealed class Event : ViewEvent {
         data class ChangeNumberOfSeasons(val number: Int) : Event()
+        object Refresh : Event()
+
     }
 
     data class State(
         val loading: Boolean = true,
-        val connected: NetworkStatus = NetworkStatus.Unknown,
+        val connected: Boolean = false,
         val tv: Tv? = null,
         val episodeList: List<Episode>? = null,
         val castList: List<Cast>? = null,

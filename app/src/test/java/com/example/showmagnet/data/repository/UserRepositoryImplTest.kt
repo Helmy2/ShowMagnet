@@ -1,8 +1,8 @@
 package com.example.showmagnet.data.repository
 
 import com.example.showmagnet.MainDispatcherRule
+import com.example.showmagnet.data.source.preference.UserPreferencesManager
 import com.example.showmagnet.domain.repository.UserRepository
-import com.example.showmagnet.domain.source.preference.UserPreferencesManager
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.runBlocking
 import org.junit.Before

@@ -1,27 +1,28 @@
 package com.example.showmagnet.data.source.remote.api
 
-import com.example.showmagnet.data.source.remote.model.show.ShowResponse
+import com.example.showmagnet.data.source.remote.ApiConstants
+import com.example.showmagnet.data.source.remote.ApiParameters
+import com.example.showmagnet.data.source.remote.model.common.ShowResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface ShowApi {
-    @GET("trending/all/{timeWindow}")
-    suspend fun getTrending(@Path("timeWindow") timeWindow: String): ShowResponse
+    @GET(ApiConstants.TRAILERS_ENDPOINT)
+    suspend fun getTrending(@Path(ApiParameters.TIME_WINDOW) timeWindow: String): ShowResponse
 
-    @GET("movie/popular")
+    @GET(ApiConstants.Movie.POPULAR_ENDPOINT)
     suspend fun getPopularMovies(): ShowResponse
 
-    @GET("tv/popular")
+    @GET(ApiConstants.Tv.POPULAR_ENDPOINT)
     suspend fun getPopularTv(): ShowResponse
 
-    @GET("movie/upcoming")
+    @GET(ApiConstants.Movie.UPCOMING_ENDPOINT)
     suspend fun getUpcomingMovie(): ShowResponse
 
-    @GET("discover/movie?with_genres=16")
+    @GET(ApiConstants.Discover.MOVIE_ANIME)
     suspend fun getAnimationMovies(): ShowResponse
 
-    @GET("discover/tv?with_genres=16")
+    @GET(ApiConstants.Discover.TV_ANIME)
     suspend fun getAnimationTv(): ShowResponse
-
 
 }
