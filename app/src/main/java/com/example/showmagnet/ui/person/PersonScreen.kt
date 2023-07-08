@@ -88,7 +88,6 @@ fun PersonScreen(
                     ShowsList(
                         title = "Movies",
                         shows = state.movieCredits,
-                        loading = false,
                         onItemClick = { handleNavigation(PersonContract.Navigation.ToMovie(it.id)) },
                     )
                 }
@@ -96,7 +95,6 @@ fun PersonScreen(
                     ShowsList(
                         title = "Tv Shows",
                         shows = state.tvCredits,
-                        loading = false,
                         onItemClick = { handleNavigation(PersonContract.Navigation.ToTv(it.id)) },
                     )
                 }

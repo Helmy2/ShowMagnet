@@ -97,7 +97,6 @@ fun MovieScreen(
                     ShowsList(
                         shows = state.collection,
                         title = "Collection",
-                        loading = false,
                         onItemClick = { handleNavigation(MovieContract.Navigation.ToDigitalis(it)) },
                     )
                 }
@@ -111,7 +110,6 @@ fun MovieScreen(
                     ShowsList(
                         shows = state.recommendations,
                         title = "Recommendations",
-                        loading = false,
                         onItemClick = { handleNavigation(MovieContract.Navigation.ToDigitalis(it)) },
                     )
                 }

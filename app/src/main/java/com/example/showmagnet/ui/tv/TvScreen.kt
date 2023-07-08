@@ -131,7 +131,6 @@ fun TvScreen(
                     ShowsList(
                         shows = state.recommendations,
                         title = "Recommendations",
-                        loading = false,
                         onItemClick = {
                             when (it.type) {
                                 MediaType.MOVIE -> handleNavigation(TvContract.Navigation.ToMovie(it.id))

@@ -64,7 +64,6 @@ fun HomeScreen(
             ) {
                 ShowsList(shows = state.upcoming,
                     title = "Upcoming",
-                    loading = state.loading,
                     onItemClick = { handleNavigation(HomeContract.Navigation.ToDigitalis(it)) })
                 ShowsList(
                     shows = state.trending,
@@ -79,7 +78,6 @@ fun HomeScreen(
                         )
                     },
                     onItemClick = { handleNavigation(HomeContract.Navigation.ToDigitalis(it)) },
-                    loading = state.loading
                 )
                 ShowsList(
                     shows = state.popular,
@@ -94,7 +92,6 @@ fun HomeScreen(
                         )
                     },
                     onItemClick = { handleNavigation(HomeContract.Navigation.ToDigitalis(it)) },
-                    loading = state.loading
                 )
                 ShowsList(
                     shows = state.anime,
@@ -109,10 +106,8 @@ fun HomeScreen(
                         )
                     },
                     onItemClick = { handleNavigation(HomeContract.Navigation.ToDigitalis(it)) },
-                    loading = state.loading
                 )
             }
-
         }
     }
 }

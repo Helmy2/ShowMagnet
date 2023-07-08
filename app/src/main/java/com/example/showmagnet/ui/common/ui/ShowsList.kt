@@ -32,9 +32,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.showmagnet.domain.model.common.Show
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material.placeholder
-import com.google.accompanist.placeholder.material.shimmer
 
 @Composable
 fun ShowsList(
@@ -44,7 +41,6 @@ fun ShowsList(
     selectionList: List<String> = emptyList(),
     onSelectionChange: (Int) -> Unit = {},
     onItemClick: (Show) -> Unit,
-    loading: Boolean,
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
@@ -72,25 +68,13 @@ fun ShowsList(
             contentPadding = PaddingValues(horizontal = 8.dp),
         ) {
             items(count = if (shows.isEmpty()) 10 else shows.size) { i ->
-                ShimmerListItem(isLoading = loading || shows.isEmpty(), contentAfterLoading = {
-                    ShowItem(
-                        loading = false,
-                        url = shows[i].posterPath.baseUrl,
-                        title = shows[i].title,
-                        rating = shows[i].voteAverage,
-                        onItemClick = { onItemClick(shows[i]) },
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    )
-                }, contentBeforeLoading = {
-                    ShowItem(
-                        loading = true,
-                        url = "",
-                        title = "",
-                        rating = 0f,
-                        onItemClick = { },
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    )
-                })
+                ShowItem(
+                    url = shows[i].posterPath.baseUrl,
+                    title = shows[i].title,
+                    rating = shows[i].voteAverage,
+                    onItemClick = { onItemClick(shows[i]) },
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
             }
         }
     }
@@ -101,7 +85,6 @@ private fun ShowItem(
     url: String,
     title: String,
     rating: Float,
-    loading: Boolean,
     onItemClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -118,10 +101,7 @@ private fun ShowItem(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(.7f)
-                    .placeholder(
-                        visible = loading, highlight = PlaceholderHighlight.shimmer()
-                    ),
+                    .aspectRatio(.7f),
             )
             Text(
                 text = title,
@@ -130,17 +110,9 @@ private fun ShowItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                    .placeholder(
-                        visible = loading, highlight = PlaceholderHighlight.shimmer()
-                    )
             )
             RatingbarFeild(
-                rating,
-                Modifier
-                    .padding(vertical = 8.dp, horizontal = 16.dp)
-                    .placeholder(
-                        visible = loading, highlight = PlaceholderHighlight.shimmer()
-                    )
+                rating, Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
             )
         }
     }
