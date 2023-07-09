@@ -6,6 +6,7 @@ import com.example.showmagnet.domain.model.common.Image
 data class Movie(
     val id: Int,
     val title: String,
+    val favorite: Boolean,
     val adult: Boolean,
     val backdropPath: Image,
     val posterPath: Image,

@@ -83,7 +83,11 @@ fun MovieScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 if (state.movie != null) {
-                    MovieDetailsFeild(state.movie, {})
+                    MovieDetailsFeild(
+                        state.movie,
+                        onGenreClick = {},
+                        onFavoriteClick = { handleEvent(MovieContract.Event.ToggleFavorite) },
+                    )
                     StorylineFeild(
                         state.movie.overview, modifier = Modifier.padding(horizontal = 16.dp)
                     )
@@ -134,6 +138,7 @@ private fun StorylineFeild(overview: String, modifier: Modifier = Modifier) {
 private fun MovieDetailsFeild(
     movie: Movie,
     onGenreClick: (id: Int) -> Unit,
+    onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -164,10 +169,12 @@ private fun MovieDetailsFeild(
         )
         InformationFeild(
             title = movie.title,
+            favorite = movie.favorite,
             runtime = movie.runtime.toHourFormat(),
             releaseDate = movie.releaseDate,
             voteAverage = movie.voteAverage,
             onGenreClick = onGenreClick,
+            onFavoriteClick = onFavoriteClick,
             genres = movie.genres,
             modifier = Modifier
                 .padding(horizontal = 16.dp)

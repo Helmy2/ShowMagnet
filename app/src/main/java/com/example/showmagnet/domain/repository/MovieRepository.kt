@@ -2,8 +2,8 @@ package com.example.showmagnet.domain.repository
 
 import com.example.showmagnet.domain.model.common.Cast
 import com.example.showmagnet.domain.model.common.Image
-import com.example.showmagnet.domain.model.movie.Movie
 import com.example.showmagnet.domain.model.common.Show
+import com.example.showmagnet.domain.model.movie.Movie
 
 interface MovieRepository {
     suspend fun getMovieDetails(id: Int): Result<Movie>
@@ -17,4 +17,8 @@ interface MovieRepository {
     suspend fun getRecommendations(id: Int): Result<List<Show>>
     suspend fun getUpcoming(): Result<List<Show>>
     suspend fun getPopular(): Result<List<Show>>
+    suspend fun addMovieToFavoriteList(id: Int): Result<Boolean>
+    suspend fun getMoviesFavoriteList(): Result<List<Int>>
+    suspend fun deleteFromFavoriteMovieList(id: Int): Result<Boolean>
+    suspend fun isFavoriteMovie(id: Int): Result<Boolean>
 }

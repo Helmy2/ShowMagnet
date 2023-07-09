@@ -13,6 +13,8 @@ class TvContract {
     sealed class Event : ViewEvent {
         data class ChangeNumberOfSeasons(val number: Int) : Event()
         object Refresh : Event()
+        object ToggleFavorite : Event()
+
 
     }
 

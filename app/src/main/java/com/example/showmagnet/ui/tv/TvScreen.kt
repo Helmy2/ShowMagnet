@@ -101,7 +101,10 @@ fun TvScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 if (state.tv != null) {
-                    TvDetailsFeild(state.tv, {})
+                    TvDetailsFeild(
+                        state.tv,
+                        onGenreClick = {},
+                        onFavoriteClick = { handleEvent(TvContract.Event.ToggleFavorite) })
                 }
                 if (!state.castList.isNullOrEmpty()) {
                     CastList(
@@ -257,6 +260,7 @@ private fun EpisodeItem(episode: Episode, modifier: Modifier = Modifier) {
 private fun TvDetailsFeild(
     tv: Tv,
     onGenreClick: (id: Int) -> Unit,
+    onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -287,9 +291,11 @@ private fun TvDetailsFeild(
         )
         InformationFeild(
             title = tv.name,
+            favorite = tv.favorite,
             releaseDate = tv.firstAirDate ?: "",
             voteAverage = tv.voteAverage,
             onGenreClick = onGenreClick,
+            onFavoriteClick = onFavoriteClick,
             genres = tv.genres,
             modifier = Modifier
                 .padding(horizontal = 16.dp)

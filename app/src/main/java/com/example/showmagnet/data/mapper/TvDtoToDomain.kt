@@ -16,9 +16,10 @@ fun EpisodeRemote.toDomain() = Episode(
     voteAverage = voteAverage ?: -1f
 )
 
-fun TvResponse.toDomain() = Tv(
+fun TvResponse.toDomain(favorite: Boolean) = Tv(
     id = id,
     name = name.orEmpty(),
+    favorite = favorite,
     adult = adult ?: false,
     numberOfEpisodes = numberOfEpisodes ?: -1,
     numberOfSeasons = numberOfSeasons ?: -1,

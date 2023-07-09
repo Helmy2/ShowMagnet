@@ -4,9 +4,10 @@ import com.example.showmagnet.data.source.remote.model.movie.MovieResponse
 import com.example.showmagnet.domain.model.common.Image
 import com.example.showmagnet.domain.model.movie.Movie
 
-fun MovieResponse.toDomain() = Movie(
+fun MovieResponse.toDomain(favorite: Boolean) = Movie(
     id = id,
     title = title.orEmpty(),
+    favorite = favorite,
     adult = adult ?: false,
     backdropPath = Image(backdropPath),
     posterPath = Image(posterPath),

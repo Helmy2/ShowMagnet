@@ -3,6 +3,7 @@ package com.example.showmagnet.di
 import android.content.Context
 import com.example.showmagnet.R
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -19,6 +20,10 @@ import javax.inject.Singleton
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class DefaultWebClientId
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class CurrentFirebaseUser
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -38,4 +43,10 @@ object FirebaseModule {
     @DefaultWebClientId
     fun provideDefaultWebClientId(@ApplicationContext context: Context): String =
         context.getString(R.string.default_web_client_id)
+
+    @Provides
+    @Singleton
+    @CurrentFirebaseUser
+    fun provideFireBaseUser(auth: FirebaseAuth): FirebaseUser? = auth.currentUser
+
 }

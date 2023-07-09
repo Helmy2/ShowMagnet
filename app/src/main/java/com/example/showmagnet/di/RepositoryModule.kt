@@ -4,13 +4,13 @@ import com.example.showmagnet.data.repository.AuthRepositoryImpl
 import com.example.showmagnet.data.repository.MovieRepositoryImpl
 import com.example.showmagnet.data.repository.PersonRepositoryImpl
 import com.example.showmagnet.data.repository.ShowRepositoryImpl
-import com.example.showmagnet.data.repository.TvDetailsRepositoryImpl
+import com.example.showmagnet.data.repository.TvRepositoryImpl
 import com.example.showmagnet.data.repository.UserRepositoryImpl
 import com.example.showmagnet.domain.repository.AuthRepository
 import com.example.showmagnet.domain.repository.MovieRepository
 import com.example.showmagnet.domain.repository.PersonRepository
 import com.example.showmagnet.domain.repository.ShowRepository
-import com.example.showmagnet.domain.repository.TvDetailsRepository
+import com.example.showmagnet.domain.repository.TvRepository
 import com.example.showmagnet.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
@@ -43,8 +43,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindTvDetailsRepository(
-        tvDetailsRepositoryImpl: TvDetailsRepositoryImpl
-    ): TvDetailsRepository
+        tvRepositoryImpl: TvRepositoryImpl
+    ): TvRepository
 
     @Binds
     @Singleton

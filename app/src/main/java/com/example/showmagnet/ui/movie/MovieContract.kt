@@ -11,7 +11,7 @@ import com.example.showmagnet.ui.common.ViewState
 class MovieContract {
     sealed class Event : ViewEvent {
         object Refresh : Event()
-
+        object ToggleFavorite : Event()
     }
 
     data class State(

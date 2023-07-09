@@ -9,6 +9,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,15 +29,16 @@ import com.example.showmagnet.ui.common.utils.toYearFormat
 fun InformationFeild(
     modifier: Modifier = Modifier,
     title: String,
+    favorite: Boolean,
     runtime: String? = null,
     voteAverage: Float,
     genres: List<Genre>,
     releaseDate: String,
     onGenreClick: (id: Int) -> Unit,
+    onFavoriteClick: () -> Unit
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Row(
             modifier = Modifier.align(Alignment.End),
@@ -42,11 +48,26 @@ fun InformationFeild(
             Spacer(modifier = Modifier.width(8.dp))
             Text(text = voteAverage.toString(), style = MaterialTheme.typography.titleMedium)
         }
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium.copy(fontSize = 25.sp),
-            maxLines = 2
-        )
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium
+                    .copy(fontSize = 20.sp),
+                maxLines = 2,
+                modifier = Modifier.weight(fill = false, weight = 1f)
+            )
+            IconButton(onClick = onFavoriteClick) {
+                Icon(
+                    imageVector = if (favorite) Icons.Default.Favorite
+                    else Icons.Default.FavoriteBorder,
+                    contentDescription = "Favorite Button",
+                )
+            }
+        }
         FlowRow {
             runtime?.let {
                 Text(text = runtime, modifier = Modifier.padding(4.dp))
