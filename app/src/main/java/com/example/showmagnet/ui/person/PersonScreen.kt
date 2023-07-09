@@ -10,6 +10,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -75,7 +80,9 @@ fun PersonScreen(
             ) {
                 if (state.person != null) {
                     PersonInf(
-                        person = state.person, modifier = Modifier.padding(horizontal = 16.dp)
+                        person = state.person,
+                        onFavoriteClick = { handleEvent(PersonContract.Event.ToggleFavorite) },
+                        modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 }
                 if (!state.imageList.isNullOrEmpty()) {
@@ -107,7 +114,9 @@ fun PersonScreen(
 
 @Composable
 private fun PersonInf(
-    person: PersonDetails, modifier: Modifier = Modifier
+    person: PersonDetails,
+    onFavoriteClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
@@ -131,10 +140,26 @@ private fun PersonInf(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(
-                    text = person.name,
-                    style = MaterialTheme.typography.titleLarge,
-                )
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = person.name,
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.weight(fill = false, weight = 1f)
+
+                    )
+                    IconButton(onClick = onFavoriteClick) {
+                        Icon(
+                            imageVector = if (person.favorite) Icons.Default.Favorite
+                            else Icons.Default.FavoriteBorder,
+                            contentDescription = "Favorite Button",
+                        )
+                    }
+                }
+
                 FlowCard(title = "Known For", body = person.knownForDepartment)
                 FlowCard(title = "Popularity", body = person.popularity.toString())
                 FlowCard(title = "Birthday", body = person.birthDay)

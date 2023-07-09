@@ -1,7 +1,7 @@
 package com.example.showmagnet.data.mapper
 
-import com.example.showmagnet.data.source.remote.model.tv.EpisodeRemote
-import com.example.showmagnet.data.source.remote.model.tv.TvResponse
+import com.example.showmagnet.data.source.remote.api.model.tv.EpisodeRemote
+import com.example.showmagnet.data.source.remote.api.model.tv.TvResponse
 import com.example.showmagnet.domain.model.common.Image
 import com.example.showmagnet.domain.model.tv.Episode
 import com.example.showmagnet.domain.model.tv.Tv

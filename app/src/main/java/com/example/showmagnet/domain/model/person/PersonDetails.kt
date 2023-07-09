@@ -4,6 +4,7 @@ import com.example.showmagnet.domain.model.common.Image
 
 data class PersonDetails(
     val name: String,
+    val favorite: Boolean,
     val biography: String,
     val birthDay: String,
     val deathDay: Any,

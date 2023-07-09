@@ -1,13 +1,13 @@
 package com.example.showmagnet.di
 
-import com.example.showmagnet.data.source.remote.ApiConstants
+import com.example.showmagnet.data.source.remote.api.ApiConstants
 import com.example.showmagnet.data.source.remote.api.MovieApi
 import com.example.showmagnet.data.source.remote.api.PersonApi
 import com.example.showmagnet.data.source.remote.api.ShowApi
 import com.example.showmagnet.data.source.remote.api.TvApi
-import com.example.showmagnet.data.source.remote.interceptors.AuthenticationInterceptor
-import com.example.showmagnet.data.source.remote.interceptors.LoggingInterceptor
-import com.example.showmagnet.data.source.remote.interceptors.NetworkStatusInterceptor
+import com.example.showmagnet.data.source.remote.api.interceptors.AuthenticationInterceptor
+import com.example.showmagnet.data.source.remote.api.interceptors.LoggingInterceptor
+import com.example.showmagnet.data.source.remote.api.interceptors.NetworkStatusInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,6 +1,6 @@
 package com.example.showmagnet.data.mapper
 
-import com.example.showmagnet.data.source.remote.model.movie.MovieResponse
+import com.example.showmagnet.data.source.remote.api.model.movie.MovieResponse
 import com.example.showmagnet.domain.model.common.Image
 import com.example.showmagnet.domain.model.movie.Movie
 

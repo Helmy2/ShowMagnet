@@ -1,13 +1,14 @@
 package com.example.showmagnet.data.mapper
 
-import com.example.showmagnet.data.source.remote.model.person.PersonDetailsResponse
-import com.example.showmagnet.data.source.remote.model.person.PersonDto
+import com.example.showmagnet.data.source.remote.api.model.person.PersonDetailsResponse
+import com.example.showmagnet.data.source.remote.api.model.person.PersonDto
 import com.example.showmagnet.domain.model.common.Image
 import com.example.showmagnet.domain.model.person.Person
 import com.example.showmagnet.domain.model.person.PersonDetails
 
-fun PersonDetailsResponse.toDomain() = PersonDetails(
+fun PersonDetailsResponse.toDomain(favorite: Boolean) = PersonDetails(
     id = id,
+    favorite = favorite,
     name = name.orEmpty(),
     biography = biography.orEmpty(),
     birthDay = birthDay.orEmpty(),

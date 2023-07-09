@@ -3,10 +3,12 @@ package com.example.showmagnet.ui.person
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.showmagnet.domain.model.NetworkUnavailableException
+import com.example.showmagnet.domain.use_case.person.AddPersonToFavoriteUseCase
 import com.example.showmagnet.domain.use_case.person.GetPersonDetailsUseCase
 import com.example.showmagnet.domain.use_case.person.GetPersonImagesUseCase
 import com.example.showmagnet.domain.use_case.person.GetPersonMovieCreditsUseCase
 import com.example.showmagnet.domain.use_case.person.GetPersonTvCreditsUseCase
+import com.example.showmagnet.domain.use_case.person.RemovePersonFromFavoriteUseCase
 import com.example.showmagnet.ui.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -20,6 +22,8 @@ class PersonViewModel @Inject constructor(
     val getPersonDetailsUseCase: GetPersonDetailsUseCase,
     val getPersonMovieCreditsUseCase: GetPersonMovieCreditsUseCase,
     val getPersonTvCreditsUseCase: GetPersonTvCreditsUseCase,
+    val addPersonToFavoriteUseCase: AddPersonToFavoriteUseCase,
+    val removePersonFromFavoriteUseCase: RemovePersonFromFavoriteUseCase
 ) : BaseViewModel<PersonContract.Event, PersonContract.State, PersonContract.Effect>() {
     private val id: Int = checkNotNull(savedStateHandle["id"])
 
@@ -28,6 +32,43 @@ class PersonViewModel @Inject constructor(
     override fun handleEvents(event: PersonContract.Event) {
         when (event) {
             PersonContract.Event.Refresh -> refresh()
+            PersonContract.Event.ToggleFavorite -> toggleFavorite()
+        }
+    }
+
+    private fun toggleFavorite() = viewModelScope.launch {
+        viewState.value.person?.favorite?.let {
+            setState { copy(person = viewState.value.person?.copy(favorite = !it)) }
+            if (!it) {
+                addPersonToFavoriteUseCase(id)
+            } else {
+                removePersonFromFavoriteUseCase(id)
+            }
+            updatePersonDetails()
+        }
+    }
+
+    private suspend fun updatePersonDetails() {
+        val personResult = getPersonDetailsUseCase(id)
+
+        if (personResult.isFailure) {
+            if (personResult.exceptionOrNull() is NetworkUnavailableException) setState {
+                copy(loading = false, connected = false)
+            }
+            else {
+                setEffect {
+                    PersonContract.Effect.ShowErrorToast(
+                        personResult.exceptionOrNull()?.localizedMessage ?: ""
+                    )
+                }
+            }
+            return
+        }
+
+        setState {
+            copy(
+                person = personResult.getOrNull(), connected = true, loading = false
+            )
         }
     }
 
@@ -38,27 +79,7 @@ class PersonViewModel @Inject constructor(
     private fun refresh() = viewModelScope.launch {
         setState { copy(loading = true) }
 
-        val personResult = getPersonDetailsUseCase(id)
-
-        if (personResult.isFailure) {
-            if (personResult.exceptionOrNull() is NetworkUnavailableException) setState {
-                copy( loading = false,connected = false)
-            }
-            else {
-                setEffect {
-                    PersonContract.Effect.ShowErrorToast(
-                        personResult.exceptionOrNull()?.localizedMessage ?: ""
-                    )
-                }
-            }
-            return@launch
-        }
-
-        setState {
-            copy(
-                person = personResult.getOrNull(), connected = true, loading = false
-            )
-        }
+        updatePersonDetails()
 
         val personImages = getPersonImagesUseCase(id)
         setState {
