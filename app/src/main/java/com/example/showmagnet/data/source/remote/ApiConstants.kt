@@ -20,6 +20,7 @@ object ApiConstants {
         const val MOVIE_CREDITS_ENDPOINT = "person/{${ApiParameters.ID}}/movie_credits"
         const val TV_CREDITS_ENDPOINT = "person/{${ApiParameters.ID}}/tv_credits"
         const val IMAGES_ENDPOINT = "person/{${ApiParameters.ID}}/images"
+        const val TRENDING_ENDPOINT = "trending/person/{${ApiParameters.TIME_WINDOW}}"
     }
 
     object Tv {

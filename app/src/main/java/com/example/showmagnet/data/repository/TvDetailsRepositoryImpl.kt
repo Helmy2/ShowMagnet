@@ -4,6 +4,7 @@ import com.example.showmagnet.data.mapper.toDomain
 import com.example.showmagnet.data.source.remote.api.TvApi
 import com.example.showmagnet.domain.model.common.Cast
 import com.example.showmagnet.domain.model.common.Image
+import com.example.showmagnet.domain.model.common.MediaType
 import com.example.showmagnet.domain.model.common.Show
 import com.example.showmagnet.domain.model.tv.Episode
 import com.example.showmagnet.domain.model.tv.Tv
@@ -83,6 +84,22 @@ class TvDetailsRepositoryImpl @Inject constructor(
         } else {
             Result.success(result)
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Result.failure(e)
+    }
+
+    override suspend fun getPopular(): Result<List<Show>> = try {
+        val response = api.getPopularTv()
+
+        val result = response.shows?.filterNotNull()?.map { it.toDomain(MediaType.TV) }
+
+        if (result == null) {
+            Result.failure(Exception("Something went wrong"))
+        } else {
+            Result.success(result)
+        }
+
     } catch (e: Exception) {
         e.printStackTrace()
         Result.failure(e)

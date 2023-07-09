@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +17,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,21 +31,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.showmagnet.domain.model.common.Show
+import com.example.showmagnet.domain.model.common.TimeWindow
+import com.example.showmagnet.domain.model.person.Person
 
 @Composable
-fun ShowsList(
-    shows: List<Show>,
-    title: String,
-    selectedIndex: Int = 0,
-    selectionList: List<String> = emptyList(),
-    onSelectionChange: (Int) -> Unit = {},
-    onItemClick: (Show) -> Unit,
+fun PersonList(
+    people: List<Person>, title: String,
+    onSelectionChange: (TimeWindow) -> Unit,
+    onItemClick: (id: Int) -> Unit
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-
+    var selectedIndex by remember { mutableStateOf(0) }
     Column(
-        Modifier.height(screenHeight * .45f)
+        Modifier.height(screenHeight * .35f)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -53,8 +56,11 @@ fun ShowsList(
             )
             ChoiceField(
                 selectedIndex = selectedIndex,
-                selectionList = selectionList,
-                onItemClicked = onSelectionChange
+                selectionList = TimeWindow.values().map { it.formattedValue },
+                onItemClicked = {
+                    onSelectionChange(TimeWindow.values()[it])
+                    selectedIndex = it
+                }
             )
         }
 
@@ -62,12 +68,11 @@ fun ShowsList(
         LazyRow(
             contentPadding = PaddingValues(horizontal = 8.dp),
         ) {
-            items(items = shows, key = { it.id }) { show ->
-                ShowItem(
-                    url = show.posterPath.baseUrl,
-                    title = show.title,
-                    rating = show.voteAverage,
-                    onItemClick = { onItemClick(show) },
+            items(items = people, key = { it.id }) { person ->
+                PersonItem(
+                    url = person.profilePath.baseUrl,
+                    name = person.name,
+                    onItemClick = { onItemClick(person.id) },
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
             }
@@ -76,40 +81,34 @@ fun ShowsList(
 }
 
 @Composable
-private fun ShowItem(
+private fun PersonItem(
     url: String,
-    title: String,
-    rating: Float,
+    name: String,
     onItemClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     Card(modifier = modifier
-        .aspectRatio(.52f)
-        .clip(RoundedCornerShape(16.dp))
+        .width(screenWidth * .35f)
+        .clip(RoundedCornerShape(8.dp))
         .clickable { onItemClick() }) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Column {
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current).data(url).build(),
-                contentDescription = title,
-                contentScale = ContentScale.Crop,
+                model = ImageRequest.Builder(LocalContext.current).data(url)
+                    .crossfade(true).build(),
+                contentDescription = name,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(.7f),
+                    .aspectRatio(0.7f),
+                contentScale = ContentScale.Crop
             )
             Text(
-                text = title,
+                text = name,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-            )
-            RatingbarFeild(
-                rating, Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(8.dp),
             )
         }
     }
 }
-

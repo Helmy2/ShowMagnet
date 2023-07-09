@@ -1,7 +1,9 @@
 package com.example.showmagnet.data.mapper
 
 import com.example.showmagnet.data.source.remote.model.person.PersonDetailsResponse
+import com.example.showmagnet.data.source.remote.model.person.PersonDto
 import com.example.showmagnet.domain.model.common.Image
+import com.example.showmagnet.domain.model.person.Person
 import com.example.showmagnet.domain.model.person.PersonDetails
 
 fun PersonDetailsResponse.toDomain() = PersonDetails(
@@ -16,4 +18,11 @@ fun PersonDetailsResponse.toDomain() = PersonDetails(
     placeOfBirth = placeOfBirth.orEmpty(),
     popularity = popularity ?: -1f,
     profilePath = Image(profilePath)
+)
+
+
+fun PersonDto.toDomain() = Person(
+    id = id,
+    name = name.orEmpty(),
+    profilePath = Image(profilePath),
 )

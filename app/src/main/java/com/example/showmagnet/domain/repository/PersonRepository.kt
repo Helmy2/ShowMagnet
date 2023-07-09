@@ -2,6 +2,8 @@ package com.example.showmagnet.domain.repository
 
 import com.example.showmagnet.domain.model.common.Image
 import com.example.showmagnet.domain.model.common.Show
+import com.example.showmagnet.domain.model.common.TimeWindow
+import com.example.showmagnet.domain.model.person.Person
 import com.example.showmagnet.domain.model.person.PersonDetails
 
 interface PersonRepository {
@@ -12,4 +14,5 @@ interface PersonRepository {
     suspend fun getMovieCredits(id: Int): Result<List<Show>>
 
     suspend fun getTvCredits(id: Int): Result<List<Show>>
+    suspend fun getTrendingPeople(timeWindow: TimeWindow): Result<List<Person>>
 }

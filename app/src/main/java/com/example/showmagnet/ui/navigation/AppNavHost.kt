@@ -39,7 +39,8 @@ fun AppNavHost(isUserSingedIn: Boolean) {
 
         homeScreen(
             onNavigateToMovie = { navController.navigateToMovie(it) },
-            onNavigateToTv = { navController.navigateToTv(it) }
+            onNavigateToTv = { navController.navigateToTv(it) },
+            onNavigateToPeron = { navController.navigateToPerson(it) }
         )
 
         movieScreen(

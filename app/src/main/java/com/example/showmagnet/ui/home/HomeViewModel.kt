@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.showmagnet.domain.model.NetworkUnavailableException
 import com.example.showmagnet.domain.model.common.MediaType
 import com.example.showmagnet.domain.model.common.TimeWindow
+import com.example.showmagnet.domain.use_case.person.GetTrendingPeopleUseCase
 import com.example.showmagnet.domain.use_case.show.GetAnimationUseCase
 import com.example.showmagnet.domain.use_case.show.GetPopularUseCase
 import com.example.showmagnet.domain.use_case.show.GetTrendingUseCase
@@ -20,6 +21,7 @@ class HomeViewModel @Inject constructor(
     val getUpcomingUseCase: GetUpcomingUseCase,
     val getAnimationUseCase: GetAnimationUseCase,
     val getPopularUseCase: GetPopularUseCase,
+    val getPopularPersonUseCase: GetTrendingPeopleUseCase
 ) : BaseViewModel<HomeContract.Event, HomeContract.State, HomeContract.Effect>() {
 
     override fun setInitialState() = HomeContract.State()
@@ -27,7 +29,8 @@ class HomeViewModel @Inject constructor(
         when (event) {
             is HomeContract.Event.AnimeMediaTypeChange -> updateAnimeMediaType(event.mediaType)
             is HomeContract.Event.PopularMediaTypeChange -> updatePopularMediaType(event.mediaType)
-            is HomeContract.Event.TrendingTimeWindowChange -> updateTrendingTimeWindow(event.timeWindow)
+            is HomeContract.Event.TrendingShowTimeWindowChange -> updateTrendingTimeWindow(event.timeWindow)
+            is HomeContract.Event.TrendingPersonTimeWindowChange -> updatePopularPeople(event.timeWindow)
             HomeContract.Event.Refresh -> refresh()
         }
     }
@@ -69,8 +72,8 @@ class HomeViewModel @Inject constructor(
         val result = getTrendingUseCase(timeWindow)
         if (result.isSuccess) setState {
             copy(
-                trending = result.getOrDefault(emptyList()),
-                trendingTimeWindow = timeWindow,
+                trendingShow = result.getOrDefault(emptyList()),
+                trendingShowTimeWindow = timeWindow,
                 connected = true,
                 loading = false
             )
@@ -96,11 +99,27 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun updatePopularPeople(timeWindow: TimeWindow) = viewModelScope.launch {
+        val result = getPopularPersonUseCase(timeWindow)
+        if (result.isSuccess) setState {
+            copy(
+                tradingPeople = result.getOrDefault(emptyList()),
+                connected = true,
+                loading = false
+            )
+        } else {
+            if (result.exceptionOrNull() is NetworkUnavailableException) setState {
+                copy(connected = false)
+            }
+        }
+    }
+
     private fun refresh() = viewModelScope.launch {
         setState { copy(loading = true) }
 
         updateUpcoming()
-        updateTrendingTimeWindow(viewState.value.trendingTimeWindow)
+        updateTrendingTimeWindow(viewState.value.trendingShowTimeWindow)
+        updatePopularPeople(viewState.value.trendingPersonTimeWindow)
         updatePopularMediaType(viewState.value.popularMediaType)
         updateAnimeMediaType(viewState.value.animeMediaType)
 

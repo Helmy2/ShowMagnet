@@ -11,40 +11,6 @@ import javax.inject.Inject
 class ShowRepositoryImpl @Inject constructor(
     private val api: ShowApi,
 ) : ShowRepository {
-    override suspend fun getPopular(mediaType: MediaType): Result<List<Show>> = try {
-        val response = when (mediaType) {
-            MediaType.MOVIE -> api.getPopularMovies()
-            MediaType.TV -> api.getPopularTv()
-        }
-        val result = response.shows?.filterNotNull()?.map { it.toDomain(mediaType) }
-
-        if (result == null) {
-            Result.failure(Exception("Something went wrong"))
-        } else {
-            Result.success(result)
-        }
-
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Result.failure(e)
-    }
-
-    override suspend fun getUpcoming(): Result<List<Show>> = try {
-        val response = api.getUpcomingMovie()
-        val result = response.shows?.filterNotNull()?.map { it.toDomain(MediaType.MOVIE) }
-
-        Result.success(result)
-
-        if (result == null) {
-            Result.failure(Exception("Something went wrong"))
-        } else {
-            Result.success(result)
-        }
-
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Result.failure(e)
-    }
 
     override suspend fun getAnimation(mediaType: MediaType): Result<List<Show>> = try {
         val response = when (mediaType) {

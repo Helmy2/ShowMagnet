@@ -5,6 +5,8 @@ import com.example.showmagnet.data.source.remote.api.PersonApi
 import com.example.showmagnet.domain.model.common.Image
 import com.example.showmagnet.domain.model.common.MediaType
 import com.example.showmagnet.domain.model.common.Show
+import com.example.showmagnet.domain.model.common.TimeWindow
+import com.example.showmagnet.domain.model.person.Person
 import com.example.showmagnet.domain.model.person.PersonDetails
 import com.example.showmagnet.domain.repository.PersonRepository
 import javax.inject.Inject
@@ -60,6 +62,22 @@ class PersonRepositoryImpl @Inject constructor(
         } else {
             Result.success(result)
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Result.failure(e)
+    }
+
+    override suspend fun getTrendingPeople(timeWindow: TimeWindow): Result<List<Person>> = try {
+        val response = api.getTrendingPeople(timeWindow.value)
+        val result = response.results?.filterNotNull()?.filter { it.profilePath != null }
+            ?.map { it.toDomain() }
+
+        if (result == null) {
+            Result.failure(Exception("Something went wrong"))
+        } else {
+            Result.success(result)
+        }
+
     } catch (e: Exception) {
         e.printStackTrace()
         Result.failure(e)

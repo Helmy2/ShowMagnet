@@ -2,6 +2,7 @@ package com.example.showmagnet.data.source.remote.api
 
 import com.example.showmagnet.data.source.remote.ApiConstants
 import com.example.showmagnet.data.source.remote.ApiParameters
+import com.example.showmagnet.data.source.remote.model.person.PeopleResponse
 import com.example.showmagnet.data.source.remote.model.person.PersonCreditResponse
 import com.example.showmagnet.data.source.remote.model.person.PersonDetailsResponse
 import com.example.showmagnet.data.source.remote.model.person.PersonImagesResponse
@@ -20,5 +21,9 @@ interface PersonApi {
 
     @GET(ApiConstants.Person.IMAGES_ENDPOINT)
     suspend fun getPersonImages(@Path(ApiParameters.ID) id: Int): PersonImagesResponse
+
+    @GET(ApiConstants.Person.TRENDING_ENDPOINT)
+    suspend fun getTrendingPeople(@Path(ApiParameters.TIME_WINDOW) timeWindow: String): PeopleResponse
+
 }
 

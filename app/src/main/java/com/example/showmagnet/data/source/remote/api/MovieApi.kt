@@ -25,4 +25,10 @@ interface MovieApi {
 
     @GET(ApiConstants.Movie.IMAGES_ENDPOINT)
     suspend fun getMovieImages(@Path(ApiParameters.ID) id: Int): ImagesResponse
+
+    @GET(ApiConstants.Movie.POPULAR_ENDPOINT)
+    suspend fun getPopularMovies(): ShowResponse
+
+    @GET(ApiConstants.Movie.UPCOMING_ENDPOINT)
+    suspend fun getUpcomingMovie(): ShowResponse
 }

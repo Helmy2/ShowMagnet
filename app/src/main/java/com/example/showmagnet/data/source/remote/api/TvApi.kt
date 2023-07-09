@@ -28,4 +28,7 @@ interface TvApi {
         @Path(ApiParameters.ID) id: Int,
         @Path(ApiParameters.SEASON_NUMBER) seasonNumber: Int
     ): SeasonResponse
+
+    @GET(ApiConstants.Tv.POPULAR_ENDPOINT)
+    suspend fun getPopularTv(): ShowResponse
 }

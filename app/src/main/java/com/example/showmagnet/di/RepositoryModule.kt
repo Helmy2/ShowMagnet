@@ -1,10 +1,10 @@
 package com.example.showmagnet.di
 
-import com.example.showmagnet.data.repository.MovieDetailsRepositoryImpl
+import com.example.showmagnet.data.repository.MovieRepositoryImpl
 import com.example.showmagnet.data.repository.PersonRepositoryImpl
 import com.example.showmagnet.data.repository.ShowRepositoryImpl
 import com.example.showmagnet.data.repository.TvDetailsRepositoryImpl
-import com.example.showmagnet.domain.repository.MovieDetailsRepository
+import com.example.showmagnet.domain.repository.MovieRepository
 import com.example.showmagnet.domain.repository.PersonRepository
 import com.example.showmagnet.domain.repository.ShowRepository
 import com.example.showmagnet.domain.repository.TvDetailsRepository
@@ -27,8 +27,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun provideMovieDetailsRepository(
-        movieDetailsRepositoryImpl: MovieDetailsRepositoryImpl
-    ): MovieDetailsRepository
+        movieRepositoryImpl: MovieRepositoryImpl
+    ): MovieRepository
 
     @Binds
     @Singleton

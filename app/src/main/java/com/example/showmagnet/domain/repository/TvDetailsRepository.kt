@@ -15,4 +15,5 @@ interface TvDetailsRepository {
 
     suspend fun getRecommendations(id: Int): Result<List<Show>>
     suspend fun getSeason(id: Int, seasonNumber: Int): Result<List<Episode>>
+    suspend fun getPopular(): Result<List<Show>>
 }

@@ -5,7 +5,7 @@ import com.example.showmagnet.domain.model.common.Image
 import com.example.showmagnet.domain.model.movie.Movie
 import com.example.showmagnet.domain.model.common.Show
 
-interface MovieDetailsRepository {
+interface MovieRepository {
     suspend fun getMovieDetails(id: Int): Result<Movie>
 
     suspend fun getCast(id: Int): Result<List<Cast>>
@@ -15,4 +15,6 @@ interface MovieDetailsRepository {
     suspend fun getImages(id: Int): Result<List<Image>>
 
     suspend fun getRecommendations(id: Int): Result<List<Show>>
+    suspend fun getUpcoming(): Result<List<Show>>
+    suspend fun getPopular(): Result<List<Show>>
 }

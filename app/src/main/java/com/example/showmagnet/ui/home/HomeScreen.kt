@@ -15,9 +15,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.showmagnet.domain.model.common.MediaType
+import com.example.showmagnet.domain.model.common.MediaType.MOVIE
+import com.example.showmagnet.domain.model.common.MediaType.TV
+import com.example.showmagnet.domain.model.common.MediaType.values
 import com.example.showmagnet.domain.model.common.TimeWindow
 import com.example.showmagnet.ui.common.ui.ConnectedAndLoadingFeild
+import com.example.showmagnet.ui.common.ui.PersonList
 import com.example.showmagnet.ui.common.ui.ShowsList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -50,11 +53,9 @@ fun HomeScreen(
     Scaffold(snackbarHost = {
         SnackbarHost(snackbarHostState)
     }) { padding ->
-        ConnectedAndLoadingFeild(
-            connected = state.connected,
+        ConnectedAndLoadingFeild(connected = state.connected,
             loading = state.loading,
-            onRefresh = { handleEvent(HomeContract.Event.Refresh) }
-        ) {
+            onRefresh = { handleEvent(HomeContract.Event.Refresh) }) {
             Column(
                 Modifier
                     .padding(top = 8.dp)
@@ -62,50 +63,78 @@ fun HomeScreen(
                     .verticalScroll(state = rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                ShowsList(shows = state.upcoming,
-                    title = "Upcoming",
-                    onItemClick = { handleNavigation(HomeContract.Navigation.ToDigitalis(it)) })
+                ShowsList(shows = state.upcoming, title = "Upcoming", onItemClick = {
+                    when (it.type) {
+                        MOVIE -> handleNavigation(HomeContract.Navigation.ToMovie(it.id))
+                        TV -> handleNavigation(HomeContract.Navigation.ToTv(it.id))
+                    }
+                })
                 ShowsList(
-                    shows = state.trending,
-                    title = "Trending",
-                    selectedIndex = TimeWindow.values().indexOf(state.trendingTimeWindow),
+                    shows = state.trendingShow,
+                    title = "Trending Show",
+                    selectedIndex = TimeWindow.values().indexOf(state.trendingShowTimeWindow),
                     selectionList = TimeWindow.values().map { it.formattedValue },
                     onSelectionChange = {
                         handleEvent(
-                            HomeContract.Event.TrendingTimeWindowChange(
+                            HomeContract.Event.TrendingShowTimeWindowChange(
                                 TimeWindow.values()[it]
                             )
                         )
                     },
-                    onItemClick = { handleNavigation(HomeContract.Navigation.ToDigitalis(it)) },
+                    onItemClick = {
+                        when (it.type) {
+                            MOVIE -> handleNavigation(HomeContract.Navigation.ToMovie(it.id))
+                            TV -> handleNavigation(HomeContract.Navigation.ToTv(it.id))
+                        }
+                    },
+                )
+                PersonList(
+                    people = state.tradingPeople,
+                    title = "Trading People",
+                    onSelectionChange = {
+                        handleEvent(
+                            HomeContract.Event.TrendingPersonTimeWindowChange(it)
+                        )
+                    },
+                    onItemClick = { handleNavigation(HomeContract.Navigation.ToPerson(it)) },
                 )
                 ShowsList(
                     shows = state.popular,
                     title = "Popular",
-                    selectedIndex = MediaType.values().indexOf(state.popularMediaType),
-                    selectionList = MediaType.values().map { it.name },
+                    selectedIndex = values().indexOf(state.popularMediaType),
+                    selectionList = values().map { it.name },
                     onSelectionChange = {
                         handleEvent(
                             HomeContract.Event.PopularMediaTypeChange(
-                                MediaType.values()[it]
+                                values()[it]
                             )
                         )
                     },
-                    onItemClick = { handleNavigation(HomeContract.Navigation.ToDigitalis(it)) },
+                    onItemClick = {
+                        when (it.type) {
+                            MOVIE -> handleNavigation(HomeContract.Navigation.ToMovie(it.id))
+                            TV -> handleNavigation(HomeContract.Navigation.ToTv(it.id))
+                        }
+                    },
                 )
                 ShowsList(
                     shows = state.anime,
                     title = "Anime",
-                    selectedIndex = MediaType.values().indexOf(state.animeMediaType),
-                    selectionList = MediaType.values().map { it.name },
+                    selectedIndex = values().indexOf(state.animeMediaType),
+                    selectionList = values().map { it.name },
                     onSelectionChange = {
                         handleEvent(
                             HomeContract.Event.AnimeMediaTypeChange(
-                                MediaType.values()[it]
+                                values()[it]
                             )
                         )
                     },
-                    onItemClick = { handleNavigation(HomeContract.Navigation.ToDigitalis(it)) },
+                    onItemClick = {
+                        when (it.type) {
+                            MOVIE -> handleNavigation(HomeContract.Navigation.ToMovie(it.id))
+                            TV -> handleNavigation(HomeContract.Navigation.ToTv(it.id))
+                        }
+                    },
                 )
             }
         }

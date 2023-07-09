@@ -4,14 +4,15 @@ import com.example.showmagnet.data.mapper.toDomain
 import com.example.showmagnet.data.source.remote.api.MovieApi
 import com.example.showmagnet.domain.model.common.Cast
 import com.example.showmagnet.domain.model.common.Image
+import com.example.showmagnet.domain.model.common.MediaType
 import com.example.showmagnet.domain.model.common.Show
 import com.example.showmagnet.domain.model.movie.Movie
-import com.example.showmagnet.domain.repository.MovieDetailsRepository
+import com.example.showmagnet.domain.repository.MovieRepository
 import javax.inject.Inject
 
-class MovieDetailsRepositoryImpl @Inject constructor(
+class MovieRepositoryImpl @Inject constructor(
     private val api: MovieApi,
-) : MovieDetailsRepository {
+) : MovieRepository {
     override suspend fun getMovieDetails(id: Int): Result<Movie> = try {
         val response = api.getMovieDetails(id).toDomain()
         Result.success(response)
@@ -79,6 +80,39 @@ class MovieDetailsRepositoryImpl @Inject constructor(
         } else {
             Result.success(result)
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Result.failure(e)
+    }
+
+    override suspend fun getUpcoming(): Result<List<Show>> = try {
+        val response = api.getUpcomingMovie()
+        val result = response.shows?.filterNotNull()?.map { it.toDomain(MediaType.MOVIE) }
+
+        Result.success(result)
+
+        if (result == null) {
+            Result.failure(Exception("Something went wrong"))
+        } else {
+            Result.success(result)
+        }
+
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Result.failure(e)
+    }
+
+    override suspend fun getPopular(): Result<List<Show>> = try {
+        val response = api.getPopularMovies()
+
+        val result = response.shows?.filterNotNull()?.map { it.toDomain(MediaType.MOVIE) }
+
+        if (result == null) {
+            Result.failure(Exception("Something went wrong"))
+        } else {
+            Result.success(result)
+        }
+
     } catch (e: Exception) {
         e.printStackTrace()
         Result.failure(e)
