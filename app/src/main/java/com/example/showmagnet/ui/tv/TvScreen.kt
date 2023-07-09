@@ -108,7 +108,7 @@ fun TvScreen(
                         state.castList,
                     ) { handleNavigation(TvContract.Navigation.ToPerson(it)) }
                 }
-                if (!state.episodeList.isNullOrEmpty()) {
+                if (state.episodeList != null) {
                     SeasonFeild(
                         state.episodeList,
                         numberOfSeasons = state.tv?.numberOfSeasons ?: 1,
