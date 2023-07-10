@@ -119,6 +119,29 @@ class TvRepositoryImpl @Inject constructor(
         Result.failure(e)
     }
 
+    override suspend fun getFavoriteTv(): Result<List<Show>> = try {
+        val favoriteList = getTvFavoriteList().getOrThrow()
+        val list = mutableListOf<Show>()
+
+        favoriteList.forEach {
+            val tv = getDetails(it).getOrThrow()
+            list.add(
+                Show(
+                    tv.id,
+                    tv.name,
+                    tv.voteAverage,
+                    tv.posterPath,
+                    type = MediaType.TV
+                )
+            )
+        }
+
+        Result.success(list)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Result.failure(e)
+    }
+
 
     override suspend fun addTvToFavoriteList(id: Int) = remoteDataSource.addToFavorite(id)
 

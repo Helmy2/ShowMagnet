@@ -97,14 +97,35 @@ class PersonRepositoryImpl @Inject constructor(
         Result.failure(e)
     }
 
+    override suspend fun getFavoritePeople(): Result<List<Person>> = try {
+        val favoriteList = getPersonFavoriteList().getOrThrow()
+        val list = mutableListOf<Person>()
+
+        favoriteList.forEach {
+            val person = getPersonDetails(it).getOrThrow()
+            list.add(
+                Person(
+                    id = person.id,
+                    name = person.name,
+                    profilePath = person.profilePath
+                )
+            )
+        }
+
+        Result.success(list)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Result.failure(e)
+    }
+
 
     override suspend fun addPersonToFavoriteList(id: Int) =
-        remoteDataSource.addToFavorite( id)
+        remoteDataSource.addToFavorite(id)
 
     override suspend fun getPersonFavoriteList() = remoteDataSource.getFavoriteList()
 
     override suspend fun deleteFromFavoritePersonsList(id: Int) =
-        remoteDataSource.deleteFromFavorite( id)
+        remoteDataSource.deleteFromFavorite(id)
 
-    override suspend fun isFavoritePersons(id: Int) = remoteDataSource.isFavorite( id)
+    override suspend fun isFavoritePersons(id: Int) = remoteDataSource.isFavorite(id)
 }

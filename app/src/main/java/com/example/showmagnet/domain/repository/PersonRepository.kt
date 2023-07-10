@@ -19,4 +19,5 @@ interface PersonRepository {
     suspend fun getPersonFavoriteList(): Result<List<Int>>
     suspend fun deleteFromFavoritePersonsList(id: Int): Result<Boolean>
     suspend fun isFavoritePersons(id: Int): Result<Boolean>
+    suspend fun getFavoritePeople(): Result<List<Person>>
 }

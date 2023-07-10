@@ -17,10 +17,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,17 +27,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.showmagnet.domain.model.common.TimeWindow
 import com.example.showmagnet.domain.model.person.Person
 
 @Composable
 fun PersonList(
     people: List<Person>, title: String,
-    onSelectionChange: (TimeWindow) -> Unit,
-    onItemClick: (id: Int) -> Unit
+    selectedIndex: Int = 0,
+    selectionList: List<String> = emptyList(),
+    onSelectionChange: (Int) -> Unit = {},
+    onItemClick: (id: Int) -> Unit,
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    var selectedIndex by remember { mutableStateOf(0) }
     Column(
         Modifier.height(screenHeight * .35f)
     ) {
@@ -56,11 +52,8 @@ fun PersonList(
             )
             ChoiceField(
                 selectedIndex = selectedIndex,
-                selectionList = TimeWindow.values().map { it.formattedValue },
-                onItemClicked = {
-                    onSelectionChange(TimeWindow.values()[it])
-                    selectedIndex = it
-                }
+                selectionList = selectionList,
+                onItemClicked = onSelectionChange
             )
         }
 

@@ -128,6 +128,29 @@ class MovieRepositoryImpl @Inject constructor(
         Result.failure(e)
     }
 
+    override suspend fun getFavoriteMovies(): Result<List<Show>> = try {
+        val favoriteList = getMoviesFavoriteList().getOrThrow()
+        val list = mutableListOf<Show>()
+
+        favoriteList.forEach {
+            val movie = getMovieDetails(it).getOrThrow()
+            list.add(
+                Show(
+                    movie.id,
+                    movie.title,
+                    movie.voteAverage,
+                    movie.posterPath,
+                    type = MediaType.MOVIE
+                )
+            )
+        }
+
+        Result.success(list)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Result.failure(e)
+    }
+
     override suspend fun addMovieToFavoriteList(id: Int) = remoteDataSource.addToFavorite(id)
 
     override suspend fun getMoviesFavoriteList() = remoteDataSource.getFavoriteList()

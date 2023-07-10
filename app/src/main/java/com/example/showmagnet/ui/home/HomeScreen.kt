@@ -1,5 +1,6 @@
 package com.example.showmagnet.ui.home
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     state: HomeContract.State,
@@ -33,6 +35,7 @@ fun HomeScreen(
     handleEvent: (HomeContract.Event) -> Unit,
     handleNavigation: (HomeContract.Navigation) -> Unit
 ) {
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -52,14 +55,13 @@ fun HomeScreen(
 
     Scaffold(snackbarHost = {
         SnackbarHost(snackbarHostState)
-    }) { padding ->
+    }) {
         ConnectedAndLoadingFeild(connected = state.connected,
             loading = state.loading,
             onRefresh = { handleEvent(HomeContract.Event.Refresh) }) {
             Column(
                 Modifier
                     .padding(top = 8.dp)
-                    .padding(padding)
                     .verticalScroll(state = rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
@@ -91,9 +93,13 @@ fun HomeScreen(
                 PersonList(
                     people = state.tradingPeople,
                     title = "Trading People",
+                    selectedIndex = TimeWindow.values().indexOf(state.trendingPersonTimeWindow),
+                    selectionList = TimeWindow.values().map { it.formattedValue },
                     onSelectionChange = {
                         handleEvent(
-                            HomeContract.Event.TrendingPersonTimeWindowChange(it)
+                            HomeContract.Event.TrendingPersonTimeWindowChange(
+                                TimeWindow.values()[it]
+                            )
                         )
                     },
                     onItemClick = { handleNavigation(HomeContract.Navigation.ToPerson(it)) },

@@ -20,8 +20,8 @@ class HomeContract {
 
 
     data class State(
-        val loading: Boolean = false,
-        val connected: Boolean = false,
+        val loading: Boolean = true,
+        val connected: Boolean = true,
         val trendingShow: List<Show> = emptyList(),
         val popular: List<Show> = emptyList(),
         val upcoming: List<Show> = emptyList(),

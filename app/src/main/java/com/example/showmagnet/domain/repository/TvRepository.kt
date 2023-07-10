@@ -20,4 +20,5 @@ interface TvRepository {
     suspend fun deleteFromFavoriteTvList(id: Int): Result<Boolean>
     suspend fun getTvFavoriteList(): Result<List<Int>>
     suspend fun addTvToFavoriteList(id: Int): Result<Boolean>
+    suspend fun getFavoriteTv(): Result<List<Show>>
 }
