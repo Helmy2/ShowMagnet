@@ -1,12 +1,10 @@
 package com.example.showmagnet.di
 
-import com.example.showmagnet.data.repository.AuthRepositoryImpl
 import com.example.showmagnet.data.repository.MovieRepositoryImpl
 import com.example.showmagnet.data.repository.PersonRepositoryImpl
 import com.example.showmagnet.data.repository.ShowRepositoryImpl
 import com.example.showmagnet.data.repository.TvRepositoryImpl
 import com.example.showmagnet.data.repository.UserRepositoryImpl
-import com.example.showmagnet.domain.repository.AuthRepository
 import com.example.showmagnet.domain.repository.MovieRepository
 import com.example.showmagnet.domain.repository.PersonRepository
 import com.example.showmagnet.domain.repository.ShowRepository
@@ -45,12 +43,6 @@ abstract class RepositoryModule {
     abstract fun bindTvDetailsRepository(
         tvRepositoryImpl: TvRepositoryImpl
     ): TvRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindAuthRepository(
-        authRepositoryImpl: AuthRepositoryImpl
-    ): AuthRepository
 
 
     @Binds

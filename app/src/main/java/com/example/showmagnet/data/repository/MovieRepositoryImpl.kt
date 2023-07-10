@@ -3,28 +3,22 @@ package com.example.showmagnet.data.repository
 import com.example.showmagnet.data.mapper.toDomain
 import com.example.showmagnet.data.source.remote.api.MovieApi
 import com.example.showmagnet.data.source.remote.database.RemoteDataSource
-import com.example.showmagnet.di.CurrentFirebaseUser
+import com.example.showmagnet.data.source.remote.database.Types
 import com.example.showmagnet.domain.model.common.Cast
 import com.example.showmagnet.domain.model.common.Image
 import com.example.showmagnet.domain.model.common.MediaType
 import com.example.showmagnet.domain.model.common.Show
 import com.example.showmagnet.domain.model.movie.Movie
 import com.example.showmagnet.domain.repository.MovieRepository
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val api: MovieApi,
-    private val firestore: FirebaseFirestore,
-    @CurrentFirebaseUser private val user: FirebaseUser?,
 ) : MovieRepository {
-    private val userId = user?.uid ?: throw Exception("User not found")
-
-    private val reference = firestore.collection(USERS)
-        .document(userId).collection(MOVIES)
-
+    init {
+        remoteDataSource.setReference(Types.MOVIES)
+    }
 
     override suspend fun getMovieDetails(id: Int): Result<Movie> = try {
         val response = api.getMovieDetails(id)
@@ -41,10 +35,9 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCast(id: Int): Result<List<Cast>> = try {
-        val response =
-            api.getMovieCast(id)
-        val result = response.cast?.filterNotNull()?.filter { it.profilePath != null }
-            ?.map { it.toDomain() }
+        val response = api.getMovieCast(id)
+        val result =
+            response.cast?.filterNotNull()?.filter { it.profilePath != null }?.map { it.toDomain() }
 
         if (result == null) {
             Result.failure(Exception("Something went wrong"))
@@ -58,10 +51,9 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCollection(id: Int): Result<List<Show>> = try {
-        val response =
-            api.getMovieCollection(id)
-        val result = response.shows?.filterNotNull()?.filter { it.posterPath != null }
-            ?.map { it.toDomain() }
+        val response = api.getMovieCollection(id)
+        val result =
+            response.shows?.filterNotNull()?.filter { it.posterPath != null }?.map { it.toDomain() }
 
         if (result == null) {
             Result.failure(Exception("Something went wrong"))
@@ -75,8 +67,7 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun getImages(id: Int): Result<List<Image>> = try {
         val response = api.getMovieImages(id)
-        val result = (response.backdrops.orEmpty() + response.posters.orEmpty())
-            .filterNotNull()
+        val result = (response.backdrops.orEmpty() + response.posters.orEmpty()).filterNotNull()
             .map { it.toDomain() }
 
         if (result.isEmpty()) {
@@ -91,8 +82,8 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun getRecommendations(id: Int): Result<List<Show>> = try {
         val response = api.getMovieRecommendations(id)
-        val result = response.shows?.filterNotNull()?.filter { it.posterPath != null }
-            ?.map { it.toDomain() }
+        val result =
+            response.shows?.filterNotNull()?.filter { it.posterPath != null }?.map { it.toDomain() }
 
         if (result == null) {
             Result.failure(Exception("Something went wrong"))
@@ -137,23 +128,13 @@ class MovieRepositoryImpl @Inject constructor(
         Result.failure(e)
     }
 
+    override suspend fun addMovieToFavoriteList(id: Int) = remoteDataSource.addToFavorite(id)
 
-    companion object {
-        private const val USERS = "users"
-        private const val MOVIES = "movies"
-    }
-
-
-    override suspend fun addMovieToFavoriteList(id: Int) =
-        remoteDataSource.addToFavorite(reference, id)
-
-    override suspend fun getMoviesFavoriteList() =
-        remoteDataSource.getFavoriteList(reference)
+    override suspend fun getMoviesFavoriteList() = remoteDataSource.getFavoriteList()
 
     override suspend fun deleteFromFavoriteMovieList(id: Int) =
-        remoteDataSource.deleteFromFavorite(reference, id)
+        remoteDataSource.deleteFromFavorite(id)
 
-    override suspend fun isFavoriteMovie(id: Int) =
-        remoteDataSource.isFavorite(reference, id)
+    override suspend fun isFavoriteMovie(id: Int) = remoteDataSource.isFavorite(id)
 }
 

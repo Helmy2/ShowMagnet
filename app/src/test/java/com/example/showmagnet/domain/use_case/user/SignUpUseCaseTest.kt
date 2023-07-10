@@ -1,7 +1,6 @@
-package com.example.showmagnet.domain.use_case.auth
+package com.example.showmagnet.domain.use_case.user
 
 import com.example.showmagnet.MainDispatcherRule
-import com.example.showmagnet.domain.repository.AuthRepository
 import com.example.showmagnet.domain.repository.UserRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
@@ -11,12 +10,10 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
 class SignUpUseCaseTest {
-    private val authRepository = mock<AuthRepository>()
-    private val userRepository = mock<UserRepository>()
+    private val repository = mock<UserRepository>()
     val useCase by lazy {
         SignUpUseCase(
-            authRepository,
-            userRepository
+            repository
         )
     }
 
@@ -25,9 +22,9 @@ class SignUpUseCaseTest {
 
     @Test
     fun successAndReturnTrue() = runBlocking {
-        whenever(userRepository.updateProfileName("name")).doReturn(Result.success(true))
         whenever(
-            authRepository.signUp(
+            repository.signUp(
+                name = "name",
                 email = "test@exampl.com",
                 password = "password"
             )
@@ -40,13 +37,13 @@ class SignUpUseCaseTest {
 
     @Test
     fun successAndReturnFalse() = runBlocking {
-        whenever(userRepository.updateProfileName("name")).doReturn(Result.success(false))
         whenever(
-            authRepository.signUp(
+            repository.signUp(
+                name = "name",
                 email = "test@exampl.com",
                 password = "password"
             )
-        ).doReturn(Result.success(true))
+        ).doReturn(Result.success(false))
 
         val result = useCase("name", "test@exampl.com", "password")
 
@@ -56,9 +53,9 @@ class SignUpUseCaseTest {
 
     @Test
     fun failureInSignUp() = runBlocking {
-        whenever(userRepository.updateProfileName("name")).doReturn(Result.success(true))
         whenever(
-            authRepository.signUp(
+            repository.signUp(
+                name = "name",
                 email = "test@exampl.com",
                 password = "password"
             )
@@ -72,13 +69,13 @@ class SignUpUseCaseTest {
 
     @Test
     fun failureInChangeName() = runBlocking {
-        whenever(userRepository.updateProfileName("name")).doReturn(Result.failure(Exception()))
         whenever(
-            authRepository.signUp(
+            repository.signUp(
+                name = "name",
                 email = "test@exampl.com",
                 password = "password"
             )
-        ).doReturn(Result.success(true))
+        ).doReturn(Result.failure(Exception()))
 
         val result = useCase("name", "test@exampl.com", "password")
 

@@ -1,7 +1,7 @@
 package com.example.showmagnet.ui.auth.sign_up
 
 import com.example.showmagnet.MainDispatcherRule
-import com.example.showmagnet.domain.use_case.auth.SignUpUseCase
+import com.example.showmagnet.domain.use_case.user.SignUpUseCase
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule

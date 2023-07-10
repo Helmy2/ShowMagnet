@@ -1,7 +1,7 @@
 package com.example.showmagnet.ui.auth.sign_up
 
 import androidx.lifecycle.viewModelScope
-import com.example.showmagnet.domain.use_case.auth.SignUpUseCase
+import com.example.showmagnet.domain.use_case.user.SignUpUseCase
 import com.example.showmagnet.ui.auth.sign_up.SignUpContract.Effect
 import com.example.showmagnet.ui.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

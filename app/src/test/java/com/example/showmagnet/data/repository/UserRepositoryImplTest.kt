@@ -1,8 +1,10 @@
 package com.example.showmagnet.data.repository
 
+import android.content.Intent
 import com.example.showmagnet.MainDispatcherRule
 import com.example.showmagnet.data.source.preference.UserPreferencesManager
 import com.example.showmagnet.domain.repository.UserRepository
+import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -15,9 +17,10 @@ import org.mockito.kotlin.whenever
 
 class UserRepositoryImplTest {
     private val auth: FirebaseAuth = mock()
+    private val signInClient: SignInClient = mock()
     private val userPreferencesManager: UserPreferencesManager = mock()
 
-    private lateinit var userRepository: UserRepository
+    private lateinit var repository: UserRepository
 
 
     @get:Rule
@@ -25,12 +28,17 @@ class UserRepositoryImplTest {
 
     @Before
     fun setUp() {
-        userRepository = UserRepositoryImpl(auth, userPreferencesManager)
+        repository = UserRepositoryImpl(
+            auth,
+            userPreferencesManager,
+            signInClient,
+            ""
+        )
     }
 
     @Test
     fun updateProfileNameSuccessTest() = runBlocking {
-        val result = userRepository.updateProfileName("name")
+        val result = repository.updateProfileName("name")
         assert(result.isSuccess)
     }
 
@@ -38,13 +46,13 @@ class UserRepositoryImplTest {
     fun updateProfileNameFailureTest() = runBlocking {
         whenever(auth.currentUser).doThrow(NullPointerException())
 
-        val result = userRepository.updateProfileName("name")
+        val result = repository.updateProfileName("name")
         assert(result.isFailure)
     }
 
     @Test
     fun signOutSuccessTest() = runBlocking {
-        val result = userRepository.signOut()
+        val result = repository.signOut()
         assert(result.isSuccess)
     }
 
@@ -52,7 +60,7 @@ class UserRepositoryImplTest {
     fun signOutFailureTest() = runBlocking {
         whenever(auth.signOut()).doThrow(NullPointerException())
 
-        val result = userRepository.signOut()
+        val result = repository.signOut()
         assert(result.isFailure)
     }
 
@@ -60,7 +68,7 @@ class UserRepositoryImplTest {
     fun getUserInfoFailureTest() = runBlocking {
         whenever(auth.currentUser).doReturn(null)
 
-        val result = userRepository.getUserInfo()
+        val result = repository.getUserInfo()
         assert(result.isFailure)
     }
 
@@ -68,7 +76,7 @@ class UserRepositoryImplTest {
     fun getUserInfoFailureWithExceptionTest() = runBlocking {
         whenever(auth.currentUser).doThrow(NullPointerException())
 
-        val result = userRepository.getUserInfo()
+        val result = repository.getUserInfo()
         assert(result.isFailure)
     }
 
@@ -76,29 +84,81 @@ class UserRepositoryImplTest {
     fun getUserInfoSuccessTest() = runBlocking {
         whenever(auth.currentUser).doReturn(mock())
 
-        val result = userRepository.getUserInfo()
+        val result = repository.getUserInfo()
         assert(result.isSuccess)
     }
 
     @Test
-    fun setIsSignedInSuccessTest() = runBlocking {
-        whenever(
-            userPreferencesManager.updateIsUserSignedIn(true)
-        ).doReturn(Result.success(true))
+    fun signUpFailureTest() = runBlocking {
+        whenever(auth.createUserWithEmailAndPassword("email", "password")).doThrow(
+            NullPointerException()
+        )
 
-        val result = userRepository.setIsSignedIn(true)
-        assert(result.isSuccess)
-    }
+        val result = repository.signUp(name = "name", email = "email", password = "password")
 
-    @Test
-    fun setIsSignedInFailureTest() = runBlocking {
-        whenever(
-            userPreferencesManager.updateIsUserSignedIn(true)
-        ).doReturn(Result.failure(Exception()))
-
-        val result = userRepository.setIsSignedIn(true)
         assert(result.isFailure)
     }
 
+    @Test
+    fun signInFailureTest() = runBlocking {
+        whenever(auth.signInWithEmailAndPassword("email", "password")).doThrow(
+            NullPointerException()
+        )
+
+        val result = repository.signUp(name = "name", email = "email", password = "password")
+
+        assert(result.isFailure)
+    }
+
+    @Test
+    fun signInWithIntentFailureTest() = runBlocking {
+        whenever(signInClient.getSignInCredentialFromIntent(Intent())).doThrow(
+            NullPointerException()
+        )
+
+        val result = repository.signInWithIntent(Intent())
+
+        assert(result.isFailure)
+    }
+
+
+    @Test
+    fun resetPasswordFailureTest() = runBlocking {
+        whenever(auth.sendPasswordResetEmail("email")).doThrow(NullPointerException())
+
+        val result = repository.resetPassword("email")
+
+        assert(result.isFailure)
+    }
+
+
+    @Test
+    fun isSignedInSuccessTrueTest() = runBlocking {
+        whenever(auth.currentUser).doReturn(mock())
+
+        val result = repository.isSignedIn()
+
+        assert(result.isSuccess)
+        assert(result.getOrNull() == true)
+    }
+
+    @Test
+    fun isSignedInSuccessFalseTest() = runBlocking {
+        whenever(auth.currentUser).doReturn(null)
+
+        val result = repository.isSignedIn()
+
+        assert(result.isSuccess)
+        assert(result.getOrNull() == false)
+    }
+
+    @Test
+    fun isSignedInFailureFalseTest() = runBlocking {
+        whenever(auth.currentUser).doThrow(NullPointerException())
+
+        val result = repository.isSignedIn()
+
+        assert(result.isFailure)
+    }
 
 }

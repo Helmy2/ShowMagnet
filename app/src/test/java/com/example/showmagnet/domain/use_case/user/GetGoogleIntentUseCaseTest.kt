@@ -1,7 +1,7 @@
-package com.example.showmagnet.domain.use_case.auth
+package com.example.showmagnet.domain.use_case.user
 
 import com.example.showmagnet.MainDispatcherRule
-import com.example.showmagnet.domain.repository.AuthRepository
+import com.example.showmagnet.domain.repository.UserRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -10,9 +10,9 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
 class GetGoogleIntentUseCaseTest {
-    private val authRepository = mock<AuthRepository>()
+    private val repository = mock<UserRepository>()
     val useCase by lazy {
-        GetGoogleIntentUseCase(authRepository)
+        GetGoogleIntentUseCase(repository)
     }
 
     @get:Rule
@@ -20,7 +20,7 @@ class GetGoogleIntentUseCaseTest {
 
     @Test
     fun success() = runBlocking {
-        whenever(authRepository.signInWithGoogle()).doReturn(Result.success(null))
+        whenever(repository.signInWithGoogle()).doReturn(Result.success(null))
 
         val result = useCase()
         assert(result.isSuccess)
@@ -29,7 +29,7 @@ class GetGoogleIntentUseCaseTest {
 
     @Test
     fun failure() = runBlocking {
-        whenever(authRepository.signInWithGoogle()).doReturn(Result.failure(Exception()))
+        whenever(repository.signInWithGoogle()).doReturn(Result.failure(Exception()))
 
         val result = useCase()
         assert(result.isFailure)

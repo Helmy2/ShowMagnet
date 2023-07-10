@@ -1,4 +1,4 @@
-package com.example.showmagnet.domain.use_case.auth
+package com.example.showmagnet.domain.use_case.user
 
 import com.example.showmagnet.MainDispatcherRule
 import com.example.showmagnet.domain.repository.UserRepository
@@ -9,12 +9,10 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-class ChangeIsUserSignedInUseCaseTest {
-    private val userRepository = mock<UserRepository>()
+class ResetPasswordUseCaseTest {
+    private val repository = mock<UserRepository>()
     val useCase by lazy {
-        ChangeIsUserSignedInUseCase(
-            userRepository = userRepository
-        )
+        ResetPasswordUseCase(repository)
     }
 
     @get:Rule
@@ -22,27 +20,27 @@ class ChangeIsUserSignedInUseCaseTest {
 
     @Test
     fun successAndReturnTrue() = runBlocking {
-        whenever(userRepository.setIsSignedIn(true)).doReturn(Result.success(true))
+        whenever(repository.resetPassword("test@example.com")).doReturn(Result.success(true))
 
-        val result = useCase(true)
+        val result = useCase("test@example.com")
         assert(result.isSuccess)
         assert(result.getOrNull() == true)
     }
 
     @Test
     fun successAndReturnFalse() = runBlocking {
-        whenever(userRepository.setIsSignedIn(true)).doReturn(Result.success(false))
+        whenever(repository.resetPassword("test@example.com")).doReturn(Result.success(false))
 
-        val result = useCase(true)
+        val result = useCase("test@example.com")
         assert(result.isSuccess)
         assert(result.getOrNull() == false)
     }
 
     @Test
     fun failure() = runBlocking {
-        whenever(userRepository.setIsSignedIn(true)).doReturn(Result.failure(Exception()))
+        whenever(repository.resetPassword("test@example.com")).doReturn(Result.failure(Exception()))
 
-        val result = useCase(true)
+        val result = useCase("test@example.com")
         assert(result.isFailure)
     }
 }

@@ -1,10 +1,10 @@
 package com.example.showmagnet.ui.auth.sign_in
 
 import com.example.showmagnet.MainDispatcherRule
-import com.example.showmagnet.domain.use_case.auth.GetGoogleIntentUseCase
-import com.example.showmagnet.domain.use_case.auth.ResetPasswordUseCase
-import com.example.showmagnet.domain.use_case.auth.SignInWithEmailUseCase
-import com.example.showmagnet.domain.use_case.auth.SignInWithGoogleUseCase
+import com.example.showmagnet.domain.use_case.user.GetGoogleIntentUseCase
+import com.example.showmagnet.domain.use_case.user.ResetPasswordUseCase
+import com.example.showmagnet.domain.use_case.user.SignInWithEmailUseCase
+import com.example.showmagnet.domain.use_case.user.SignInWithGoogleUseCase
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
