@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import com.example.showmagnet.ui.common.ui.BaseTextFiled
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -19,7 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
     keyboardController: SoftwareKeyboardController?,
     modifier: Modifier = Modifier
 ) {
-    SignTextFiled(
+    BaseTextFiled(
         value = email,
         onValueChange = onValueChange,
         label = {

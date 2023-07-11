@@ -2,6 +2,7 @@ package com.example.showmagnet.domain.repository
 
 import android.content.Intent
 import android.content.IntentSender
+import android.graphics.Bitmap
 import com.example.showmagnet.domain.model.user.UserData
 import com.example.showmagnet.domain.model.user.UserPreferences
 import kotlinx.coroutines.flow.Flow
@@ -19,4 +20,6 @@ interface UserRepository {
     suspend fun signInWithIntent(intent: Intent): Result<Boolean>
     suspend fun signIn(email: String, password: String): Result<Boolean>
     suspend fun signUp(name: String, email: String, password: String): Result<Boolean>
+    suspend fun updateDarkTheme(darkTheme: Boolean): Result<Boolean>
+    suspend fun updateProfile(name: String, bitmap: Bitmap?): Result<Boolean>
 }

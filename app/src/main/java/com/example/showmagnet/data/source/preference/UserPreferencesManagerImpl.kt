@@ -19,6 +19,7 @@ class UserPreferencesManagerImpl @Inject constructor(
         private object PreferencesKeys {
             val IsUserSignedIN =
                 booleanPreferencesKey("IsUserSignedIN")
+            val DarkTheme = booleanPreferencesKey("DarkTheme")
         }
     }
 
@@ -42,9 +43,18 @@ class UserPreferencesManagerImpl @Inject constructor(
         Result.failure(e)
     }
 
+    override suspend fun updateDarkTheme(darkTheme: Boolean) = try {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.DarkTheme] = darkTheme
+        }
+        Result.success(true)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
 
     private fun mapUserPreferences(preferences: Preferences): UserPreferences {
         val isOnboardingComplete = preferences[PreferencesKeys.IsUserSignedIN] ?: false
-        return UserPreferences(isOnboardingComplete)
+        val darkTheme = preferences[PreferencesKeys.DarkTheme] ?: true
+        return UserPreferences(isOnboardingComplete, darkTheme)
     }
 }

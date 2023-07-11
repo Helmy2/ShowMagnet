@@ -1,4 +1,4 @@
-package com.example.showmagnet.ui.auth.components
+package com.example.showmagnet.ui.common.ui
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -10,7 +10,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SignTextFiled(
+fun BaseTextFiled(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,

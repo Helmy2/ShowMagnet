@@ -29,8 +29,7 @@ class FavoriteViewModel @Inject constructor(
         val result = getFavoriteMovieUseCase()
         if (result.isSuccess) setState {
             copy(
-                movie = result.getOrDefault(emptyList()),
-                connected = true,
+                movie = result.getOrDefault(emptyList()), connected = true, loading = false
             )
         } else {
             if (result.exceptionOrNull() is NetworkUnavailableException) setState {
@@ -43,8 +42,8 @@ class FavoriteViewModel @Inject constructor(
         val result = getFavoriteTvUseCase()
         if (result.isSuccess) setState {
             copy(
-                tv = result.getOrDefault(emptyList()),
-                connected = true,
+                tv = result.getOrDefault(emptyList()), connected = true, loading = false
+
             )
         } else {
             if (result.exceptionOrNull() is NetworkUnavailableException) setState {
@@ -57,8 +56,8 @@ class FavoriteViewModel @Inject constructor(
         val result = getFavoritePeopleUseCase()
         if (result.isSuccess) setState {
             copy(
-                people = result.getOrDefault(emptyList()),
-                connected = true,
+                people = result.getOrDefault(emptyList()), connected = true, loading = false
+
             )
         } else {
             if (result.exceptionOrNull() is NetworkUnavailableException) setState {

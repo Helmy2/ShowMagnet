@@ -59,7 +59,7 @@ import androidx.compose.ui.window.Dialog
 import com.example.showmagnet.R
 import com.example.showmagnet.ui.auth.components.EmailTextField
 import com.example.showmagnet.ui.auth.components.LoadingButton
-import com.example.showmagnet.ui.auth.components.SignTextFiled
+import com.example.showmagnet.ui.common.ui.BaseTextFiled
 import com.example.showmagnet.ui.auth.components.TitleField
 import com.example.showmagnet.ui.common.utils.TestTage
 import kotlinx.coroutines.flow.Flow
@@ -241,7 +241,7 @@ private fun PasswordField(
     keyboardController: SoftwareKeyboardController?,
     modifier: Modifier = Modifier
 ) {
-    SignTextFiled(
+    BaseTextFiled(
         value = password,
         onValueChange = onValueChange,
         label = {

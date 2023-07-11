@@ -15,6 +15,8 @@ import com.example.showmagnet.ui.favorite.FavoriteContract
 import com.example.showmagnet.ui.favorite.FavoriteScreen
 import com.example.showmagnet.ui.favorite.FavoriteViewModel
 import com.example.showmagnet.ui.navigation.component.homeScreen
+import com.example.showmagnet.ui.profile.ProfileScreen
+import com.example.showmagnet.ui.profile.ProfileViewModel
 
 @Composable
 fun MainNavHost(
@@ -41,6 +43,8 @@ fun MainNavHost(
             onNavigateToPeron = onNavigateToPeron
         )
 
+        profileScreen()
+
         composable(AppDestinations.Explore.route) {
             Box(
                 modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
@@ -48,16 +52,21 @@ fun MainNavHost(
                 Text(text = "Explore")
             }
         }
-
-        composable(AppDestinations.Profile.route) {
-            Box(
-                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-            ) {
-                Text(text = "Profile")
-            }
-        }
     }
 }
+
+fun NavGraphBuilder.profileScreen() {
+    composable(AppDestinations.Profile.route) {
+        val viewModel = hiltViewModel<ProfileViewModel>()
+
+        ProfileScreen(
+            state = viewModel.viewState.value,
+            effect = viewModel.effect,
+            handleEvent = viewModel::setEvent
+        )
+    }
+}
+
 
 fun NavGraphBuilder.favoriteScreen(
     onNavigateToMovie: (id: Int) -> Unit,

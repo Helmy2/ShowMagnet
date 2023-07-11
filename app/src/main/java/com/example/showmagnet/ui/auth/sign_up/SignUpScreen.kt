@@ -51,8 +51,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.showmagnet.ui.auth.components.EmailTextField
 import com.example.showmagnet.ui.auth.components.LoadingButton
-import com.example.showmagnet.ui.auth.components.SignTextFiled
 import com.example.showmagnet.ui.auth.components.TitleField
+import com.example.showmagnet.ui.common.ui.BaseTextFiled
+import com.example.showmagnet.ui.common.ui.NameTextField
 import com.example.showmagnet.ui.common.utils.TestTage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -168,27 +169,6 @@ fun SignUpScreen(
 }
 
 @Composable
-private fun NameTextField(
-    name: String, onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    SignTextFiled(
-        modifier = modifier,
-        value = name,
-        onValueChange = onValueChange,
-        label = {
-            Text(
-                "Name",
-                style = MaterialTheme.typography.labelMedium,
-            )
-        },
-        keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Next, keyboardType = KeyboardType.Text
-        )
-    )
-}
-
-@Composable
 fun PasswordRequirements(
     text: String,
     modifier: Modifier = Modifier,
@@ -222,7 +202,7 @@ private fun PasswordField(
     keyboardController: SoftwareKeyboardController?,
     modifier: Modifier = Modifier
 ) {
-    SignTextFiled(
+    BaseTextFiled(
         value = password,
         onValueChange = onValueChange,
         label = {

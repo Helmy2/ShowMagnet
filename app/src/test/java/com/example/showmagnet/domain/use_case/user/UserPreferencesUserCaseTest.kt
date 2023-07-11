@@ -12,10 +12,10 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-class IsUserSingedInUserCaseTest {
+class UserPreferencesUserCaseTest {
     private val userRepository = mock<UserRepository>()
     val useCase by lazy {
-        IsUserSingedInUserCase(
+        UserPreferencesUserCase(
             userRepository
         )
     }
@@ -34,7 +34,7 @@ class IsUserSingedInUserCaseTest {
         })
 
         val result = useCase().last()
-        assert(result)
+        assert(result.isUserSignedIn)
     }
 
     @Test
@@ -48,6 +48,6 @@ class IsUserSingedInUserCaseTest {
         })
 
         val result = useCase().last()
-        assert(!result)
+        assert(!result.isUserSignedIn)
     }
 }

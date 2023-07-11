@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface UserPreferencesManager {
     val userPreferencesFlow: Flow<UserPreferences>
     suspend fun updateIsUserSignedIn(isSignedIn: Boolean): Result<Boolean>
+    suspend fun updateDarkTheme(darkTheme: Boolean): Result<Boolean>
 }

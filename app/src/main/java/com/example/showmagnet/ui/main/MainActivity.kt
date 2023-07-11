@@ -29,11 +29,11 @@ class MainActivity : ComponentActivity() {
         val viewModel by viewModels<AppNavViewModel>()
 
         setContent {
-            val isUserSingedIn by viewModel.isUserSingedIn.collectAsState()
-            ShowMagnetTheme {
+            val userPreferences by viewModel.isUserSingedIn.collectAsState()
+            ShowMagnetTheme(darkTheme = userPreferences?.darkTheme ?: false) {
                 Surface(Modifier.fillMaxSize()) {
-                    isUserSingedIn?.let {
-                        AppNavHost(it)
+                    userPreferences?.let {
+                        AppNavHost(it.isUserSignedIn)
                     }
                 }
             }
