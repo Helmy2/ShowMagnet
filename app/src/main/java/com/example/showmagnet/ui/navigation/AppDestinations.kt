@@ -11,7 +11,7 @@ sealed class AppDestinations(val route: String) {
     object Main : AppDestinations("Main")
     object Home : AppDestinations("Home")
     object Favorite : AppDestinations("Favorite")
-    object Explore : AppDestinations("Explore")
+    object Discover : AppDestinations("Discover")
     object Profile : AppDestinations("Profile")
 
     object Movie : AppDestinations("Movie/{id}") {

@@ -2,7 +2,7 @@ package com.example.showmagnet.ui.tv
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.example.showmagnet.domain.model.NetworkUnavailableException
+import com.example.showmagnet.domain.model.common.NetworkUnavailableException
 import com.example.showmagnet.domain.use_case.tv.AddTvToFavoriteUseCase
 import com.example.showmagnet.domain.use_case.tv.GetTvCastUseCase
 import com.example.showmagnet.domain.use_case.tv.GetTvDetailsUseCase

@@ -2,7 +2,7 @@ package com.example.showmagnet.ui.person
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.example.showmagnet.domain.model.NetworkUnavailableException
+import com.example.showmagnet.domain.model.common.NetworkUnavailableException
 import com.example.showmagnet.domain.use_case.person.AddPersonToFavoriteUseCase
 import com.example.showmagnet.domain.use_case.person.GetPersonDetailsUseCase
 import com.example.showmagnet.domain.use_case.person.GetPersonImagesUseCase

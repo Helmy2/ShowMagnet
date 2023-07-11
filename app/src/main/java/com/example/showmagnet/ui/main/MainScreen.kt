@@ -31,7 +31,7 @@ val elementList = listOf(
         "Home", AppDestinations.Home, Icons.Filled.Home
     ),
     NavigationBarElement(
-        "Explore", AppDestinations.Explore, Icons.Filled.Explore
+        "Explore", AppDestinations.Discover, Icons.Filled.Explore
     ),
     NavigationBarElement(
         "Favorite", AppDestinations.Favorite, Icons.Filled.Favorite
@@ -59,15 +59,14 @@ fun MainScreen(
                     selected = currentDestination?.hierarchy?.any { it.route == element.destinations.route } == true,
                     onClick = {
                         navController.navigate(element.destinations.route) {
-                            // Pop up to the start destination of the graph to
-                            // avoid building up a large stack of destinations
-                            // on the back stack as users select items
+
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
                             }
-                            // Avoid multiple copies of the same destination when
-                            // reselecting the same item
+
                             launchSingleTop = true
+
+                            restoreState = true
                         }
                     })
             }

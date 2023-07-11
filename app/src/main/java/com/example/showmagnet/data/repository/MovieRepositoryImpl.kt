@@ -128,6 +128,22 @@ class MovieRepositoryImpl @Inject constructor(
         Result.failure(e)
     }
 
+    override suspend fun discoverMovie(parameters: Map<String, String>): Result<List<Show>> = try {
+        val response = api.discoverMovie(parameters)
+
+        val result = response.shows?.filterNotNull()?.map { it.toDomain(MediaType.MOVIE) }
+
+        if (result == null) {
+            Result.failure(Exception("Something went wrong"))
+        } else {
+            Result.success(result)
+        }
+
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Result.failure(e)
+    }
+
     override suspend fun getFavoriteMovies(): Result<List<Show>> = try {
         val favoriteList = getMoviesFavoriteList().getOrThrow()
         val list = mutableListOf<Show>()
@@ -150,6 +166,8 @@ class MovieRepositoryImpl @Inject constructor(
         e.printStackTrace()
         Result.failure(e)
     }
+
+
 
     override suspend fun addMovieToFavoriteList(id: Int) = remoteDataSource.addToFavorite(id)
 

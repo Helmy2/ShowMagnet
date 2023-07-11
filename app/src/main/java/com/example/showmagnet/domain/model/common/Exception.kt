@@ -1,4 +1,4 @@
-package com.example.showmagnet.domain.model
+package com.example.showmagnet.domain.model.common
 
 import java.io.IOException
 

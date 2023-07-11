@@ -1,16 +1,15 @@
 package com.example.showmagnet.ui.navigation
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.showmagnet.ui.discover.DiscoverContract
+import com.example.showmagnet.ui.discover.DiscoverViewModel
+import com.example.showmagnet.ui.discover.DiscoveryScreen
 import com.example.showmagnet.ui.favorite.FavoriteContract
 import com.example.showmagnet.ui.favorite.FavoriteScreen
 import com.example.showmagnet.ui.favorite.FavoriteViewModel
@@ -45,15 +44,34 @@ fun MainNavHost(
 
         profileScreen()
 
-        composable(AppDestinations.Explore.route) {
-            Box(
-                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-            ) {
-                Text(text = "Explore")
+        discoverScreen(
+            onNavigateToMovie = onNavigateToMovie,
+            onNavigateToTv = onNavigateToTv
+        )
+    }
+}
+
+fun NavGraphBuilder.discoverScreen(
+    onNavigateToMovie: (id: Int) -> Unit,
+    onNavigateToTv: (id: Int) -> Unit,
+) {
+    composable(AppDestinations.Discover.route) {
+        val viewModel = hiltViewModel<DiscoverViewModel>()
+
+        DiscoveryScreen(
+            state = viewModel.viewState.value,
+            effect = viewModel.effect,
+            handleEvent = viewModel::setEvent
+        ) {
+            when (it) {
+                is DiscoverContract.Navigation.ToMovie -> onNavigateToMovie(it.id)
+                is DiscoverContract.Navigation.ToTv -> onNavigateToTv(it.id)
             }
+
         }
     }
 }
+
 
 fun NavGraphBuilder.profileScreen() {
     composable(AppDestinations.Profile.route) {

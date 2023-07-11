@@ -36,6 +36,8 @@ object ApiConstants {
     object Discover {
         const val MOVIE_ANIME = "discover/movie?with_genres=16"
         const val TV_ANIME = "discover/tv?with_genres=16"
+        const val MOVIE = "discover/movie"
+        const val TV = "discover/tv"
     }
 }
 

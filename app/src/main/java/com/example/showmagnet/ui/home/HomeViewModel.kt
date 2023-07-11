@@ -1,8 +1,8 @@
 package com.example.showmagnet.ui.home
 
 import androidx.lifecycle.viewModelScope
-import com.example.showmagnet.domain.model.NetworkUnavailableException
 import com.example.showmagnet.domain.model.common.MediaType
+import com.example.showmagnet.domain.model.common.NetworkUnavailableException
 import com.example.showmagnet.domain.model.common.TimeWindow
 import com.example.showmagnet.domain.use_case.person.GetTrendingPeopleUseCase
 import com.example.showmagnet.domain.use_case.show.GetAnimationUseCase

@@ -1,7 +1,7 @@
 package com.example.showmagnet.ui.favorite
 
 import androidx.lifecycle.viewModelScope
-import com.example.showmagnet.domain.model.NetworkUnavailableException
+import com.example.showmagnet.domain.model.common.NetworkUnavailableException
 import com.example.showmagnet.domain.use_case.favorite.GetFavoriteMovieUseCase
 import com.example.showmagnet.domain.use_case.favorite.GetFavoritePeopleUseCase
 import com.example.showmagnet.domain.use_case.favorite.GetFavoriteTvUseCase

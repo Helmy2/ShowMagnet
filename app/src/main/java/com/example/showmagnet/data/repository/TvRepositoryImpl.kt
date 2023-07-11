@@ -127,11 +127,7 @@ class TvRepositoryImpl @Inject constructor(
             val tv = getDetails(it).getOrThrow()
             list.add(
                 Show(
-                    tv.id,
-                    tv.name,
-                    tv.voteAverage,
-                    tv.posterPath,
-                    type = MediaType.TV
+                    tv.id, tv.name, tv.voteAverage, tv.posterPath, type = MediaType.TV
                 )
             )
         }
@@ -142,6 +138,21 @@ class TvRepositoryImpl @Inject constructor(
         Result.failure(e)
     }
 
+    override suspend fun discoverTv(parameters: Map<String, String>): Result<List<Show>> = try {
+        val response = api.discoverTv(parameters)
+
+        val result = response.shows?.filterNotNull()?.map { it.toDomain(MediaType.TV) }
+
+        if (result == null) {
+            Result.failure(Exception("Something went wrong"))
+        } else {
+            Result.success(result)
+        }
+
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Result.failure(e)
+    }
 
     override suspend fun addTvToFavoriteList(id: Int) = remoteDataSource.addToFavorite(id)
 
