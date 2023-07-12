@@ -6,17 +6,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -43,15 +38,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.showmagnet.domain.model.common.MediaType
-import com.example.showmagnet.domain.model.common.Show
 import com.example.showmagnet.domain.model.common.SortBy
 import com.example.showmagnet.ui.common.Constant
 import com.example.showmagnet.ui.common.ui.ChipList
 import com.example.showmagnet.ui.common.ui.ConnectedAndLoadingFeild
-import com.example.showmagnet.ui.common.ui.ShowItem
+import com.example.showmagnet.ui.common.ui.SearchBar
+import com.example.showmagnet.ui.common.ui.ShowsGrid
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -79,8 +75,6 @@ fun DiscoveryScreen(
         }
     }
 
-
-
     Scaffold(
         snackbarHost = {
             SnackbarHost(snackbarHostState)
@@ -100,16 +94,22 @@ fun DiscoveryScreen(
                     onItemClick = {
                         when (it.type) {
                             MediaType.MOVIE -> handleNavigation(
-                                DiscoverContract.Navigation.ToMovie(
-                                    it.id
-                                )
+                                DiscoverContract.Navigation.ToMovie(it.id)
                             )
 
-                            MediaType.TV -> handleNavigation(DiscoverContract.Navigation.ToTv(it.id))
+                            MediaType.TV -> handleNavigation(
+                                DiscoverContract.Navigation.ToTv(it.id)
+                            )
                         }
                     },
                 ) {
-                    DiscoverSetting(
+                    TopBar(searchText = state.search,
+                        onSearchTextChanged = {
+                            handleEvent(DiscoverContract.Event.SearchValueChange(it))
+                        },
+                        onSearch = {
+                            handleEvent(DiscoverContract.Event.Search)
+                        },
                         mediaType = state.mediaType,
                         selectedGeneraIndex = if (state.mediaType == MediaType.MOVIE) Constant.movieGenreList.indexOf(
                             state.genre
@@ -118,17 +118,17 @@ fun DiscoveryScreen(
                         ),
                         isAdult = state.adult,
                         currentSortBy = state.sortBy,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-
-                    ) { mediaType, selectedGeneraIndex, adult, sortBy ->
-                        handleEvent(
-                            DiscoverContract.Event.MediaTypeChange(
-                                mediaType, if (selectedGeneraIndex == -1) null
-                                else if (mediaType == MediaType.MOVIE) Constant.movieGenreList[selectedGeneraIndex]
-                                else Constant.tvGenreList[selectedGeneraIndex], adult, sortBy
+                        onApplyClicked = { mediaType, selectedGeneraIndex, adult, sortBy ->
+                            handleEvent(
+                                DiscoverContract.Event.MediaTypeChange(
+                                    mediaType, if (selectedGeneraIndex == -1) null
+                                    else if (mediaType == MediaType.MOVIE) Constant.movieGenreList[selectedGeneraIndex]
+                                    else Constant.tvGenreList[selectedGeneraIndex], adult, sortBy
+                                )
                             )
-                        )
-                    }
+                        },
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
                 }
             }
         }
@@ -136,37 +136,43 @@ fun DiscoveryScreen(
 }
 
 @Composable
-fun ShowsGrid(
-    shows: List<Show>,
-    onItemClick: (Show) -> Unit,
-    shouldLoadMore: () -> Unit,
-    setting: @Composable () -> Unit,
+private fun TopBar(
+    searchText: String,
+    onSearchTextChanged: (String) -> Unit,
+    onSearch: () -> Unit,
+    mediaType: MediaType,
+    selectedGeneraIndex: Int,
+    isAdult: Boolean,
+    currentSortBy: SortBy,
+    onApplyClicked: (selectedMediaType: MediaType, selectedGeneraIndex: Int, adult: Boolean, sortBy: SortBy) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier,
-        contentPadding = PaddingValues(horizontal = 8.dp)
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
     ) {
-        item(span = { GridItemSpan(2) }) {
-            setting()
-        }
-        itemsIndexed(items = shows, key = { _, show -> show.id }) { index, show ->
-            ShowItem(
-                url = show.posterPath.baseUrl,
-                title = show.title,
-                rating = show.voteAverage,
-                onItemClick = { onItemClick(show) },
-                modifier = Modifier.padding(8.dp)
-            )
-            if (index == shows.size - 4)
-                shouldLoadMore()
-        }
+        SearchBar(
+            searchText = searchText,
+            onSearchTextChanged = onSearchTextChanged,
+            onSearch = onSearch,
+            modifier = Modifier.weight(1f)
+        )
+        DiscoverSetting(
+            mediaType = mediaType,
+            selectedGeneraIndex = selectedGeneraIndex,
+            isAdult = isAdult,
+            currentSortBy = currentSortBy,
+            modifier = Modifier,
+            onApplyClicked = onApplyClicked,
+        )
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DiscoverSetting(
+private fun DiscoverSetting(
     mediaType: MediaType,
     selectedGeneraIndex: Int,
     isAdult: Boolean,
@@ -186,20 +192,12 @@ fun DiscoverSetting(
         scope.launch { showDialog = false }
     }
 
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        Text(text = "Discover", style = MaterialTheme.typography.titleLarge)
-        IconButton(onClick = { showDialog = true }) {
-            Icon(
-                imageVector = Icons.Default.Settings, contentDescription = "Settings"
-            )
-        }
+
+    IconButton(onClick = { showDialog = true }, modifier = modifier) {
+        Icon(
+            imageVector = Icons.Default.Settings, contentDescription = "Settings"
+        )
     }
-
-
 
     AnimatedVisibility(showDialog) {
         AlertDialog(

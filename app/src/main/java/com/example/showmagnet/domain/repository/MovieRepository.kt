@@ -23,4 +23,5 @@ interface MovieRepository {
     suspend fun isFavoriteMovie(id: Int): Result<Boolean>
     suspend fun getFavoriteMovies(): Result<List<Show>>
     suspend fun discoverMovie(parameters: Map<String, String>): Result<List<Show>>
+    suspend fun search(query: String, page: Int): Result<List<Show>>
 }

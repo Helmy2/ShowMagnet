@@ -7,6 +7,7 @@ import com.example.showmagnet.data.source.remote.api.model.movie.ImagesResponse
 import com.example.showmagnet.data.source.remote.api.model.movie.MovieResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 import retrofit2.http.QueryMap
 
 interface MovieApi {
@@ -34,5 +35,11 @@ interface MovieApi {
     @GET(ApiConstants.Discover.MOVIE)
     suspend fun discoverMovie(
         @QueryMap parameters: Map<String, String>
+    ): ShowResponse
+
+    @GET(ApiConstants.Movie.SEARCH_ENDPOINT)
+    suspend fun search(
+        @Query(ApiParameters.QUERY) query: String,
+        @Query(ApiParameters.PAGE) page: Int
     ): ShowResponse
 }

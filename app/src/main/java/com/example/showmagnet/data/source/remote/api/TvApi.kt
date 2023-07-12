@@ -7,6 +7,7 @@ import com.example.showmagnet.data.source.remote.api.model.tv.SeasonResponse
 import com.example.showmagnet.data.source.remote.api.model.tv.TvResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 import retrofit2.http.QueryMap
 
 interface TvApi {
@@ -34,5 +35,11 @@ interface TvApi {
     @GET(ApiConstants.Discover.TV)
     suspend fun discoverTv(
         @QueryMap parameters: Map<String, String>
+    ): ShowResponse
+
+    @GET(ApiConstants.Tv.SEARCH_ENDPOINT)
+    suspend fun search(
+        @Query(ApiParameters.QUERY) query: String,
+        @Query(ApiParameters.PAGE) page: Int
     ): ShowResponse
 }

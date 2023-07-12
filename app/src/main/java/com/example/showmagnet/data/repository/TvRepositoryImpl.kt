@@ -158,6 +158,19 @@ class TvRepositoryImpl @Inject constructor(
         Result.failure(e)
     }
 
+    override suspend fun search(query: String, page: Int): Result<List<Show>> = try {
+        val response = api.search(query, page)
+        val result = response.shows?.filterNotNull()?.map { it.toDomain(MediaType.MOVIE) }
+        if (result == null) {
+            Result.failure(Exception("Something went wrong"))
+        } else {
+            Result.success(result)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Result.failure(e)
+    }
+
     override suspend fun addTvToFavoriteList(id: Int) = remoteDataSource.addToFavorite(id)
 
     override suspend fun getTvFavoriteList() = remoteDataSource.getFavoriteList()

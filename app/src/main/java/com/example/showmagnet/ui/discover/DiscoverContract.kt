@@ -13,6 +13,11 @@ class DiscoverContract {
         object Refresh : Event()
 
         object LoadMore : Event()
+
+        object Search : Event()
+
+        class SearchValueChange(val query: String) : Event()
+
         class MediaTypeChange(
             val mediaType: MediaType,
             val genre: Genre?,
@@ -29,7 +34,8 @@ class DiscoverContract {
         val mediaType: MediaType = MediaType.MOVIE,
         val genre: Genre? = null,
         val adult: Boolean = false,
-        val sortBy: SortBy = SortBy.Popularity
+        val sortBy: SortBy = SortBy.Popularity,
+        val search: String = "",
     ) : ViewState
 
     sealed class Navigation {

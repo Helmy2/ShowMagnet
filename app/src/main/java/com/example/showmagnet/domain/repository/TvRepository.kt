@@ -22,4 +22,5 @@ interface TvRepository {
     suspend fun addTvToFavoriteList(id: Int): Result<Boolean>
     suspend fun getFavoriteTv(): Result<List<Show>>
     suspend fun discoverTv(parameters: Map<String, String>): Result<List<Show>>
+    suspend fun search(query: String, page: Int): Result<List<Show>>
 }

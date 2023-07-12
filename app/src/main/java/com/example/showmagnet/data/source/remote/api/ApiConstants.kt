@@ -13,6 +13,7 @@ object ApiConstants {
         const val IMAGES_ENDPOINT = "movie/{${ApiParameters.ID}}/images"
         const val POPULAR_ENDPOINT = "movie/popular"
         const val UPCOMING_ENDPOINT = "movie/upcoming"
+        const val SEARCH_ENDPOINT = "search/movie"
     }
 
     object Person {
@@ -31,6 +32,7 @@ object ApiConstants {
         const val SEASON_ENDPOINT =
             "tv/{${ApiParameters.ID}}/season/{${ApiParameters.SEASON_NUMBER}}"
         const val POPULAR_ENDPOINT = "tv/popular"
+        const val SEARCH_ENDPOINT = "search/tv"
     }
 
     object Discover {
@@ -45,4 +47,6 @@ object ApiParameters {
     const val ID = "id"
     const val TIME_WINDOW = "time_window"
     const val SEASON_NUMBER = "season_number"
+    const val QUERY = "query"
+    const val PAGE = "page"
 }
