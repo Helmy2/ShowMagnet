@@ -47,6 +47,7 @@ import com.example.showmagnet.domain.model.common.Show
 import com.example.showmagnet.domain.model.common.SortBy
 import com.example.showmagnet.ui.common.Constant
 import com.example.showmagnet.ui.common.ui.ChipList
+import com.example.showmagnet.ui.common.ui.ConnectedAndLoadingFeild
 import com.example.showmagnet.ui.common.ui.ShowItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -85,40 +86,49 @@ fun DiscoveryScreen(
             SnackbarHost(snackbarHostState)
         },
     ) {
-        Column(
-            horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            ShowsGrid(
-                shows = state.shows,
-                shouldLoadMore = { handleEvent(DiscoverContract.Event.LoadMore) },
-                onItemClick = {
-                    when (it.type) {
-                        MediaType.MOVIE -> handleNavigation(DiscoverContract.Navigation.ToMovie(it.id))
-                        MediaType.TV -> handleNavigation(DiscoverContract.Navigation.ToTv(it.id))
-                    }
-                },
+        ConnectedAndLoadingFeild(connected = state.connected,
+            loading = state.loading,
+            onRefresh = { handleEvent(DiscoverContract.Event.Refresh) }) {
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxSize()
             ) {
-                DiscoverSetting(
-                    mediaType = state.mediaType,
-                    selectedGeneraIndex = if (state.mediaType == MediaType.MOVIE) Constant.movieGenreList.indexOf(
-                        state.genre
-                    ) else Constant.tvGenreList.indexOf(
-                        state.genre
-                    ),
-                    isAdult = state.adult,
-                    currentSortBy = state.sortBy,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                ShowsGrid(
+                    shows = state.shows,
+                    shouldLoadMore = { handleEvent(DiscoverContract.Event.LoadMore) },
+                    onItemClick = {
+                        when (it.type) {
+                            MediaType.MOVIE -> handleNavigation(
+                                DiscoverContract.Navigation.ToMovie(
+                                    it.id
+                                )
+                            )
 
-                ) { mediaType, selectedGeneraIndex, adult, sortBy ->
-                    handleEvent(
-                        DiscoverContract.Event.MediaTypeChange(
-                            mediaType, if (selectedGeneraIndex == -1) null
-                            else if (mediaType == MediaType.MOVIE) Constant.movieGenreList[selectedGeneraIndex]
-                            else Constant.tvGenreList[selectedGeneraIndex], adult, sortBy
+                            MediaType.TV -> handleNavigation(DiscoverContract.Navigation.ToTv(it.id))
+                        }
+                    },
+                ) {
+                    DiscoverSetting(
+                        mediaType = state.mediaType,
+                        selectedGeneraIndex = if (state.mediaType == MediaType.MOVIE) Constant.movieGenreList.indexOf(
+                            state.genre
+                        ) else Constant.tvGenreList.indexOf(
+                            state.genre
+                        ),
+                        isAdult = state.adult,
+                        currentSortBy = state.sortBy,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+
+                    ) { mediaType, selectedGeneraIndex, adult, sortBy ->
+                        handleEvent(
+                            DiscoverContract.Event.MediaTypeChange(
+                                mediaType, if (selectedGeneraIndex == -1) null
+                                else if (mediaType == MediaType.MOVIE) Constant.movieGenreList[selectedGeneraIndex]
+                                else Constant.tvGenreList[selectedGeneraIndex], adult, sortBy
+                            )
                         )
-                    )
+                    }
                 }
             }
         }

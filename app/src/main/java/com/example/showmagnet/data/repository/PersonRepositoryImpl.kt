@@ -102,12 +102,12 @@ class PersonRepositoryImpl @Inject constructor(
         val list = mutableListOf<Person>()
 
         favoriteList.forEach {
-            val person = getPersonDetails(it).getOrThrow()
+            val person = api.getPersonDetails(it)
             list.add(
                 Person(
                     id = person.id,
-                    name = person.name,
-                    profilePath = person.profilePath
+                    name = person.name.orEmpty(),
+                    profilePath = Image(person.profilePath)
                 )
             )
         }

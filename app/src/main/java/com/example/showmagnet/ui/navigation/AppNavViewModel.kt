@@ -13,7 +13,7 @@ class AppNavViewModel
 @Inject constructor(
     userPreferencesUserCase: UserPreferencesUserCase
 ) : ViewModel() {
-    val isUserSingedIn = userPreferencesUserCase()
+    val userPreferencesStateFlow = userPreferencesUserCase()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

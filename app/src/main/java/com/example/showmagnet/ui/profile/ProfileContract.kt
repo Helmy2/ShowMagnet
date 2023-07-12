@@ -15,7 +15,10 @@ class ProfileContract {
     }
 
     data class State(
-        val loading: Boolean = true, val connected: Boolean = true, val user: UserData? = null
+        val loading: Boolean = true,
+        val connected: Boolean = true,
+        val user: UserData? = null,
+        val dark: Boolean
     ) : ViewState
 
     sealed class Effect : ViewEffect {

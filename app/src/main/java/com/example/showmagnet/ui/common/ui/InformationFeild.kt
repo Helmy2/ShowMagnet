@@ -34,7 +34,6 @@ fun InformationFeild(
     voteAverage: Float,
     genres: List<Genre>,
     releaseDate: String,
-    onGenreClick: (id: Int) -> Unit,
     onFavoriteClick: () -> Unit
 ) {
     Column(
@@ -55,8 +54,7 @@ fun InformationFeild(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium
-                    .copy(fontSize = 20.sp),
+                style = MaterialTheme.typography.titleMedium.copy(fontSize = 20.sp),
                 maxLines = 2,
                 modifier = Modifier.weight(fill = false, weight = 1f)
             )
@@ -73,15 +71,11 @@ fun InformationFeild(
                 Text(text = runtime, modifier = Modifier.padding(4.dp))
             }
             Chip(
-                text = releaseDate.toYearFormat(),
-                onItemClick = {},
-                modifier = Modifier.padding(4.dp)
+                text = releaseDate.toYearFormat(), modifier = Modifier.padding(4.dp)
             )
             genres.forEach {
                 Chip(
-                    text = it.name,
-                    onItemClick = { onGenreClick(it.id) },
-                    modifier = Modifier.padding(4.dp)
+                    text = it.name, modifier = Modifier.padding(4.dp)
                 )
             }
         }

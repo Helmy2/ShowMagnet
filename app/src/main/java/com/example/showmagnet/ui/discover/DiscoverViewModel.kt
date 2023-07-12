@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.example.showmagnet.domain.model.common.Genre
 import com.example.showmagnet.domain.model.common.MediaType
+import com.example.showmagnet.domain.model.common.NetworkUnavailableException
 import com.example.showmagnet.domain.model.common.SortBy
 import com.example.showmagnet.domain.use_case.show.DiscoverUseCase
 import com.example.showmagnet.ui.common.BaseViewModel
@@ -59,14 +60,20 @@ class DiscoverViewModel @Inject constructor(
         if (result.isSuccess) setState {
             copy(
                 shows = if (pageNumber.value == 1) result.getOrDefault(emptyList())
-                else  viewState.value.shows + result.getOrDefault(emptyList()) ,
+                else viewState.value.shows + result.getOrDefault(emptyList()),
                 connected = true,
                 loading = false
             )
+        } else {
+            if (result.exceptionOrNull() is NetworkUnavailableException) setState {
+                copy(connected = false, loading = false)
+            }
+            setState { copy(loading = false) }
         }
     }
 
     init {
+        setState { copy(loading = true) }
         refresh()
     }
 }

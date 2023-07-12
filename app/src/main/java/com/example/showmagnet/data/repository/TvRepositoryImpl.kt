@@ -124,10 +124,14 @@ class TvRepositoryImpl @Inject constructor(
         val list = mutableListOf<Show>()
 
         favoriteList.forEach {
-            val tv = getDetails(it).getOrThrow()
+            val tv = api.getDetails(it)
             list.add(
                 Show(
-                    tv.id, tv.name, tv.voteAverage, tv.posterPath, type = MediaType.TV
+                    id = tv.id,
+                    title = tv.name.orEmpty(),
+                    voteAverage = tv.voteAverage ?: 0f,
+                    posterPath = Image(tv.posterPath),
+                    type = MediaType.TV
                 )
             )
         }

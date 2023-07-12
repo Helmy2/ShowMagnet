@@ -103,7 +103,6 @@ fun TvScreen(
                 if (state.tv != null) {
                     TvDetailsFeild(
                         state.tv,
-                        onGenreClick = {},
                         onFavoriteClick = { handleEvent(TvContract.Event.ToggleFavorite) })
                 }
                 if (!state.castList.isNullOrEmpty()) {
@@ -259,7 +258,6 @@ private fun EpisodeItem(episode: Episode, modifier: Modifier = Modifier) {
 @Composable
 private fun TvDetailsFeild(
     tv: Tv,
-    onGenreClick: (id: Int) -> Unit,
     onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -294,7 +292,6 @@ private fun TvDetailsFeild(
             favorite = tv.favorite,
             releaseDate = tv.firstAirDate ?: "",
             voteAverage = tv.voteAverage,
-            onGenreClick = onGenreClick,
             onFavoriteClick = onFavoriteClick,
             genres = tv.genres,
             modifier = Modifier

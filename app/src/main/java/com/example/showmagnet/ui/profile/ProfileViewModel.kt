@@ -6,8 +6,10 @@ import com.example.showmagnet.domain.use_case.user.GetUserInfoUserCase
 import com.example.showmagnet.domain.use_case.user.SignOutUseCase
 import com.example.showmagnet.domain.use_case.user.UpdateDarkThemeUseCase
 import com.example.showmagnet.domain.use_case.user.UpdateProfileUseCase
+import com.example.showmagnet.domain.use_case.user.UserPreferencesUserCase
 import com.example.showmagnet.ui.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,10 +18,11 @@ class ProfileViewModel @Inject constructor(
     private val getUserUseCase: GetUserInfoUserCase,
     private val signOutUserCase: SignOutUseCase,
     private val updateDarkThemeUseCase: UpdateDarkThemeUseCase,
-    private val updateProfileUseCase: UpdateProfileUseCase
+    private val updateProfileUseCase: UpdateProfileUseCase,
+    userPreferencesUserCase: UserPreferencesUserCase
 ) : BaseViewModel<ProfileContract.Event, ProfileContract.State, ProfileContract.Effect>() {
 
-    override fun setInitialState() = ProfileContract.State()
+    override fun setInitialState() = ProfileContract.State(dark = false)
 
     override fun handleEvents(event: ProfileContract.Event) {
         when (event) {
@@ -32,8 +35,16 @@ class ProfileViewModel @Inject constructor(
 
     private fun updateProfile(name: String, bitmap: Bitmap?) = viewModelScope.launch {
         setState { copy(loading = true) }
-        updateProfileUseCase(name, bitmap)
-        refresh()
+        val result = updateProfileUseCase(name, bitmap)
+        if (result.isSuccess) {
+            refresh()
+        } else {
+            setEffect {
+                ProfileContract.Effect.ShowErrorToast(
+                    result.exceptionOrNull()?.localizedMessage ?: ""
+                )
+            }
+        }
         setState { copy(loading = false) }
     }
 
@@ -68,6 +79,11 @@ class ProfileViewModel @Inject constructor(
 
 
     init {
+        viewModelScope.launch {
+            userPreferencesUserCase().collectLatest {
+                setState { copy(dark = it.darkTheme) }
+            }
+        }
         refresh()
     }
 

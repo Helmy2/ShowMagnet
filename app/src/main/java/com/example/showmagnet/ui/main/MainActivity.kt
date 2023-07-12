@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
         val viewModel by viewModels<AppNavViewModel>()
 
         setContent {
-            val userPreferences by viewModel.isUserSingedIn.collectAsState()
+            val userPreferences by viewModel.userPreferencesStateFlow.collectAsState()
             ShowMagnetTheme(darkTheme = userPreferences?.darkTheme ?: false) {
                 Surface(Modifier.fillMaxSize()) {
                     userPreferences?.let {
@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
             object : ViewTreeObserver.OnPreDrawListener {
                 override fun onPreDraw(): Boolean {
                     // Check whether the initial data is ready.
-                    return if (viewModel.isUserSingedIn.value != null) {
+                    return if (viewModel.userPreferencesStateFlow.value != null) {
                         // The content is ready. Start drawing.
                         content.viewTreeObserver.removeOnPreDrawListener(this)
                         true

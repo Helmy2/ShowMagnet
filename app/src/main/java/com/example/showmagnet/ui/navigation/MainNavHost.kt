@@ -45,8 +45,7 @@ fun MainNavHost(
         profileScreen()
 
         discoverScreen(
-            onNavigateToMovie = onNavigateToMovie,
-            onNavigateToTv = onNavigateToTv
+            onNavigateToMovie = onNavigateToMovie, onNavigateToTv = onNavigateToTv
         )
     }
 }
@@ -67,7 +66,6 @@ fun NavGraphBuilder.discoverScreen(
                 is DiscoverContract.Navigation.ToMovie -> onNavigateToMovie(it.id)
                 is DiscoverContract.Navigation.ToTv -> onNavigateToTv(it.id)
             }
-
         }
     }
 }

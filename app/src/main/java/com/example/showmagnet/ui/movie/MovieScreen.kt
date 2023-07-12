@@ -85,7 +85,6 @@ fun MovieScreen(
                 if (state.movie != null) {
                     MovieDetailsFeild(
                         state.movie,
-                        onGenreClick = {},
                         onFavoriteClick = { handleEvent(MovieContract.Event.ToggleFavorite) },
                     )
                     StorylineFeild(
@@ -137,7 +136,6 @@ private fun StorylineFeild(overview: String, modifier: Modifier = Modifier) {
 @Composable
 private fun MovieDetailsFeild(
     movie: Movie,
-    onGenreClick: (id: Int) -> Unit,
     onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -173,7 +171,6 @@ private fun MovieDetailsFeild(
             runtime = movie.runtime.toHourFormat(),
             releaseDate = movie.releaseDate,
             voteAverage = movie.voteAverage,
-            onGenreClick = onGenreClick,
             onFavoriteClick = onFavoriteClick,
             genres = movie.genres,
             modifier = Modifier

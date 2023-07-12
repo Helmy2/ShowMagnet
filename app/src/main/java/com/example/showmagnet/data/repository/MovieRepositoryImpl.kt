@@ -149,13 +149,13 @@ class MovieRepositoryImpl @Inject constructor(
         val list = mutableListOf<Show>()
 
         favoriteList.forEach {
-            val movie = getMovieDetails(it).getOrThrow()
+            val movie = api.getMovieDetails(it)
             list.add(
                 Show(
-                    movie.id,
-                    movie.title,
-                    movie.voteAverage,
-                    movie.posterPath,
+                    id = movie.id,
+                    title = movie.title.orEmpty(),
+                    voteAverage = movie.voteAverage ?: 0f,
+                    posterPath = Image(movie.posterPath),
                     type = MediaType.MOVIE
                 )
             )
@@ -166,7 +166,6 @@ class MovieRepositoryImpl @Inject constructor(
         e.printStackTrace()
         Result.failure(e)
     }
-
 
 
     override suspend fun addMovieToFavoriteList(id: Int) = remoteDataSource.addToFavorite(id)

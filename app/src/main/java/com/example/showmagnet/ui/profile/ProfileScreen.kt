@@ -10,8 +10,8 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,14 +19,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.RemoveRedEye
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -55,6 +56,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.showmagnet.R
 import com.example.showmagnet.ui.common.ui.NameTextField
@@ -101,8 +103,9 @@ fun ProfileScreen(
             if (state.user != null) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current).data(state.user.url)
-                        .error(R.drawable.account).placeholder(R.drawable.account).crossfade(true)
-                        .build(),
+                        .memoryCacheKey(state.user.url).diskCacheKey(state.user.url)
+                        .diskCachePolicy(CachePolicy.ENABLED).memoryCachePolicy(CachePolicy.ENABLED)
+                        .error(R.drawable.account).crossfade(true).build(),
                     contentDescription = "Profile Picture",
                     modifier = Modifier
                         .size(100.dp)
@@ -122,25 +125,23 @@ fun ProfileScreen(
                     onSave = { name, uri ->
                         val bitmap = uri?.let {
                             if (Build.VERSION.SDK_INT < 28) {
-                                MediaStore.Images
-                                    .Media.getBitmap(context.contentResolver, it)
+                                MediaStore.Images.Media.getBitmap(context.contentResolver, it)
                             } else {
-                                val source = ImageDecoder
-                                    .createSource(context.contentResolver, it)
+                                val source = ImageDecoder.createSource(context.contentResolver, it)
                                 ImageDecoder.decodeBitmap(source)
                             }
                         }
 
                         handleEvent(
                             ProfileContract.Event.UpdateProfile(
-                                name,
-                                bitmap
+                                name, bitmap
                             )
                         )
                     },
                     modifier = Modifier.padding(horizontal = 16.dp),
                 )
                 ThemeMode(
+                    dark = state.dark,
                     onThemeMode = { handleEvent(ProfileContract.Event.ToggleTheme(it)) },
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
@@ -161,10 +162,8 @@ fun EditProfileFeild(
     onSave: (String, Uri?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
     var name by remember { mutableStateOf(userName) }
-
+    var openDialog by remember { mutableStateOf(false) }
 
     var selectedImageUri by remember {
         mutableStateOf<Uri?>(null)
@@ -176,40 +175,39 @@ fun EditProfileFeild(
                 uri?.let {
                     selectedImageUri = uri
                 }
-            }
-        )
+            })
 
-    BackHandler(sheetState.isVisible) {
-        scope.launch { sheetState.hide() }
+    BackHandler(openDialog) {
+        openDialog = false
     }
 
     SettingItem(Icons.Outlined.Person, "Edit Profile", modifier) {
-        scope.launch {
-            sheetState.show()
-        }
+        openDialog = true
+
     }
 
-    if (sheetState.isVisible) {
-        ModalBottomSheet(
-            sheetState = sheetState,
+    if (openDialog) {
+        AlertDialog(
             onDismissRequest = {
-                scope.launch {
-                    sheetState.hide()
-                }
+                openDialog = false
+
             },
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.imePadding()
+                modifier = Modifier
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(16.dp)
+
             ) {
                 Text(text = "Edit Profile", style = MaterialTheme.typography.headlineLarge)
                 Divider()
 
                 AsyncImage(model = ImageRequest.Builder(LocalContext.current).data(
                     if (selectedImageUri != null) selectedImageUri else imageUrl
-                ).error(R.drawable.account).placeholder(R.drawable.account).crossfade(true)
-                    .build(),
+                ).error(R.drawable.account).crossfade(true).build(),
                     contentDescription = "Profile Picture",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -229,9 +227,8 @@ fun EditProfileFeild(
                     Spacer(modifier = Modifier.weight(1f))
                     Button(
                         onClick = {
-                            scope.launch {
-                                sheetState.hide()
-                            }
+                            openDialog = false
+
                         }, modifier = Modifier.weight(3f)
                     ) {
                         Text(text = "Cancel")
@@ -241,9 +238,7 @@ fun EditProfileFeild(
                     Button(
                         onClick = {
                             onSave(name, selectedImageUri)
-                            scope.launch {
-                                sheetState.hide()
-                            }
+                            openDialog = false
                         }, modifier = Modifier.weight(3f)
                     ) {
                         Text(text = "Save")
@@ -258,9 +253,8 @@ fun EditProfileFeild(
 
 
 @Composable
-fun ThemeMode(onThemeMode: (Boolean) -> Unit, modifier: Modifier = Modifier) {
-    val isSystemInDarkTheme = isSystemInDarkTheme()
-    var enable by remember { mutableStateOf(isSystemInDarkTheme) }
+fun ThemeMode(onThemeMode: (Boolean) -> Unit, modifier: Modifier = Modifier, dark: Boolean) {
+    var enable by remember { mutableStateOf(dark) }
     Row(
         modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),

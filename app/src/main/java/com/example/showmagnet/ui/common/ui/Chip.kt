@@ -1,6 +1,5 @@
 package com.example.showmagnet.ui.common.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -15,12 +14,10 @@ import androidx.compose.ui.unit.dp
 fun Chip(
     text: String,
     modifier: Modifier = Modifier,
-    onItemClick: () -> Unit
 ) {
     Card(
         modifier = modifier
             .clip(shape = RoundedCornerShape(8.dp))
-            .clickable { onItemClick() },
     ) {
         Text(
             text = text, style = MaterialTheme.typography.bodyMedium,
