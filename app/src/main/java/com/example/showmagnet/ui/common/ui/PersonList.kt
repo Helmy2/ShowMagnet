@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -37,10 +36,7 @@ fun PersonList(
     onSelectionChange: (Int) -> Unit = {},
     onItemClick: (id: Int) -> Unit,
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    Column(
-        Modifier.height(screenHeight * .35f)
-    ) {
+    Column {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 16.dp)
@@ -75,24 +71,21 @@ fun PersonList(
 
 @Composable
 private fun PersonItem(
-    url: String,
-    name: String,
-    onItemClick: () -> Unit,
-    modifier: Modifier = Modifier
+    url: String, name: String, onItemClick: () -> Unit, modifier: Modifier = Modifier
 ) {
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     Card(modifier = modifier
-        .width(screenWidth * .35f)
         .clip(RoundedCornerShape(8.dp))
-        .clickable { onItemClick() }) {
+        .clickable { onItemClick() }
+        .width(120.dp)
+        .aspectRatio(.52f)) {
         Column {
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current).data(url)
-                    .crossfade(true).build(),
+                model = ImageRequest.Builder(LocalContext.current).data(url).crossfade(true)
+                    .build(),
                 contentDescription = name,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(0.7f),
+                    .weight(1f),
                 contentScale = ContentScale.Crop
             )
             Text(

@@ -37,7 +37,8 @@ fun InformationFeild(
     onFavoriteClick: () -> Unit
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Row(
             modifier = Modifier.align(Alignment.End),

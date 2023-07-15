@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -29,8 +28,7 @@ import com.example.showmagnet.domain.model.common.Cast
 
 @Composable
 fun CastList(
-    castList: List<Cast>,
-    onCastClick: (id: Int) -> Unit
+    castList: List<Cast>, onCastClick: (id: Int) -> Unit
 ) {
     Column {
         Text(
@@ -65,17 +63,15 @@ private fun CastItem(
     onItemClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     Card(modifier = modifier
-        .width(screenWidth * .35f)
         .clip(RoundedCornerShape(8.dp))
-        .clickable {
-            onItemClick(id)
-        }) {
+        .clickable { onItemClick(id) }
+        .width(120.dp)
+        .aspectRatio(.52f)) {
         Column {
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current).data(url)
-                    .crossfade(true).build(),
+                model = ImageRequest.Builder(LocalContext.current).data(url).crossfade(true)
+                    .build(),
                 contentDescription = name,
                 modifier = Modifier
                     .fillMaxWidth()

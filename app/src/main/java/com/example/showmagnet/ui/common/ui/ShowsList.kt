@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.example.showmagnet.domain.model.common.Show
 
@@ -26,11 +25,7 @@ fun ShowsList(
     onSelectionChange: (Int) -> Unit = {},
     onItemClick: (Show) -> Unit,
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-
-    Column(
-        Modifier.height(screenHeight * .45f)
-    ) {
+    Column {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 16.dp)

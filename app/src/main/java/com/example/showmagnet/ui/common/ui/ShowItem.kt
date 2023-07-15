@@ -3,8 +3,10 @@ package com.example.showmagnet.ui.common.ui
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
@@ -27,12 +29,15 @@ fun ShowItem(
     onItemClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(modifier = modifier
-        .aspectRatio(.52f)
-        .clip(RoundedCornerShape(16.dp))
-        .clickable { onItemClick() }) {
+    Card(
+        modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
+            .clickable { onItemClick() }
+            .width(150.dp)
+            .aspectRatio(.52f)
+    ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current).data(url).build(),
@@ -40,7 +45,7 @@ fun ShowItem(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(.7f),
+                    .weight(1f)
             )
             Text(
                 text = title,
