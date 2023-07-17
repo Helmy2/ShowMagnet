@@ -22,13 +22,14 @@ import com.example.showmagnet.ui.common.utils.TestTage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConnectedAndLoadingFeild(
+fun ConnectionAndLoadingFeild(
     connected: Boolean,
     loading: Boolean,
+    haveData: Boolean = false,
     onRefresh: () -> Unit,
     content: @Composable () -> Unit,
 ) {
-    if (connected) {
+    if (connected || haveData) {
         Crossfade(
             loading,
             label = "",

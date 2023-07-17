@@ -42,4 +42,10 @@ interface MovieApi {
         @Query(ApiParameters.QUERY) query: String,
         @Query(ApiParameters.PAGE) page: Int
     ): ShowResponse
+
+    @GET(ApiConstants.Discover.MOVIE_ANIME)
+    suspend fun getAnimationMovies(): ShowResponse
+
+    @GET(ApiConstants.Movie.TRENDING_ENDPOINT)
+    suspend fun getTrending(): ShowResponse
 }

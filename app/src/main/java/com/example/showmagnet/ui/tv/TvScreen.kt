@@ -56,7 +56,7 @@ import com.example.showmagnet.domain.model.common.MediaType
 import com.example.showmagnet.domain.model.tv.Episode
 import com.example.showmagnet.domain.model.tv.Tv
 import com.example.showmagnet.ui.common.ui.CastList
-import com.example.showmagnet.ui.common.ui.ConnectedAndLoadingFeild
+import com.example.showmagnet.ui.common.ui.ConnectionAndLoadingFeild
 import com.example.showmagnet.ui.common.ui.ImageList
 import com.example.showmagnet.ui.common.ui.InformationFeild
 import com.example.showmagnet.ui.common.ui.RatingbarFeild
@@ -91,7 +91,7 @@ fun TvScreen(
     }
 
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) {
-        ConnectedAndLoadingFeild(
+        ConnectionAndLoadingFeild(
             connected = state.connected,
             loading = state.loading,
             onRefresh = { handleEvent(TvContract.Event.Refresh) }

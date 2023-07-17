@@ -32,6 +32,9 @@ interface TvApi {
     @GET(ApiConstants.Tv.POPULAR_ENDPOINT)
     suspend fun getPopularTv(): ShowResponse
 
+    @GET(ApiConstants.Discover.TV_ANIME)
+    suspend fun getAnimationTv(): ShowResponse
+
     @GET(ApiConstants.Discover.TV)
     suspend fun discoverTv(
         @QueryMap parameters: Map<String, String>
@@ -41,5 +44,14 @@ interface TvApi {
     suspend fun search(
         @Query(ApiParameters.QUERY) query: String,
         @Query(ApiParameters.PAGE) page: Int
+    ): ShowResponse
+
+    @GET(ApiConstants.Tv.TRENDING_ENDPOINT)
+    suspend fun getTrending(): ShowResponse
+
+    @GET(ApiConstants.Discover.TV)
+    suspend fun getUpcoming(
+        @Query(ApiParameters.FIRST_AIR_DATE_START) start: String,
+        @Query(ApiParameters.FIRST_AIR_DATE_END) end: String
     ): ShowResponse
 }

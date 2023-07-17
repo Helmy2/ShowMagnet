@@ -1,5 +1,6 @@
 package com.example.showmagnet.data.mapper
 
+import com.example.showmagnet.data.source.local.model.ShowDb
 import com.example.showmagnet.data.source.remote.api.model.common.CastDto
 import com.example.showmagnet.data.source.remote.api.model.common.GenreDto
 import com.example.showmagnet.data.source.remote.api.model.common.ImageDto
@@ -9,12 +10,13 @@ import com.example.showmagnet.domain.model.common.Genre
 import com.example.showmagnet.domain.model.common.Image
 import com.example.showmagnet.domain.model.common.MediaType
 import com.example.showmagnet.domain.model.common.Show
+import java.time.LocalDateTime
 
 
 fun CastDto.toDomain() = Cast(
     id = id,
     name = name.orEmpty(),
-    profilePath = Image(profilePath),
+    profilePath = Image(profilePath ?: "", .7f),
     character = character.orEmpty()
 )
 
@@ -24,15 +26,16 @@ fun GenreDto.toDomain() = Genre(
 )
 
 fun ImageDto.toDomain() = Image(
-    url = filePath,
+    url = filePath ?: "",
     ratio = aspectRatio ?: -1f
 )
+
 
 fun ShowDto.toDomain() = Show(
     id = id,
     title = if (mediaType == "movie") title.orEmpty() else name.orEmpty(),
     voteAverage = voteAverage ?: -1f,
-    posterPath = Image(posterPath),
+    posterPath = Image(posterPath ?: "", .7f),
     type = MediaType.values().firstOrNull { it.value == mediaType }
         ?: MediaType.MOVIE
 )
@@ -41,6 +44,28 @@ fun ShowDto.toDomain(type: MediaType) = Show(
     id = id,
     title = if (type == MediaType.MOVIE) title.orEmpty() else name.orEmpty(),
     voteAverage = voteAverage ?: -1f,
-    posterPath = Image(posterPath),
+    posterPath = Image(posterPath ?: "", .7f),
     type = type
+)
+
+fun ShowDto.toDb(
+    addedAt: LocalDateTime,
+    categoryName: String,
+    type: MediaType
+) = ShowDb(
+    id = id,
+    title = if (type == MediaType.MOVIE) title.orEmpty() else name.orEmpty(),
+    voteAverage = voteAverage ?: -1f,
+    posterPath = posterPath ?: "",
+    mediaType = type,
+    categoryName = categoryName,
+    addedAt = addedAt
+)
+
+fun ShowDb.toDomain() = Show(
+    id = id,
+    title = title,
+    voteAverage = voteAverage,
+    posterPath = Image(posterPath),
+    type = mediaType
 )

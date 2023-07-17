@@ -5,6 +5,7 @@ import com.example.showmagnet.domain.model.common.Show
 import com.example.showmagnet.domain.model.common.TimeWindow
 import com.example.showmagnet.domain.model.person.Person
 import com.example.showmagnet.domain.model.person.PersonDetails
+import kotlinx.coroutines.flow.Flow
 
 interface PersonRepository {
     suspend fun getPersonDetails(id: Int): Result<PersonDetails>
@@ -14,7 +15,7 @@ interface PersonRepository {
     suspend fun getMovieCredits(id: Int): Result<List<Show>>
 
     suspend fun getTvCredits(id: Int): Result<List<Show>>
-    suspend fun getTrendingPeople(timeWindow: TimeWindow): Result<List<Person>>
+    fun getTrendingPeople(timeWindow: TimeWindow): Flow<Result<List<Person>>>
     suspend fun addPersonToFavoriteList(id: Int): Result<Boolean>
     suspend fun getPersonFavoriteList(): Result<List<Int>>
     suspend fun deleteFromFavoritePersonsList(id: Int): Result<Boolean>

@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.showmagnet.domain.model.common.MediaType.MOVIE
 import com.example.showmagnet.domain.model.common.MediaType.TV
-import com.example.showmagnet.ui.common.ui.ConnectedAndLoadingFeild
+import com.example.showmagnet.ui.common.ui.ConnectionAndLoadingFeild
 import com.example.showmagnet.ui.common.ui.PersonList
 import com.example.showmagnet.ui.common.ui.ShowsList
 import kotlinx.coroutines.flow.Flow
@@ -54,7 +54,7 @@ fun FavoriteScreen(
     Scaffold(snackbarHost = {
         SnackbarHost(snackbarHostState)
     }) {
-        ConnectedAndLoadingFeild(connected = state.connected,
+        ConnectionAndLoadingFeild(connected = state.connected,
             loading = state.loading,
             onRefresh = { handleEvent(FavoriteContract.Event.Refresh) }) {
             Column(

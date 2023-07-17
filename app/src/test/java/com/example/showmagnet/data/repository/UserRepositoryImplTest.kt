@@ -6,6 +6,7 @@ import com.example.showmagnet.data.source.preference.UserPreferencesManager
 import com.example.showmagnet.domain.repository.UserRepository
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
@@ -17,6 +18,7 @@ import org.mockito.kotlin.whenever
 
 class UserRepositoryImplTest {
     private val auth: FirebaseAuth = mock()
+    private val storage:FirebaseStorage = mock()
     private val signInClient: SignInClient = mock()
     private val userPreferencesManager: UserPreferencesManager = mock()
 
@@ -30,6 +32,7 @@ class UserRepositoryImplTest {
     fun setUp() {
         repository = UserRepositoryImpl(
             auth,
+            storage,
             userPreferencesManager,
             signInClient,
             ""

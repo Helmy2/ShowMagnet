@@ -1,6 +1,6 @@
 package com.example.showmagnet.data.source.remote.api.interceptors
 
-import com.example.showmagnet.data.source.remote.api.ConnectionManager
+import com.example.showmagnet.data.source.remote.ConnectionManager
 import com.example.showmagnet.domain.model.common.NetworkUnavailableException
 import okhttp3.Interceptor
 import okhttp3.Response

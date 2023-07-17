@@ -1,8 +1,10 @@
 package com.example.showmagnet.data.repository
 
 import com.example.showmagnet.data.mapper.toDomain
+import com.example.showmagnet.data.source.local.LocalManager
 import com.example.showmagnet.data.source.remote.api.PersonApi
-import com.example.showmagnet.data.source.remote.database.RemoteDataSource
+import com.example.showmagnet.data.source.remote.api.RemoteManager
+import com.example.showmagnet.data.source.remote.database.RemoteUserDataSource
 import com.example.showmagnet.data.source.remote.database.Types
 import com.example.showmagnet.domain.model.common.Image
 import com.example.showmagnet.domain.model.common.MediaType
@@ -11,14 +13,19 @@ import com.example.showmagnet.domain.model.common.TimeWindow
 import com.example.showmagnet.domain.model.person.Person
 import com.example.showmagnet.domain.model.person.PersonDetails
 import com.example.showmagnet.domain.repository.PersonRepository
+import com.example.showmagnet.utils.repositoryFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class PersonRepositoryImpl @Inject constructor(
-    private val remoteDataSource: RemoteDataSource,
+    private val remoteUserDataSource: RemoteUserDataSource,
+    private val localManager: LocalManager,
+    private val remoteManger: RemoteManager,
     private val api: PersonApi,
 ) : PersonRepository {
     init {
-        remoteDataSource.setReference(Types.PERSONS)
+        remoteUserDataSource.setReference(Types.PERSONS)
     }
 
     override suspend fun getPersonDetails(id: Int): Result<PersonDetails> = try {
@@ -81,21 +88,17 @@ class PersonRepositoryImpl @Inject constructor(
         Result.failure(e)
     }
 
-    override suspend fun getTrendingPeople(timeWindow: TimeWindow): Result<List<Person>> = try {
-        val response = api.getTrendingPeople(timeWindow.value)
-        val result = response.results?.filterNotNull()?.filter { it.profilePath != null }
-            ?.map { it.toDomain() }
-
-        if (result == null) {
-            Result.failure(Exception("Something went wrong"))
-        } else {
-            Result.success(result)
-        }
-
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Result.failure(e)
-    }
+    override fun getTrendingPeople(timeWindow: TimeWindow): Flow<Result<List<Person>>> =
+        repositoryFlow(
+            localFlow =
+            localManager.getALlPeople().map { list ->
+                list.map { it.toDomain() }
+            },
+            updateFun = {
+                val result = remoteManger.getTrendingPeople(timeWindow)
+                localManager.insertPeople(result)
+            },
+        )
 
     override suspend fun getFavoritePeople(): Result<List<Person>> = try {
         val favoriteList = getPersonFavoriteList().getOrThrow()
@@ -107,7 +110,8 @@ class PersonRepositoryImpl @Inject constructor(
                 Person(
                     id = person.id,
                     name = person.name.orEmpty(),
-                    profilePath = Image(person.profilePath)
+                    profilePath = Image(person.profilePath),
+                    timeWindow = TimeWindow.DAY
                 )
             )
         }
@@ -119,13 +123,12 @@ class PersonRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun addPersonToFavoriteList(id: Int) =
-        remoteDataSource.addToFavorite(id)
+    override suspend fun addPersonToFavoriteList(id: Int) = remoteUserDataSource.addToFavorite(id)
 
-    override suspend fun getPersonFavoriteList() = remoteDataSource.getFavoriteList()
+    override suspend fun getPersonFavoriteList() = remoteUserDataSource.getFavoriteList()
 
     override suspend fun deleteFromFavoritePersonsList(id: Int) =
-        remoteDataSource.deleteFromFavorite(id)
+        remoteUserDataSource.deleteFromFavorite(id)
 
-    override suspend fun isFavoritePersons(id: Int) = remoteDataSource.isFavorite(id)
+    override suspend fun isFavoritePersons(id: Int) = remoteUserDataSource.isFavorite(id)
 }

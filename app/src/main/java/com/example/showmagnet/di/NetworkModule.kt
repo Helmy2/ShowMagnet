@@ -3,7 +3,6 @@ package com.example.showmagnet.di
 import com.example.showmagnet.data.source.remote.api.ApiConstants
 import com.example.showmagnet.data.source.remote.api.MovieApi
 import com.example.showmagnet.data.source.remote.api.PersonApi
-import com.example.showmagnet.data.source.remote.api.ShowApi
 import com.example.showmagnet.data.source.remote.api.TvApi
 import com.example.showmagnet.data.source.remote.api.interceptors.AuthenticationInterceptor
 import com.example.showmagnet.data.source.remote.api.interceptors.LoggingInterceptor
@@ -56,11 +55,6 @@ object NetworkModule {
 
         return interceptor
     }
-
-    @Provides
-    @Singleton
-    fun provideShowApi(retrofit: Retrofit): ShowApi =
-        retrofit.create(ShowApi::class.java)
 
     @Provides
     @Singleton

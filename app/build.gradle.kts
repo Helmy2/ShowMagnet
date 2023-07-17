@@ -6,6 +6,7 @@ plugins {
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -111,6 +112,12 @@ dependencies {
 
     // data store
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // room
+    implementation("androidx.room:room-runtime:2.5.2")
+    annotationProcessor("androidx.room:room-compiler:2.5.2")
+    ksp("androidx.room:room-compiler:2.5.2")
+    implementation("androidx.room:room-ktx:2.5.2")
 
     // firebase
     implementation(platform("com.google.firebase:firebase-bom:32.1.1"))

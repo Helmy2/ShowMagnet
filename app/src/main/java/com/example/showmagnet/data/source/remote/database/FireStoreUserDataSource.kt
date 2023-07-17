@@ -11,11 +11,11 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
-class FireStoreDataSource @Inject constructor(
+class FireStoreUserDataSource @Inject constructor(
     private val firestore: FirebaseFirestore,
     @CurrentFirebaseUser private val user: FirebaseUser?,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
-) : RemoteDataSource {
+) : RemoteUserDataSource {
 
     private var reference: CollectionReference? = null
 

@@ -2,12 +2,10 @@ package com.example.showmagnet.di
 
 import com.example.showmagnet.data.repository.MovieRepositoryImpl
 import com.example.showmagnet.data.repository.PersonRepositoryImpl
-import com.example.showmagnet.data.repository.ShowRepositoryImpl
 import com.example.showmagnet.data.repository.TvRepositoryImpl
 import com.example.showmagnet.data.repository.UserRepositoryImpl
 import com.example.showmagnet.domain.repository.MovieRepository
 import com.example.showmagnet.domain.repository.PersonRepository
-import com.example.showmagnet.domain.repository.ShowRepository
 import com.example.showmagnet.domain.repository.TvRepository
 import com.example.showmagnet.domain.repository.UserRepository
 import dagger.Binds
@@ -20,12 +18,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
-    @Binds
-    @Singleton
-    abstract fun bindShowRepository(
-        showRepositoryImpl: ShowRepositoryImpl
-    ): ShowRepository
-
     @Binds
     @Singleton
     abstract fun bindMovieDetailsRepository(

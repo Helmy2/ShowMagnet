@@ -3,8 +3,6 @@ package com.example.showmagnet.data.source.remote.api
 object ApiConstants {
     const val BASE_ENDPOINT = "https://api.themoviedb.org/3/"
 
-    const val TRAILERS_ENDPOINT = "trending/all/{${ApiParameters.TIME_WINDOW}}"
-
     object Movie {
         const val DETAILS_ENDPOINT = "movie/{${ApiParameters.ID}}"
         const val CREDITS_ENDPOINT = "movie/{${ApiParameters.ID}}/credits"
@@ -14,6 +12,7 @@ object ApiConstants {
         const val POPULAR_ENDPOINT = "movie/popular"
         const val UPCOMING_ENDPOINT = "movie/upcoming"
         const val SEARCH_ENDPOINT = "search/movie"
+        const val TRENDING_ENDPOINT = "trending/movie/day"
     }
 
     object Person {
@@ -33,6 +32,7 @@ object ApiConstants {
             "tv/{${ApiParameters.ID}}/season/{${ApiParameters.SEASON_NUMBER}}"
         const val POPULAR_ENDPOINT = "tv/popular"
         const val SEARCH_ENDPOINT = "search/tv"
+        const val TRENDING_ENDPOINT = "trending/tv/day"
     }
 
     object Discover {
@@ -43,10 +43,13 @@ object ApiConstants {
     }
 }
 
+
 object ApiParameters {
     const val ID = "id"
     const val TIME_WINDOW = "time_window"
     const val SEASON_NUMBER = "season_number"
     const val QUERY = "query"
     const val PAGE = "page"
+    const val FIRST_AIR_DATE_START = "first_air_date.gte"
+    const val FIRST_AIR_DATE_END = "first_air_date.lte"
 }

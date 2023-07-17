@@ -1,6 +1,6 @@
 package com.example.showmagnet.data.source.remote.database
 
-interface RemoteDataSource {
+interface RemoteUserDataSource {
     suspend fun addToFavorite(id: Int): Result<Boolean>
 
     suspend fun getFavoriteList(): Result<List<Int>>

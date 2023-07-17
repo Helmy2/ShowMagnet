@@ -1,4 +1,4 @@
-package com.example.showmagnet.data.source.remote.api
+package com.example.showmagnet.data.source.remote
 
 import android.content.Context
 import android.net.ConnectivityManager

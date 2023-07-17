@@ -1,25 +1,33 @@
 package com.example.showmagnet.data.repository
 
 import com.example.showmagnet.data.mapper.toDomain
+import com.example.showmagnet.data.source.local.LocalManager
+import com.example.showmagnet.data.source.remote.api.RemoteManager
 import com.example.showmagnet.data.source.remote.api.TvApi
-import com.example.showmagnet.data.source.remote.database.RemoteDataSource
+import com.example.showmagnet.data.source.remote.database.RemoteUserDataSource
 import com.example.showmagnet.data.source.remote.database.Types
 import com.example.showmagnet.domain.model.common.Cast
+import com.example.showmagnet.domain.model.common.Category
 import com.example.showmagnet.domain.model.common.Image
 import com.example.showmagnet.domain.model.common.MediaType
 import com.example.showmagnet.domain.model.common.Show
 import com.example.showmagnet.domain.model.tv.Episode
 import com.example.showmagnet.domain.model.tv.Tv
 import com.example.showmagnet.domain.repository.TvRepository
+import com.example.showmagnet.utils.repositoryFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class TvRepositoryImpl @Inject constructor(
-    private val remoteDataSource: RemoteDataSource,
+    private val remoteUserDataSource: RemoteUserDataSource,
+    private val localManager: LocalManager,
+    private val remoteManager: RemoteManager,
     private val api: TvApi,
 ) : TvRepository {
 
     init {
-        remoteDataSource.setReference(Types.TVS)
+        remoteUserDataSource.setReference(Types.TVS)
     }
 
 
@@ -103,21 +111,18 @@ class TvRepositoryImpl @Inject constructor(
         Result.failure(e)
     }
 
-    override suspend fun getPopular(): Result<List<Show>> = try {
-        val response = api.getPopularTv()
 
-        val result = response.shows?.filterNotNull()?.map { it.toDomain(MediaType.TV) }
 
-        if (result == null) {
-            Result.failure(Exception("Something went wrong"))
-        } else {
-            Result.success(result)
-        }
+    override fun getCategory(category: Category): Flow<Result<List<Show>>> =
+        repositoryFlow(
+            localFlow = localManager.getCategory(category)
+                .map { list -> list.map { it.toDomain() } },
+            updateFun = {
+                val result = remoteManager.getTvCategory(category)
+                localManager.insertShow(result)
+            },
+        )
 
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Result.failure(e)
-    }
 
     override suspend fun getFavoriteTv(): Result<List<Show>> = try {
         val favoriteList = getTvFavoriteList().getOrThrow()
@@ -171,12 +176,14 @@ class TvRepositoryImpl @Inject constructor(
         Result.failure(e)
     }
 
-    override suspend fun addTvToFavoriteList(id: Int) = remoteDataSource.addToFavorite(id)
 
-    override suspend fun getTvFavoriteList() = remoteDataSource.getFavoriteList()
+    override suspend fun addTvToFavoriteList(id: Int) = remoteUserDataSource.addToFavorite(id)
 
-    override suspend fun deleteFromFavoriteTvList(id: Int) = remoteDataSource.deleteFromFavorite(id)
+    override suspend fun getTvFavoriteList() = remoteUserDataSource.getFavoriteList()
 
-    override suspend fun isFavoriteTv(id: Int) = remoteDataSource.isFavorite(id)
+    override suspend fun deleteFromFavoriteTvList(id: Int) =
+        remoteUserDataSource.deleteFromFavorite(id)
+
+    override suspend fun isFavoriteTv(id: Int) = remoteUserDataSource.isFavorite(id)
 }
 

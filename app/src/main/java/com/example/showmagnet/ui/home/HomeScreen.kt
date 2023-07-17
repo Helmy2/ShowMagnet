@@ -18,9 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.showmagnet.domain.model.common.MediaType.MOVIE
 import com.example.showmagnet.domain.model.common.MediaType.TV
-import com.example.showmagnet.domain.model.common.MediaType.values
 import com.example.showmagnet.domain.model.common.TimeWindow
-import com.example.showmagnet.ui.common.ui.ConnectedAndLoadingFeild
+import com.example.showmagnet.ui.common.ui.ConnectionAndLoadingFeild
 import com.example.showmagnet.ui.common.ui.PersonList
 import com.example.showmagnet.ui.common.ui.ShowsList
 import kotlinx.coroutines.flow.Flow
@@ -56,32 +55,37 @@ fun HomeScreen(
     Scaffold(snackbarHost = {
         SnackbarHost(snackbarHostState)
     }) {
-        ConnectedAndLoadingFeild(connected = state.connected,
+        ConnectionAndLoadingFeild(
+            connected = state.connected,
             loading = state.loading,
-            onRefresh = { handleEvent(HomeContract.Event.Refresh) }) {
+            haveData = state.upcoming.isNotEmpty(),
+            onRefresh = { handleEvent(HomeContract.Event.Refresh) },
+        ) {
             Column(
                 Modifier
                     .padding(top = 8.dp)
                     .verticalScroll(state = rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                ShowsList(shows = state.upcoming, title = "Upcoming", onItemClick = {
-                    when (it.type) {
-                        MOVIE -> handleNavigation(HomeContract.Navigation.ToMovie(it.id))
-                        TV -> handleNavigation(HomeContract.Navigation.ToTv(it.id))
-                    }
-                })
                 ShowsList(
-                    shows = state.trendingShow,
-                    title = "Trending Show",
-                    selectedIndex = TimeWindow.values().indexOf(state.trendingShowTimeWindow),
-                    selectionList = TimeWindow.values().map { it.formattedValue },
+                    shows = state.upcoming,
+                    title = "Upcoming",
+                    selectedMediaType = state.upcomingMediaType,
                     onSelectionChange = {
-                        handleEvent(
-                            HomeContract.Event.TrendingShowTimeWindowChange(
-                                TimeWindow.values()[it]
-                            )
-                        )
+                        handleEvent(HomeContract.Event.UpcomingMediaTypeChange(it))
+                    },
+                    onItemClick = {
+                        when (it.type) {
+                            MOVIE -> handleNavigation(HomeContract.Navigation.ToMovie(it.id))
+                            TV -> handleNavigation(HomeContract.Navigation.ToTv(it.id))
+                        }
+                    })
+                ShowsList(
+                    shows = state.trending,
+                    title = "Trending Show",
+                    selectedMediaType = state.trendingMediaType,
+                    onSelectionChange = {
+                        handleEvent(HomeContract.Event.TrendingMediaTypeChange(it))
                     },
                     onItemClick = {
                         when (it.type) {
@@ -91,13 +95,13 @@ fun HomeScreen(
                     },
                 )
                 PersonList(
-                    people = state.tradingPeople,
-                    title = "Trading People",
-                    selectedIndex = TimeWindow.values().indexOf(state.trendingPersonTimeWindow),
+                    people = state.trendingPeople,
+                    title = "Popular People",
+                    selectedIndex = TimeWindow.values().indexOf(state.personTimeWindow),
                     selectionList = TimeWindow.values().map { it.formattedValue },
                     onSelectionChange = {
                         handleEvent(
-                            HomeContract.Event.TrendingPersonTimeWindowChange(
+                            HomeContract.Event.PersonTimeWindowChange(
                                 TimeWindow.values()[it]
                             )
                         )
@@ -107,14 +111,9 @@ fun HomeScreen(
                 ShowsList(
                     shows = state.popular,
                     title = "Popular",
-                    selectedIndex = values().indexOf(state.popularMediaType),
-                    selectionList = values().map { it.name },
+                    selectedMediaType = state.popularMediaType,
                     onSelectionChange = {
-                        handleEvent(
-                            HomeContract.Event.PopularMediaTypeChange(
-                                values()[it]
-                            )
-                        )
+                        handleEvent(HomeContract.Event.PopularMediaTypeChange(it))
                     },
                     onItemClick = {
                         when (it.type) {
@@ -126,14 +125,9 @@ fun HomeScreen(
                 ShowsList(
                     shows = state.anime,
                     title = "Anime",
-                    selectedIndex = values().indexOf(state.animeMediaType),
-                    selectionList = values().map { it.name },
+                    selectedMediaType = state.animeMediaType,
                     onSelectionChange = {
-                        handleEvent(
-                            HomeContract.Event.AnimeMediaTypeChange(
-                                values()[it]
-                            )
-                        )
+                        handleEvent(HomeContract.Event.AnimeMediaTypeChange(it))
                     },
                     onItemClick = {
                         when (it.type) {

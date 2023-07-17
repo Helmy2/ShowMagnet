@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.showmagnet.domain.model.person.PersonDetails
-import com.example.showmagnet.ui.common.ui.ConnectedAndLoadingFeild
+import com.example.showmagnet.ui.common.ui.ConnectionAndLoadingFeild
 import com.example.showmagnet.ui.common.ui.ExpandableCard
 import com.example.showmagnet.ui.common.ui.FlowCard
 import com.example.showmagnet.ui.common.ui.ImageList
@@ -67,7 +67,7 @@ fun PersonScreen(
     }
 
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
-        ConnectedAndLoadingFeild(
+        ConnectionAndLoadingFeild(
             connected = state.connected,
             loading = state.loading,
             onRefresh = { handleEvent(PersonContract.Event.Refresh) }

@@ -41,7 +41,7 @@ import com.example.showmagnet.domain.model.common.MediaType
 import com.example.showmagnet.domain.model.common.SortBy
 import com.example.showmagnet.ui.common.Constant
 import com.example.showmagnet.ui.common.ui.ChipList
-import com.example.showmagnet.ui.common.ui.ConnectedAndLoadingFeild
+import com.example.showmagnet.ui.common.ui.ConnectionAndLoadingFeild
 import com.example.showmagnet.ui.common.ui.SearchBar
 import com.example.showmagnet.ui.common.ui.ShowsGrid
 import kotlinx.coroutines.flow.Flow
@@ -80,7 +80,7 @@ fun DiscoveryScreen(
             SnackbarHost(snackbarHostState)
         },
     ) {
-        ConnectedAndLoadingFeild(connected = state.connected,
+        ConnectionAndLoadingFeild(connected = state.connected,
             loading = state.loading,
             onRefresh = { handleEvent(DiscoverContract.Event.Refresh) }) {
             Column(

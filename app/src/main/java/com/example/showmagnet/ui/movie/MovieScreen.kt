@@ -35,7 +35,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.showmagnet.domain.model.movie.Movie
 import com.example.showmagnet.ui.common.ui.CastList
-import com.example.showmagnet.ui.common.ui.ConnectedAndLoadingFeild
+import com.example.showmagnet.ui.common.ui.ConnectionAndLoadingFeild
 import com.example.showmagnet.ui.common.ui.ImageList
 import com.example.showmagnet.ui.common.ui.InformationFeild
 import com.example.showmagnet.ui.common.ui.ShowsList
@@ -73,7 +73,7 @@ fun MovieScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) {
-        ConnectedAndLoadingFeild(
+        ConnectionAndLoadingFeild(
             connected = state.connected,
             loading = state.loading,
             onRefresh = { handleEvent(MovieContract.Event.Refresh) }
