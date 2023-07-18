@@ -1,5 +1,7 @@
 package com.example.showmagnet.data.source.local
 
+import com.example.showmagnet.data.source.local.dao.PersonDao
+import com.example.showmagnet.data.source.local.dao.ShowDao
 import com.example.showmagnet.data.source.local.model.PersonDb
 import com.example.showmagnet.data.source.local.model.ShowDb
 import com.example.showmagnet.data.source.local.model.ShowType

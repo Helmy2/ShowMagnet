@@ -2,8 +2,8 @@ package com.example.showmagnet.di
 
 import com.example.showmagnet.data.source.local.LocalManager
 import com.example.showmagnet.data.source.local.LocalManagerImpl
-import com.example.showmagnet.data.source.remote.api.RemoteManager
-import com.example.showmagnet.data.source.remote.api.RemoteManagerImpl
+import com.example.showmagnet.data.source.remote.RemoteManager
+import com.example.showmagnet.data.source.remote.RemoteManagerImpl
 import com.example.showmagnet.data.source.remote.database.FireStoreUserDataSource
 import com.example.showmagnet.data.source.remote.database.RemoteUserDataSource
 import dagger.Binds

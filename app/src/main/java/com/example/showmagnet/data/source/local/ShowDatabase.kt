@@ -6,6 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.showmagnet.data.source.local.converters.DateConverter
+import com.example.showmagnet.data.source.local.dao.PersonDao
+import com.example.showmagnet.data.source.local.dao.ShowDao
 import com.example.showmagnet.data.source.local.model.PersonDb
 import com.example.showmagnet.data.source.local.model.ShowDb
 

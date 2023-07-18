@@ -5,9 +5,7 @@ import com.example.showmagnet.data.mapper.toShowType
 import com.example.showmagnet.data.source.local.LocalManager
 import com.example.showmagnet.data.source.local.model.ShowDb
 import com.example.showmagnet.data.source.local.model.ShowType
-import com.example.showmagnet.data.source.remote.api.RemoteManager
-import com.example.showmagnet.data.source.remote.api.TvApi
-import com.example.showmagnet.data.source.remote.database.RemoteUserDataSource
+import com.example.showmagnet.data.source.remote.RemoteManager
 import com.example.showmagnet.data.source.remote.database.Types
 import com.example.showmagnet.di.IoDispatcher
 import com.example.showmagnet.domain.model.common.Cast
@@ -23,101 +21,112 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import javax.inject.Inject
 
 class TvRepositoryImpl @Inject constructor(
-    private val remoteUserDataSource: RemoteUserDataSource,
     private val localManager: LocalManager,
     private val remoteManager: RemoteManager,
-    private val api: TvApi,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : TvRepository {
 
     init {
-        remoteUserDataSource.setReference(Types.TVS)
+        remoteManager.setReference(Types.TVS)
     }
 
 
-    override suspend fun getDetails(id: Int): Result<Tv> = try {
-        val response = api.getDetails(id)
-        val favorite = isFavoriteTv(response.id)
-        val result = if (favorite.isSuccess) {
-            response.toDomain(favorite = favorite.getOrThrow())
-        } else {
-            response.toDomain(false)
-        }
+    override suspend fun getDetails(id: Int): Result<Tv> = withContext(ioDispatcher) {
+        try {
+            val response = remoteManager.getTvDetails(id)
+            val favorite = isFavoriteTv(response.id)
+            val result = if (favorite.isSuccess) {
+                response.toDomain(favorite = favorite.getOrThrow())
+            } else {
+                response.toDomain(false)
+            }
 
-        Result.success(result)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Result.failure(e)
-    }
-
-    override suspend fun getSeason(id: Int, seasonNumber: Int): Result<List<Episode>> = try {
-        val response = api.getSeason(id, seasonNumber)
-        val result = response.episodes?.filterNotNull()?.filter { it.voteAverage != 0.0 }
-            ?.map { it.toDomain() }
-
-
-        if (result == null) {
-            Result.failure(Exception("Something went wrong"))
-        } else {
             Result.success(result)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
         }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Result.failure(e)
     }
 
-    override suspend fun getCast(id: Int): Result<List<Cast>> = try {
-        val response = api.getCast(id)
+    override suspend fun getSeason(id: Int, seasonNumber: Int): Result<List<Episode>> =
+        withContext(ioDispatcher) {
+            try {
+                val response = remoteManager.getTvSeason(id, seasonNumber)
+                val result = response.episodes?.filterNotNull()?.filter { it.voteAverage != 0.0 }
+                    ?.map { it.toDomain() }
 
-        val result =
-            response.cast?.filterNotNull()?.filter { it.profilePath != null }?.map { it.toDomain() }
 
-
-        if (result == null) {
-            Result.failure(Exception("Something went wrong"))
-        } else {
-            Result.success(result)
+                if (result == null) {
+                    Result.failure(Exception("Something went wrong"))
+                } else {
+                    Result.success(result)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Result.failure(e)
+            }
         }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Result.failure(e)
+
+    override suspend fun getCast(id: Int): Result<List<Cast>> = withContext(ioDispatcher) {
+        try {
+            val response = remoteManager.getTvCast(id)
+
+            val result = response.cast?.filterNotNull()?.filter { it.profilePath != null }
+                ?.map { it.toDomain() }
+
+
+            if (result == null) {
+                Result.failure(Exception("Something went wrong"))
+            } else {
+                Result.success(result)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
+        }
     }
 
 
-    override suspend fun getImages(id: Int): Result<List<Image>> = try {
-        val response = api.getImages(id)
-        val result = (response.backdrops.orEmpty() + response.posters.orEmpty()).filterNotNull()
-            .map { it.toDomain() }
+    override suspend fun getImages(id: Int): Result<List<Image>> = withContext(ioDispatcher) {
+        try {
+            val response = remoteManager.getTvImages(id)
+            val result = (response.backdrops.orEmpty() + response.posters.orEmpty()).filterNotNull()
+                .map { it.toDomain() }
 
-        if (result.isEmpty()) {
-            Result.failure(Exception("Something went wrong"))
-        } else {
-            Result.success(result)
+            if (result.isEmpty()) {
+                Result.failure(Exception("Something went wrong"))
+            } else {
+                Result.success(result)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure(e)
         }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Result.failure(e)
     }
 
-    override suspend fun getRecommendations(id: Int): Result<List<Show>> = try {
-        val response = api.getRecommendations(id)
-        val result =
-            response.shows?.filterNotNull()?.filter { it.posterPath != null }?.map { it.toDomain() }
+    override suspend fun getRecommendations(id: Int): Result<List<Show>> =
+        withContext(ioDispatcher) {
+            try {
+                val response = remoteManager.getTvRecommendations(id)
+                val result = response.shows?.filterNotNull()?.filter { it.posterPath != null }
+                    ?.map { it.toDomain() }
 
 
-        if (result == null) {
-            Result.failure(Exception("Something went wrong"))
-        } else {
-            Result.success(result)
+                if (result == null) {
+                    Result.failure(Exception("Something went wrong"))
+                } else {
+                    Result.success(result)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Result.failure(e)
+            }
         }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Result.failure(e)
-    }
 
 
     override fun getCategory(category: Category): Flow<Result<List<Show>>> = flow {
@@ -139,7 +148,7 @@ class TvRepositoryImpl @Inject constructor(
 
         val remoteReutlt = mutableListOf<ShowDb>()
         favoriteList.forEach {
-            val movie = api.getDetails(it)
+            val movie = remoteManager.getTvDetails(it)
             remoteReutlt.add(
                 ShowDb(
                     id = movie.id,
@@ -159,43 +168,48 @@ class TvRepositoryImpl @Inject constructor(
     }.flowOn(ioDispatcher).handleErrors()
 
 
-    override suspend fun discoverTv(parameters: Map<String, String>): Result<List<Show>> = try {
-        val response = api.discoverTv(parameters)
+    override suspend fun discoverTv(parameters: Map<String, String>): Result<List<Show>> =
+        withContext(ioDispatcher) {
+            try {
+                val response = remoteManager.discoverTv(parameters)
 
-        val result = response.shows?.filterNotNull()?.map { it.toDomain(MediaType.TV) }
+                val result = response.shows?.filterNotNull()?.map { it.toDomain(MediaType.TV) }
 
-        if (result == null) {
-            Result.failure(Exception("Something went wrong"))
-        } else {
-            Result.success(result)
+                if (result == null) {
+                    Result.failure(Exception("Something went wrong"))
+                } else {
+                    Result.success(result)
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Result.failure(e)
+            }
         }
 
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Result.failure(e)
-    }
-
-    override suspend fun search(query: String, page: Int): Result<List<Show>> = try {
-        val response = api.search(query, page)
-        val result = response.shows?.filterNotNull()?.map { it.toDomain(MediaType.MOVIE) }
-        if (result == null) {
-            Result.failure(Exception("Something went wrong"))
-        } else {
-            Result.success(result)
+    override suspend fun search(query: String, page: Int): Result<List<Show>> =
+        withContext(ioDispatcher) {
+            try {
+                val response = remoteManager.searchTv(query, page)
+                val result = response.shows?.filterNotNull()?.map { it.toDomain(MediaType.MOVIE) }
+                if (result == null) {
+                    Result.failure(Exception("Something went wrong"))
+                } else {
+                    Result.success(result)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Result.failure(e)
+            }
         }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Result.failure(e)
-    }
 
 
-    override suspend fun addTvToFavoriteList(id: Int) = remoteUserDataSource.addToFavorite(id)
+    override suspend fun addTvToFavoriteList(id: Int) = remoteManager.addToFavorite(id)
 
-    override suspend fun getTvFavoriteList() = remoteUserDataSource.getFavoriteList()
+    override suspend fun getTvFavoriteList() = remoteManager.getFavoriteList()
 
-    override suspend fun deleteFromFavoriteTvList(id: Int) =
-        remoteUserDataSource.deleteFromFavorite(id)
+    override suspend fun deleteFromFavoriteTvList(id: Int) = remoteManager.deleteFromFavorite(id)
 
-    override suspend fun isFavoriteTv(id: Int) = remoteUserDataSource.isFavorite(id)
+    override suspend fun isFavoriteTv(id: Int) = remoteManager.isFavorite(id)
 }
 

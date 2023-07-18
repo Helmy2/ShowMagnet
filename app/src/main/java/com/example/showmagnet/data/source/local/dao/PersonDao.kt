@@ -1,4 +1,4 @@
-package com.example.showmagnet.data.source.local
+package com.example.showmagnet.data.source.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert

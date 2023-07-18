@@ -12,28 +12,28 @@ import retrofit2.http.QueryMap
 
 interface MovieApi {
     @GET(ApiConstants.Movie.DETAILS_ENDPOINT)
-    suspend fun getMovieDetails(@Path(ApiParameters.ID) id: Int): MovieResponse
+    suspend fun getDetails(@Path(ApiParameters.ID) id: Int): MovieResponse
 
     @GET(ApiConstants.Movie.CREDITS_ENDPOINT)
-    suspend fun getMovieCast(@Path(ApiParameters.ID) id: Int): CreditsResponse
+    suspend fun getCast(@Path(ApiParameters.ID) id: Int): CreditsResponse
 
     @GET(ApiConstants.Movie.RECOMMENDATIONS_ENDPOINT)
-    suspend fun getMovieRecommendations(@Path(ApiParameters.ID) id: Int): ShowResponse
+    suspend fun getRecommendations(@Path(ApiParameters.ID) id: Int): ShowResponse
 
     @GET(ApiConstants.Movie.COLLECTION_ENDPOINT)
-    suspend fun getMovieCollection(@Path(ApiParameters.ID) id: Int): CollectionResponse
+    suspend fun getCollection(@Path(ApiParameters.ID) id: Int): CollectionResponse
 
     @GET(ApiConstants.Movie.IMAGES_ENDPOINT)
-    suspend fun getMovieImages(@Path(ApiParameters.ID) id: Int): ImagesResponse
+    suspend fun getImages(@Path(ApiParameters.ID) id: Int): ImagesResponse
 
     @GET(ApiConstants.Movie.POPULAR_ENDPOINT)
-    suspend fun getPopularMovies(): ShowResponse
+    suspend fun getPopular(): ShowResponse
 
     @GET(ApiConstants.Movie.UPCOMING_ENDPOINT)
-    suspend fun getUpcomingMovie(): ShowResponse
+    suspend fun getUpcoming(): ShowResponse
 
     @GET(ApiConstants.Discover.MOVIE)
-    suspend fun discoverMovie(
+    suspend fun discover(
         @QueryMap parameters: Map<String, String>
     ): ShowResponse
 
@@ -44,7 +44,7 @@ interface MovieApi {
     ): ShowResponse
 
     @GET(ApiConstants.Discover.MOVIE_ANIME)
-    suspend fun getAnimationMovies(): ShowResponse
+    suspend fun getAnimation(): ShowResponse
 
     @GET(ApiConstants.Movie.TRENDING_ENDPOINT)
     suspend fun getTrending(): ShowResponse

@@ -1,8 +1,8 @@
 package com.example.showmagnet.di
 
 import android.content.Context
-import com.example.showmagnet.data.source.local.PersonDao
-import com.example.showmagnet.data.source.local.ShowDao
+import com.example.showmagnet.data.source.local.dao.PersonDao
+import com.example.showmagnet.data.source.local.dao.ShowDao
 import com.example.showmagnet.data.source.local.ShowDatabase
 import dagger.Module
 import dagger.Provides

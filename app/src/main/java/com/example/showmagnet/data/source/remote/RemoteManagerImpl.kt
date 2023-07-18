@@ -1,4 +1,4 @@
-package com.example.showmagnet.data.source.remote.api
+package com.example.showmagnet.data.source.remote
 
 import com.example.showmagnet.data.mapper.toDb
 import com.example.showmagnet.data.source.local.model.PeopleType
@@ -6,6 +6,19 @@ import com.example.showmagnet.data.source.local.model.PeopleType.FAVORITE_PEOPLE
 import com.example.showmagnet.data.source.local.model.PeopleType.POPULAR_PEOPLE
 import com.example.showmagnet.data.source.local.model.PersonDb
 import com.example.showmagnet.data.source.local.model.ShowDb
+import com.example.showmagnet.data.source.remote.api.MovieApi
+import com.example.showmagnet.data.source.remote.api.PersonApi
+import com.example.showmagnet.data.source.remote.api.TvApi
+import com.example.showmagnet.data.source.remote.api.model.common.CreditsResponse
+import com.example.showmagnet.data.source.remote.api.model.common.ShowResponse
+import com.example.showmagnet.data.source.remote.api.model.movie.CollectionResponse
+import com.example.showmagnet.data.source.remote.api.model.movie.ImagesResponse
+import com.example.showmagnet.data.source.remote.api.model.movie.MovieResponse
+import com.example.showmagnet.data.source.remote.api.model.person.PersonCreditResponse
+import com.example.showmagnet.data.source.remote.api.model.person.PersonDetailsResponse
+import com.example.showmagnet.data.source.remote.api.model.person.PersonImagesResponse
+import com.example.showmagnet.data.source.remote.api.model.tv.SeasonResponse
+import com.example.showmagnet.data.source.remote.api.model.tv.TvResponse
 import com.example.showmagnet.data.source.remote.database.RemoteUserDataSource
 import com.example.showmagnet.data.source.remote.database.Types
 import com.example.showmagnet.domain.model.common.Category
@@ -26,13 +39,8 @@ class RemoteManagerImpl @Inject constructor(
     private val movieApi: MovieApi,
 ) : RemoteManager {
 
-    init {
-        remoteUserDataSource.setReference(Types.PERSONS)
-    }
-
     override suspend fun getPeople(
-        type: PeopleType,
-        timeWindow: TimeWindow
+        type: PeopleType, timeWindow: TimeWindow
     ): List<PersonDb> {
         val now = LocalDateTime.now()
         val response = when (type) {
@@ -68,10 +76,10 @@ class RemoteManagerImpl @Inject constructor(
 
     override suspend fun getMovieCategory(category: Category): List<ShowDb> {
         val response = when (category) {
-            UPCOMING -> movieApi.getUpcomingMovie()
+            UPCOMING -> movieApi.getUpcoming()
             TRENDING -> movieApi.getTrending()
-            POPULAR -> movieApi.getPopularMovies()
-            ANIME -> movieApi.getAnimationMovies()
+            POPULAR -> movieApi.getPopular()
+            ANIME -> movieApi.getAnimation()
         }
 
         val result = response.shows?.filterNotNull()?.map {
@@ -107,4 +115,56 @@ class RemoteManagerImpl @Inject constructor(
 
         return result
     }
+
+    override suspend fun getPersonDetails(id: Int): PersonDetailsResponse =
+        personApi.getPersonDetails(id)
+
+    override suspend fun getPersonImages(id: Int): PersonImagesResponse =
+        personApi.getPersonImages(id)
+
+    override suspend fun getMovieCredits(id: Int): PersonCreditResponse =
+        personApi.getMovieCredits(id)
+
+    override suspend fun getTvCredits(id: Int): PersonCreditResponse = personApi.getTvCredits(id)
+
+    override suspend fun addToFavorite(id: Int) = remoteUserDataSource.addToFavorite(id)
+
+    override suspend fun deleteFromFavorite(id: Int) = remoteUserDataSource.deleteFromFavorite(id)
+    override suspend fun getFavoriteList(): Result<List<Int>> =
+        remoteUserDataSource.getFavoriteList()
+
+    override suspend fun isFavorite(id: Int): Result<Boolean> = remoteUserDataSource.isFavorite(id)
+
+    override fun setReference(type: Types) = remoteUserDataSource.setReference(type)
+    override suspend fun getTvDetails(id: Int): TvResponse = tvApi.getDetails(id)
+
+    override suspend fun getTvSeason(id: Int, seasonNumber: Int): SeasonResponse =
+        tvApi.getSeason(id, seasonNumber)
+
+    override suspend fun getTvCast(id: Int): CreditsResponse = tvApi.getCast(id)
+
+    override suspend fun getTvImages(id: Int): ImagesResponse = tvApi.getImages(id)
+
+    override suspend fun getTvRecommendations(id: Int): ShowResponse = tvApi.getRecommendations(id)
+
+    override suspend fun searchTv(query: String, page: Int): ShowResponse =
+        tvApi.search(query, page)
+
+    override suspend fun discoverTv(parameters: Map<String, String>): ShowResponse =
+        tvApi.discoverTv(parameters)
+
+    override suspend fun getMovieDetails(id: Int): MovieResponse = movieApi.getDetails(id)
+
+    override suspend fun getMovieCast(id: Int): CreditsResponse = movieApi.getCast(id)
+    override suspend fun getMovieCollection(id: Int): CollectionResponse = movieApi.getCollection(id)
+
+    override suspend fun getMovieImages(id: Int): ImagesResponse = movieApi.getImages(id)
+
+    override suspend fun getMovieRecommendations(id: Int): ShowResponse = movieApi.getRecommendations(id)
+
+    override suspend fun discoverMovie(parameters: Map<String, String>): ShowResponse =
+        movieApi.discover(parameters)
+
+    override suspend fun searchMovie(query: String, page: Int): ShowResponse = movieApi.search(query, page)
+
 }
