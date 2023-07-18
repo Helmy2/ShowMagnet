@@ -68,7 +68,7 @@ fun FavoriteScreen(
                         shows = state.movie,
                         title = "Favorite Movies",
                         onItemClick = {
-                            when (it.type) {
+                            when (it.mediaType) {
                                 MOVIE -> handleNavigation(FavoriteContract.Navigation.ToMovie(it.id))
                                 TV -> handleNavigation(FavoriteContract.Navigation.ToTv(it.id))
                             }
@@ -78,7 +78,7 @@ fun FavoriteScreen(
                         shows = state.tv,
                         title = "Favorite TV Shows",
                         onItemClick = {
-                            when (it.type) {
+                            when (it.mediaType) {
                                 MOVIE -> handleNavigation(FavoriteContract.Navigation.ToMovie(it.id))
                                 TV -> handleNavigation(FavoriteContract.Navigation.ToTv(it.id))
                             }

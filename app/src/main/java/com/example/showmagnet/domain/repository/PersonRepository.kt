@@ -15,10 +15,8 @@ interface PersonRepository {
     suspend fun getMovieCredits(id: Int): Result<List<Show>>
 
     suspend fun getTvCredits(id: Int): Result<List<Show>>
-    fun getTrendingPeople(timeWindow: TimeWindow): Flow<Result<List<Person>>>
     suspend fun addPersonToFavoriteList(id: Int): Result<Boolean>
-    suspend fun getPersonFavoriteList(): Result<List<Int>>
     suspend fun deleteFromFavoritePersonsList(id: Int): Result<Boolean>
-    suspend fun isFavoritePersons(id: Int): Result<Boolean>
-    suspend fun getFavoritePeople(): Result<List<Person>>
+    fun getTrendingPeople(timeWindow: TimeWindow): Flow<Result<List<Person>>>
+    suspend fun getFavorite(): Flow<Result<List<Person>>>
 }

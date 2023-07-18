@@ -5,5 +5,5 @@ data class Show(
     val title: String,
     val voteAverage: Float,
     val posterPath: Image,
-    val type: MediaType
+    val mediaType: MediaType
 )

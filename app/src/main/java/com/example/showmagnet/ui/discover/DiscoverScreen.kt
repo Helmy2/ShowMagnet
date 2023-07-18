@@ -92,7 +92,7 @@ fun DiscoveryScreen(
                     shows = state.shows,
                     shouldLoadMore = { handleEvent(DiscoverContract.Event.LoadMore) },
                     onItemClick = {
-                        when (it.type) {
+                        when (it.mediaType) {
                             MediaType.MOVIE -> handleNavigation(
                                 DiscoverContract.Navigation.ToMovie(it.id)
                             )

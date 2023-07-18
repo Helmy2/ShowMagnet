@@ -24,11 +24,12 @@ fun PersonDetailsResponse.toDomain(favorite: Boolean) = PersonDetails(
     profilePath = Image(profilePath)
 )
 
-fun PersonDto.toDb(timeWindow: TimeWindow, addedAt: LocalDateTime) = PersonDb(
+fun PersonDto.toDb(type: String, timeWindow: String, addedAt: LocalDateTime) = PersonDb(
     id = id,
     name = name.orEmpty(),
     profilePath = profilePath ?: throw IllegalArgumentException(),
-    timeWindowDb = timeWindow,
+    type = type,
+    timeWindow = timeWindow,
     addedAt = addedAt
 )
 
@@ -36,5 +37,5 @@ fun PersonDb.toDomain() = Person(
     id = id,
     name = name,
     profilePath = Image(profilePath),
-    timeWindow = timeWindowDb
+    timeWindow = TimeWindow.valueOf(timeWindow),
 )

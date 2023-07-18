@@ -28,7 +28,7 @@ fun NavGraphBuilder.movieScreen(
         ) {
             when (it) {
                 is MovieContract.Navigation.ToDigitalis -> {
-                    when (it.show.type) {
+                    when (it.show.mediaType) {
                         MediaType.MOVIE -> onNavigateToMovie(it.show.id)
                         MediaType.TV -> onNavigateToTv(it.show.id)
                     }

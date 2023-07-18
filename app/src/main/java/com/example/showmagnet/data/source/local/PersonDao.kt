@@ -12,9 +12,9 @@ interface PersonDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPerson(data: List<PersonDb>)
 
-    @Query("SELECT * FROM person_table")
-    fun getAllPeople(): List<PersonDb>
+    @Query("SELECT * FROM person_table where type = :type")
+    fun getAllPeople(type: String): List<PersonDb>
 
-    @Query("DELETE FROM person_table")
-    suspend fun deleteAllPeople()
+    @Query("DELETE FROM person_table where type = :type")
+    suspend fun deleteAllPeople(type: String)
 }

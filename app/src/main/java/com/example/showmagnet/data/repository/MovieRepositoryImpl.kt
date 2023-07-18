@@ -1,7 +1,10 @@
 package com.example.showmagnet.data.repository
 
 import com.example.showmagnet.data.mapper.toDomain
+import com.example.showmagnet.data.mapper.toShowType
 import com.example.showmagnet.data.source.local.LocalManager
+import com.example.showmagnet.data.source.local.model.ShowDb
+import com.example.showmagnet.data.source.local.model.ShowType
 import com.example.showmagnet.data.source.remote.api.MovieApi
 import com.example.showmagnet.data.source.remote.api.RemoteManager
 import com.example.showmagnet.data.source.remote.database.RemoteUserDataSource
@@ -19,6 +22,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
@@ -108,17 +112,43 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
     override fun getCategory(category: Category): Flow<Result<List<Show>>> = flow {
-        val localResult = localManager.getCategory(category, MediaType.MOVIE)
-        emit(Result.success(localResult.filter { it.mediaType == MediaType.MOVIE }
-            .map { it.toDomain() }))
+        val localResult = localManager.getShows(category.toShowType(), MediaType.MOVIE)
+        emit(Result.success(localResult.map { it.toDomain() }))
 
         val remoteReutlt = remoteManager.getMovieCategory(category)
         emit(Result.success(remoteReutlt.map { it.toDomain() }))
 
-        localManager.deleteCategory(category, MediaType.MOVIE)
+        localManager.deleteShows(category.toShowType(), MediaType.MOVIE)
         localManager.insertShow(remoteReutlt)
     }.flowOn(ioDispatcher).handleErrors()
 
+
+    override suspend fun getFavorite(): Flow<Result<List<Show>>> = flow {
+        val localResult = localManager.getShows(ShowType.FAVORITE_SHOW, MediaType.MOVIE)
+        emit(Result.success(localResult.map { it.toDomain() }))
+
+        val favoriteList = getMoviesFavoriteList().getOrThrow()
+
+        val remoteReutlt = mutableListOf<ShowDb>()
+        favoriteList.forEach {
+            val movie = api.getMovieDetails(it)
+            remoteReutlt.add(
+                ShowDb(
+                    id = movie.id,
+                    title = movie.title.orEmpty(),
+                    voteAverage = movie.voteAverage ?: 0f,
+                    posterPath = movie.posterPath ?: "",
+                    mediaType = MediaType.MOVIE.name,
+                    type = ShowType.FAVORITE_SHOW.name,
+                    addedAt = LocalDateTime.now()
+                )
+            )
+        }
+        emit(Result.success(remoteReutlt.map { it.toDomain() }))
+
+        localManager.deleteShows(ShowType.FAVORITE_SHOW, MediaType.MOVIE)
+        localManager.insertShow(remoteReutlt)
+    }.flowOn(ioDispatcher).handleErrors()
 
     override suspend fun discoverMovie(parameters: Map<String, String>): Result<List<Show>> = try {
         val response = api.discoverMovie(parameters)
@@ -144,29 +174,6 @@ class MovieRepositoryImpl @Inject constructor(
         } else {
             Result.success(result)
         }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Result.failure(e)
-    }
-
-    override suspend fun getFavoriteMovies(): Result<List<Show>> = try {
-        val favoriteList = getMoviesFavoriteList().getOrThrow()
-        val list = mutableListOf<Show>()
-
-        favoriteList.forEach {
-            val movie = api.getMovieDetails(it)
-            list.add(
-                Show(
-                    id = movie.id,
-                    title = movie.title.orEmpty(),
-                    voteAverage = movie.voteAverage ?: 0f,
-                    posterPath = Image(movie.posterPath),
-                    type = MediaType.MOVIE
-                )
-            )
-        }
-
-        Result.success(list)
     } catch (e: Exception) {
         e.printStackTrace()
         Result.failure(e)

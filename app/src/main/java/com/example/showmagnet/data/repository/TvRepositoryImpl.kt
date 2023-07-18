@@ -1,7 +1,10 @@
 package com.example.showmagnet.data.repository
 
 import com.example.showmagnet.data.mapper.toDomain
+import com.example.showmagnet.data.mapper.toShowType
 import com.example.showmagnet.data.source.local.LocalManager
+import com.example.showmagnet.data.source.local.model.ShowDb
+import com.example.showmagnet.data.source.local.model.ShowType
 import com.example.showmagnet.data.source.remote.api.RemoteManager
 import com.example.showmagnet.data.source.remote.api.TvApi
 import com.example.showmagnet.data.source.remote.database.RemoteUserDataSource
@@ -20,6 +23,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class TvRepositoryImpl @Inject constructor(
@@ -116,42 +120,44 @@ class TvRepositoryImpl @Inject constructor(
     }
 
 
-
     override fun getCategory(category: Category): Flow<Result<List<Show>>> = flow {
-        val localResult = localManager.getCategory(category, MediaType.TV)
-        emit(Result.success(localResult.filter { it.mediaType == MediaType.TV }
-            .map { it.toDomain() }))
+        val localResult = localManager.getShows(category.toShowType(), MediaType.TV)
+        emit(Result.success(localResult.map { it.toDomain() }))
 
         val remoteReutlt = remoteManager.getTvCategory(category)
         emit(Result.success(remoteReutlt.map { it.toDomain() }))
 
-        localManager.deleteCategory(category, MediaType.TV)
+        localManager.deleteShows(category.toShowType(), MediaType.TV)
         localManager.insertShow(remoteReutlt)
     }.flowOn(ioDispatcher).handleErrors()
 
+    override suspend fun getFavorite(): Flow<Result<List<Show>>> = flow {
+        val localResult = localManager.getShows(ShowType.FAVORITE_SHOW, MediaType.TV)
+        emit(Result.success(localResult.map { it.toDomain() }))
 
-    override suspend fun getFavoriteTv(): Result<List<Show>> = try {
         val favoriteList = getTvFavoriteList().getOrThrow()
-        val list = mutableListOf<Show>()
 
+        val remoteReutlt = mutableListOf<ShowDb>()
         favoriteList.forEach {
-            val tv = api.getDetails(it)
-            list.add(
-                Show(
-                    id = tv.id,
-                    title = tv.name.orEmpty(),
-                    voteAverage = tv.voteAverage ?: 0f,
-                    posterPath = Image(tv.posterPath),
-                    type = MediaType.TV
+            val movie = api.getDetails(it)
+            remoteReutlt.add(
+                ShowDb(
+                    id = movie.id,
+                    title = movie.name.orEmpty(),
+                    voteAverage = movie.voteAverage ?: 0f,
+                    posterPath = movie.posterPath ?: "",
+                    mediaType = MediaType.TV.name,
+                    type = ShowType.FAVORITE_SHOW.name,
+                    addedAt = LocalDateTime.now()
                 )
             )
         }
+        emit(Result.success(remoteReutlt.map { it.toDomain() }))
 
-        Result.success(list)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Result.failure(e)
-    }
+        localManager.deleteShows(ShowType.FAVORITE_SHOW, MediaType.TV)
+        localManager.insertShow(remoteReutlt)
+    }.flowOn(ioDispatcher).handleErrors()
+
 
     override suspend fun discoverTv(parameters: Map<String, String>): Result<List<Show>> = try {
         val response = api.discoverTv(parameters)

@@ -1,11 +1,13 @@
 package com.example.showmagnet.data.mapper
 
 import com.example.showmagnet.data.source.local.model.ShowDb
+import com.example.showmagnet.data.source.local.model.ShowType
 import com.example.showmagnet.data.source.remote.api.model.common.CastDto
 import com.example.showmagnet.data.source.remote.api.model.common.GenreDto
 import com.example.showmagnet.data.source.remote.api.model.common.ImageDto
 import com.example.showmagnet.data.source.remote.api.model.common.ShowDto
 import com.example.showmagnet.domain.model.common.Cast
+import com.example.showmagnet.domain.model.common.Category
 import com.example.showmagnet.domain.model.common.Genre
 import com.example.showmagnet.domain.model.common.Image
 import com.example.showmagnet.domain.model.common.MediaType
@@ -36,7 +38,7 @@ fun ShowDto.toDomain() = Show(
     title = if (mediaType == "movie") title.orEmpty() else name.orEmpty(),
     voteAverage = voteAverage ?: -1f,
     posterPath = Image(posterPath ?: "", .7f),
-    type = MediaType.values().firstOrNull { it.value == mediaType }
+    mediaType = MediaType.values().firstOrNull { it.value == mediaType }
         ?: MediaType.MOVIE
 )
 
@@ -45,20 +47,20 @@ fun ShowDto.toDomain(type: MediaType) = Show(
     title = if (type == MediaType.MOVIE) title.orEmpty() else name.orEmpty(),
     voteAverage = voteAverage ?: -1f,
     posterPath = Image(posterPath ?: "", .7f),
-    type = type
+    mediaType = type
 )
 
 fun ShowDto.toDb(
     addedAt: LocalDateTime,
-    categoryName: String,
-    type: MediaType
+    mediaType: MediaType,
+    type: String,
 ) = ShowDb(
     id = id,
-    title = if (type == MediaType.MOVIE) title.orEmpty() else name.orEmpty(),
+    title = if (mediaType == MediaType.MOVIE) title.orEmpty() else name.orEmpty(),
     voteAverage = voteAverage ?: -1f,
     posterPath = posterPath ?: "",
-    mediaType = type,
-    categoryName = categoryName,
+    mediaType = mediaType.name,
+    type = type,
     addedAt = addedAt
 )
 
@@ -67,5 +69,12 @@ fun ShowDb.toDomain() = Show(
     title = title,
     voteAverage = voteAverage,
     posterPath = Image(posterPath),
-    type = mediaType
+    mediaType = MediaType.valueOf(mediaType)
 )
+
+fun Category.toShowType() = when (this) {
+    Category.UPCOMING -> ShowType.UPCOMING_SHOW
+    Category.TRENDING -> ShowType.TRENDING_SHOW
+    Category.POPULAR -> ShowType.POPULAR_SHOW
+    Category.ANIME -> ShowType.ANIME_SHOW
+}

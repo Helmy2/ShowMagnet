@@ -21,7 +21,7 @@ interface PersonApi {
     suspend fun getPersonImages(@Path(ApiParameters.ID) id: Int): PersonImagesResponse
 
     @GET(ApiConstants.Person.TRENDING_ENDPOINT)
-    suspend fun getTrendingPeople(@Path(ApiParameters.TIME_WINDOW) timeWindow: String): PeopleResponse
+    suspend fun getPopularPeople(@Path(ApiParameters.TIME_WINDOW) timeWindow: String): PeopleResponse
 
 }
 

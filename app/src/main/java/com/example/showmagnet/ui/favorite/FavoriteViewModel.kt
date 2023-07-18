@@ -1,11 +1,11 @@
 package com.example.showmagnet.ui.favorite
 
 import androidx.lifecycle.viewModelScope
-import com.example.showmagnet.domain.model.common.NetworkUnavailableException
 import com.example.showmagnet.domain.use_case.favorite.GetFavoriteMovieUseCase
 import com.example.showmagnet.domain.use_case.favorite.GetFavoritePeopleUseCase
 import com.example.showmagnet.domain.use_case.favorite.GetFavoriteTvUseCase
 import com.example.showmagnet.ui.common.BaseViewModel
+import com.example.showmagnet.utils.collectResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,43 +26,42 @@ class FavoriteViewModel @Inject constructor(
     }
 
     private suspend fun updateFavoriteMovie() {
-        val result = getFavoriteMovieUseCase()
-        if (result.isSuccess) setState {
-            copy(
-                movie = result.getOrDefault(emptyList()), connected = true
-            )
-        } else {
-            if (result.exceptionOrNull() is NetworkUnavailableException) setState {
-                copy(connected = false, loading = false)
-            }
-        }
+        getFavoriteMovieUseCase().collectResult(
+            viewModelScope,
+            onSuccess = {
+                setState { copy(movie = it, connected = true) }
+            },
+            onNetworkFailure = {
+                setState { copy(connected = false, loading = false) }
+            },
+            onFailure = { setEffect { FavoriteContract.Effect.ShowErrorToast(it) } },
+        )
     }
 
     private suspend fun updateFavoriteTv() {
-        val result = getFavoriteTvUseCase()
-        if (result.isSuccess) setState {
-            copy(
-                tv = result.getOrDefault(emptyList()), connected = true
-
-            )
-        } else {
-            if (result.exceptionOrNull() is NetworkUnavailableException) setState {
-                copy(connected = false, loading = false)
-            }
-        }
+        getFavoriteTvUseCase().collectResult(
+            viewModelScope,
+            onSuccess = {
+                setState { copy(tv = it, connected = true) }
+            },
+            onNetworkFailure = {
+                setState { copy(connected = false, loading = false) }
+            },
+            onFailure = { setEffect { FavoriteContract.Effect.ShowErrorToast(it) } },
+        )
     }
 
     private suspend fun updateFavoritePeople() {
-        val result = getFavoritePeopleUseCase()
-        if (result.isSuccess) setState {
-            copy(
-                people = result.getOrDefault(emptyList()), connected = true
-            )
-        } else {
-            if (result.exceptionOrNull() is NetworkUnavailableException) setState {
-                copy(connected = false, loading = false)
-            }
-        }
+       getFavoritePeopleUseCase().collectResult(
+            viewModelScope,
+            onSuccess = {
+                setState { copy(people = it, connected = true) }
+            },
+            onNetworkFailure = {
+                setState { copy(connected = false, loading = false) }
+            },
+            onFailure = { setEffect { FavoriteContract.Effect.ShowErrorToast(it) } },
+        )
     }
 
     private fun refresh() = viewModelScope.launch {

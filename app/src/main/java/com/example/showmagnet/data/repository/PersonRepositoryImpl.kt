@@ -2,6 +2,7 @@ package com.example.showmagnet.data.repository
 
 import com.example.showmagnet.data.mapper.toDomain
 import com.example.showmagnet.data.source.local.LocalManager
+import com.example.showmagnet.data.source.local.model.PeopleType
 import com.example.showmagnet.data.source.remote.api.PersonApi
 import com.example.showmagnet.data.source.remote.api.RemoteManager
 import com.example.showmagnet.data.source.remote.database.RemoteUserDataSource
@@ -93,46 +94,32 @@ class PersonRepositoryImpl @Inject constructor(
     }
 
     override fun getTrendingPeople(timeWindow: TimeWindow): Flow<Result<List<Person>>> = flow {
-        val localResult = localManager.getALlPeople()
+        val localResult = localManager.getPeople(PeopleType.POPULAR_PEOPLE.name)
         emit(Result.success(localResult.map { it.toDomain() }))
 
-        val result = remoteManger.getTrendingPeople(timeWindow)
+        val result = remoteManger.getPeople(PeopleType.POPULAR_PEOPLE, timeWindow)
         emit(Result.success(result.map { it.toDomain() }))
 
-        localManager.deleteAllPeople()
+        localManager.deletePeople(PeopleType.POPULAR_PEOPLE.name)
         localManager.insertPeople(result)
     }.flowOn(ioDispatcher).handleErrors()
 
 
-    override suspend fun getFavoritePeople(): Result<List<Person>> = try {
-        val favoriteList = getPersonFavoriteList().getOrThrow()
-        val list = mutableListOf<Person>()
+    override suspend fun getFavorite(): Flow<Result<List<Person>>> = flow {
+        val localResult = localManager.getPeople(PeopleType.FAVORITE_PEOPLE.name)
+        emit(Result.success(localResult.map { it.toDomain() }))
 
-        favoriteList.forEach {
-            val person = api.getPersonDetails(it)
-            list.add(
-                Person(
-                    id = person.id,
-                    name = person.name.orEmpty(),
-                    profilePath = Image(person.profilePath),
-                    timeWindow = TimeWindow.DAY
-                )
-            )
-        }
+        val remoteReutlt = remoteManger.getPeople(PeopleType.POPULAR_PEOPLE, TimeWindow.DAY)
+        emit(Result.success(remoteReutlt.map { it.toDomain() }))
 
-        Result.success(list)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Result.failure(e)
-    }
-
+        localManager.deletePeople(PeopleType.FAVORITE_PEOPLE.name)
+        localManager.insertPeople(remoteReutlt)
+    }.flowOn(ioDispatcher).handleErrors()
 
     override suspend fun addPersonToFavoriteList(id: Int) = remoteUserDataSource.addToFavorite(id)
-
-    override suspend fun getPersonFavoriteList() = remoteUserDataSource.getFavoriteList()
 
     override suspend fun deleteFromFavoritePersonsList(id: Int) =
         remoteUserDataSource.deleteFromFavorite(id)
 
-    override suspend fun isFavoritePersons(id: Int) = remoteUserDataSource.isFavorite(id)
+    private suspend fun isFavoritePersons(id: Int) = remoteUserDataSource.isFavorite(id)
 }

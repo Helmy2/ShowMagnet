@@ -107,7 +107,7 @@ fun HomeScreen(
 }
 
 private fun navigate(show: Show, handleNavigation: (HomeContract.Navigation) -> Unit) {
-    when (show.type) {
+    when (show.mediaType) {
         MOVIE -> handleNavigation(HomeContract.Navigation.ToMovie(show.id))
         TV -> handleNavigation(HomeContract.Navigation.ToTv(show.id))
     }

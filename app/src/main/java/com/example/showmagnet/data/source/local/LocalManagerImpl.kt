@@ -2,8 +2,8 @@ package com.example.showmagnet.data.source.local
 
 import com.example.showmagnet.data.source.local.model.PersonDb
 import com.example.showmagnet.data.source.local.model.ShowDb
+import com.example.showmagnet.data.source.local.model.ShowType
 import com.example.showmagnet.di.IoDispatcher
-import com.example.showmagnet.domain.model.common.Category
 import com.example.showmagnet.domain.model.common.MediaType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -15,9 +15,10 @@ class LocalManagerImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : LocalManager {
 
-    override fun getALlPeople(): List<PersonDb> = personDao.getAllPeople()
+    override fun getPeople(type: String): List<PersonDb> = personDao.getAllPeople(type)
 
-    override suspend fun deleteAllPeople() = personDao.deleteAllPeople()
+    override suspend fun deletePeople(type: String) = personDao.deleteAllPeople(type)
+
     override suspend fun insertPeople(people: List<PersonDb>) = withContext(ioDispatcher) {
         personDao.insertPerson(people)
     }
@@ -26,10 +27,10 @@ class LocalManagerImpl @Inject constructor(
         showDao.insertShow(shows)
     }
 
-    override fun getCategory(category: Category, type: MediaType): List<ShowDb> =
-        showDao.getCategory(category, type)
+    override fun getShows(type: ShowType, mediaType: MediaType): List<ShowDb> =
+        showDao.getCategory(type.name, mediaType.name)
 
-    override suspend fun deleteCategory(category: Category, mediaType: MediaType) {
-        showDao.deleteCategory(category, mediaType)
+    override suspend fun deleteShows(type: ShowType, mediaType: MediaType) {
+        showDao.deleteCategory(type.name, mediaType.name)
     }
 }

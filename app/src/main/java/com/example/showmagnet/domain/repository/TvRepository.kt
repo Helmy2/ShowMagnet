@@ -18,8 +18,8 @@ interface TvRepository {
     suspend fun deleteFromFavoriteTvList(id: Int): Result<Boolean>
     suspend fun getTvFavoriteList(): Result<List<Int>>
     suspend fun addTvToFavoriteList(id: Int): Result<Boolean>
-    suspend fun getFavoriteTv(): Result<List<Show>>
     suspend fun discoverTv(parameters: Map<String, String>): Result<List<Show>>
     suspend fun search(query: String, page: Int): Result<List<Show>>
     fun getCategory(category: Category): Flow<Result<List<Show>>>
+    suspend fun getFavorite(): Flow<Result<List<Show>>>
 }
