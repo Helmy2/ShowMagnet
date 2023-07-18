@@ -74,8 +74,4 @@ class FavoriteViewModel @Inject constructor(
         setState { copy(loading = false) }
     }
 
-
-    init {
-        refresh()
-    }
 }

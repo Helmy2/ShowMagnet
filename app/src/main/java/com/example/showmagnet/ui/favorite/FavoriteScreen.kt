@@ -34,6 +34,10 @@ fun FavoriteScreen(
     handleNavigation: (FavoriteContract.Navigation) -> Unit
 ) {
 
+    LaunchedEffect(key1 = true){
+        handleEvent(FavoriteContract.Event.Refresh)
+    }
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
