@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.showmagnet.ui.profile
 
 import android.annotation.SuppressLint
@@ -56,7 +58,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.showmagnet.R
 import com.example.showmagnet.ui.common.ui.NameTextField
@@ -103,8 +104,6 @@ fun ProfileScreen(
             if (state.user != null) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current).data(state.user.url)
-                        .memoryCacheKey(state.user.url).diskCacheKey(state.user.url)
-                        .diskCachePolicy(CachePolicy.ENABLED).memoryCachePolicy(CachePolicy.ENABLED)
                         .error(R.drawable.account).crossfade(true).build(),
                     contentDescription = "Profile Picture",
                     modifier = Modifier

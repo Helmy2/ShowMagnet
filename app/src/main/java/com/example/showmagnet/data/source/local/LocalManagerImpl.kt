@@ -8,6 +8,7 @@ import com.example.showmagnet.data.source.local.model.ShowType
 import com.example.showmagnet.di.IoDispatcher
 import com.example.showmagnet.domain.model.common.MediaType
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -17,9 +18,11 @@ class LocalManagerImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : LocalManager {
 
-    override fun getPeople(type: String): List<PersonDb> = personDao.getAllPeople(type)
+    override fun getPeople(type: String, timeWindow: String): Flow<List<PersonDb>> =
+        personDao.getPeople(type, timeWindow)
 
-    override suspend fun deletePeople(type: String) = personDao.deleteAllPeople(type)
+    override suspend fun deletePeople(type: String, timeWindow: String) =
+        personDao.deleteAllPeople(type, timeWindow)
 
     override suspend fun insertPeople(people: List<PersonDb>) = withContext(ioDispatcher) {
         personDao.insertPerson(people)
@@ -29,7 +32,7 @@ class LocalManagerImpl @Inject constructor(
         showDao.insertShow(shows)
     }
 
-    override fun getShows(type: ShowType, mediaType: MediaType): List<ShowDb> =
+    override fun getShows(type: ShowType, mediaType: MediaType): Flow<List<ShowDb>> =
         showDao.getCategory(type.name, mediaType.name)
 
     override suspend fun deleteShows(type: ShowType, mediaType: MediaType) {

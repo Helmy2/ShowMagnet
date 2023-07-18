@@ -14,5 +14,5 @@ data class PersonDb(
     val type: String,
 ) {
     @PrimaryKey
-    var personId: String = "$id$type"
+    var personId: String = "$id$type$timeWindow"
 }

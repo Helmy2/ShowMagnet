@@ -16,8 +16,10 @@ import com.example.showmagnet.domain.repository.PersonRepository
 import com.example.showmagnet.utils.handleErrors
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -100,25 +102,26 @@ class PersonRepositoryImpl @Inject constructor(
     }
 
     override fun getTrendingPeople(timeWindow: TimeWindow): Flow<Result<List<Person>>> = flow {
-        val localResult = localManager.getPeople(PeopleType.POPULAR_PEOPLE.name)
-        emit(Result.success(localResult.map { it.toDomain() }))
+        val localResult = localManager.getPeople(PeopleType.POPULAR_PEOPLE.name, timeWindow.name)
+        emitAll(localResult.map { Result.success(it.map { it.toDomain() }) })
 
-        val result = remoteManger.getPeople(PeopleType.POPULAR_PEOPLE, timeWindow)
-        emit(Result.success(result.map { it.toDomain() }))
+        val remoteReutlt = remoteManger.getPeople(PeopleType.POPULAR_PEOPLE, timeWindow)
+        emit(Result.success(remoteReutlt.map { it.toDomain() }))
 
-        localManager.deletePeople(PeopleType.POPULAR_PEOPLE.name)
-        localManager.insertPeople(result)
+        localManager.deletePeople(PeopleType.POPULAR_PEOPLE.name, timeWindow.name)
+        localManager.insertPeople(remoteReutlt)
     }.flowOn(ioDispatcher).handleErrors()
 
 
     override suspend fun getFavorite(): Flow<Result<List<Person>>> = flow {
-        val localResult = localManager.getPeople(PeopleType.FAVORITE_PEOPLE.name)
-        emit(Result.success(localResult.map { it.toDomain() }))
+        val localResult =
+            localManager.getPeople(PeopleType.FAVORITE_PEOPLE.name, TimeWindow.DAY.name)
+        emitAll(localResult.map { Result.success(it.map { it.toDomain() }) })
 
-        val remoteReutlt = remoteManger.getPeople(PeopleType.POPULAR_PEOPLE, TimeWindow.DAY)
+        val remoteReutlt = remoteManger.getPeople(PeopleType.FAVORITE_PEOPLE, TimeWindow.DAY)
         emit(Result.success(remoteReutlt.map { it.toDomain() }))
 
-        localManager.deletePeople(PeopleType.FAVORITE_PEOPLE.name)
+        localManager.deletePeople(PeopleType.FAVORITE_PEOPLE.name, TimeWindow.DAY.name)
         localManager.insertPeople(remoteReutlt)
     }.flowOn(ioDispatcher).handleErrors()
 

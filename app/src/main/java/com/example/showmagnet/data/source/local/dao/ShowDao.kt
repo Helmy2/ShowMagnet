@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.showmagnet.data.source.local.model.ShowDb
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ShowDao {
@@ -12,7 +13,7 @@ interface ShowDao {
     suspend fun insertShow(data: List<ShowDb>)
 
     @Query("SELECT * FROM show_table where type = :type and mediaType = :mediaType")
-    fun getCategory(type: String, mediaType: String): List<ShowDb>
+    fun getCategory(type: String, mediaType: String): Flow<List<ShowDb>>
 
 
     @Query("DELETE FROM show_table where type = :type and mediaType = :mediaType")

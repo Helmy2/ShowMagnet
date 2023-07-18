@@ -19,8 +19,10 @@ import com.example.showmagnet.domain.repository.TvRepository
 import com.example.showmagnet.utils.handleErrors
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -131,7 +133,7 @@ class TvRepositoryImpl @Inject constructor(
 
     override fun getCategory(category: Category): Flow<Result<List<Show>>> = flow {
         val localResult = localManager.getShows(category.toShowType(), MediaType.TV)
-        emit(Result.success(localResult.map { it.toDomain() }))
+        emitAll(localResult.map { Result.success(it.map { it.toDomain() }) })
 
         val remoteReutlt = remoteManager.getTvCategory(category)
         emit(Result.success(remoteReutlt.map { it.toDomain() }))
@@ -142,7 +144,7 @@ class TvRepositoryImpl @Inject constructor(
 
     override suspend fun getFavorite(): Flow<Result<List<Show>>> = flow {
         val localResult = localManager.getShows(ShowType.FAVORITE_SHOW, MediaType.TV)
-        emit(Result.success(localResult.map { it.toDomain() }))
+        emitAll(localResult.map { Result.success(it.map { it.toDomain() }) })
 
         val favoriteList = getTvFavoriteList().getOrThrow()
 
@@ -168,12 +170,14 @@ class TvRepositoryImpl @Inject constructor(
     }.flowOn(ioDispatcher).handleErrors()
 
 
-    override suspend fun discoverTv(parameters: Map<String, String>): Result<List<Show>> =
+    override suspend
+    fun discoverTv(parameters: Map<String, String>): Result<List<Show>> =
         withContext(ioDispatcher) {
             try {
                 val response = remoteManager.discoverTv(parameters)
 
-                val result = response.shows?.filterNotNull()?.map { it.toDomain(MediaType.TV) }
+                val result =
+                    response.shows?.filterNotNull()?.map { it.toDomain(MediaType.TV) }
 
                 if (result == null) {
                     Result.failure(Exception("Something went wrong"))
@@ -187,11 +191,13 @@ class TvRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun search(query: String, page: Int): Result<List<Show>> =
+    override suspend
+    fun search(query: String, page: Int): Result<List<Show>> =
         withContext(ioDispatcher) {
             try {
                 val response = remoteManager.searchTv(query, page)
-                val result = response.shows?.filterNotNull()?.map { it.toDomain(MediaType.MOVIE) }
+                val result = response.shows?.filterNotNull()
+                    ?.map { it.toDomain(MediaType.MOVIE) }
                 if (result == null) {
                     Result.failure(Exception("Something went wrong"))
                 } else {
@@ -204,12 +210,16 @@ class TvRepositoryImpl @Inject constructor(
         }
 
 
-    override suspend fun addTvToFavoriteList(id: Int) = remoteManager.addToFavorite(id)
+    override suspend
+    fun addTvToFavoriteList(id: Int) = remoteManager.addToFavorite(id)
 
-    override suspend fun getTvFavoriteList() = remoteManager.getFavoriteList()
+    override suspend
+    fun getTvFavoriteList() = remoteManager.getFavoriteList()
 
-    override suspend fun deleteFromFavoriteTvList(id: Int) = remoteManager.deleteFromFavorite(id)
+    override suspend
+    fun deleteFromFavoriteTvList(id: Int) = remoteManager.deleteFromFavorite(id)
 
-    override suspend fun isFavoriteTv(id: Int) = remoteManager.isFavorite(id)
+    override suspend
+    fun isFavoriteTv(id: Int) = remoteManager.isFavorite(id)
 }
 

@@ -18,8 +18,10 @@ import com.example.showmagnet.domain.repository.MovieRepository
 import com.example.showmagnet.utils.handleErrors
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -121,7 +123,7 @@ class MovieRepositoryImpl @Inject constructor(
 
     override fun getCategory(category: Category): Flow<Result<List<Show>>> = flow {
         val localResult = localManager.getShows(category.toShowType(), MediaType.MOVIE)
-        emit(Result.success(localResult.map { it.toDomain() }))
+        emitAll(localResult.map { Result.success(it.map { it.toDomain() }) })
 
         val remoteReutlt = remoteManager.getMovieCategory(category)
         emit(Result.success(remoteReutlt.map { it.toDomain() }))
@@ -133,7 +135,7 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun getFavorite(): Flow<Result<List<Show>>> = flow {
         val localResult = localManager.getShows(ShowType.FAVORITE_SHOW, MediaType.MOVIE)
-        emit(Result.success(localResult.map { it.toDomain() }))
+        emitAll(localResult.map { Result.success(it.map { it.toDomain() }) })
 
         val favoriteList = getMoviesFavoriteList().getOrThrow()
 

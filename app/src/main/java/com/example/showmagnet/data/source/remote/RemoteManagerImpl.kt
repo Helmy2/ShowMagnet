@@ -1,6 +1,7 @@
 package com.example.showmagnet.data.source.remote
 
 import com.example.showmagnet.data.mapper.toDb
+import com.example.showmagnet.data.mapper.toShowType
 import com.example.showmagnet.data.source.local.model.PeopleType
 import com.example.showmagnet.data.source.local.model.PeopleType.FAVORITE_PEOPLE
 import com.example.showmagnet.data.source.local.model.PeopleType.POPULAR_PEOPLE
@@ -85,7 +86,7 @@ class RemoteManagerImpl @Inject constructor(
         val result = response.shows?.filterNotNull()?.map {
             it.toDb(
                 addedAt = LocalDateTime.now(),
-                type = category.name,
+                type = category.toShowType().name,
                 mediaType = MediaType.MOVIE,
             )
         } ?: emptyList()
@@ -108,7 +109,7 @@ class RemoteManagerImpl @Inject constructor(
         val result = response.shows?.filterNotNull()?.filter { it.posterPath != null }?.map {
             it.toDb(
                 addedAt = LocalDateTime.now(),
-                type = category.name,
+                type = category.toShowType().name,
                 mediaType = MediaType.TV,
             )
         }.orEmpty()
