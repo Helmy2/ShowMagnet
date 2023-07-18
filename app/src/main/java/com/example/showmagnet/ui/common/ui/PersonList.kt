@@ -1,6 +1,10 @@
 package com.example.showmagnet.ui.common.ui
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,15 +21,18 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.showmagnet.domain.model.common.TimeWindow
 import com.example.showmagnet.domain.model.person.Person
 
 @Composable
@@ -51,6 +58,73 @@ fun PersonList(
                 selectionList = selectionList,
                 onItemClicked = onSelectionChange
             )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 8.dp),
+        ) {
+            items(items = people, key = { it.id }) { person ->
+                PersonItem(
+                    url = person.profilePath.baseUrl,
+                    name = person.name,
+                    onItemClick = { onItemClick(person.id) },
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun PersonList(
+    people: List<Person>, title: String,
+    selectedTimeWindow: TimeWindow,
+    onSelectionChange: (TimeWindow) -> Unit,
+    onItemClick: (id: Int) -> Unit,
+) {
+    Column {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+
+            Row(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .border(
+                        2.dp, MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(16.dp)
+                    ),
+            ) {
+                for (it in TimeWindow.values()) {
+                    val color by animateColorAsState(
+                        targetValue = if (it == selectedTimeWindow) MaterialTheme.colorScheme.secondary
+                        else Color.Transparent, label = ""
+                    )
+
+                    val textColor by animateColorAsState(
+                        targetValue = if (it == selectedTimeWindow) MaterialTheme.colorScheme.onSecondary
+                        else MaterialTheme.colorScheme.onBackground, label = ""
+                    )
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(color)
+                            .clickable { onSelectionChange(it) }
+                    ) {
+                        Text(
+                            text = it.value,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            color = textColor
+                        )
+                    }
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(8.dp))

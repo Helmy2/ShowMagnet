@@ -6,6 +6,7 @@ import com.example.showmagnet.data.source.remote.api.RemoteManager
 import com.example.showmagnet.data.source.remote.api.TvApi
 import com.example.showmagnet.data.source.remote.database.RemoteUserDataSource
 import com.example.showmagnet.data.source.remote.database.Types
+import com.example.showmagnet.di.IoDispatcher
 import com.example.showmagnet.domain.model.common.Cast
 import com.example.showmagnet.domain.model.common.Category
 import com.example.showmagnet.domain.model.common.Image
@@ -14,9 +15,11 @@ import com.example.showmagnet.domain.model.common.Show
 import com.example.showmagnet.domain.model.tv.Episode
 import com.example.showmagnet.domain.model.tv.Tv
 import com.example.showmagnet.domain.repository.TvRepository
-import com.example.showmagnet.utils.repositoryFlow
+import com.example.showmagnet.utils.handleErrors
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class TvRepositoryImpl @Inject constructor(
@@ -24,6 +27,7 @@ class TvRepositoryImpl @Inject constructor(
     private val localManager: LocalManager,
     private val remoteManager: RemoteManager,
     private val api: TvApi,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : TvRepository {
 
     init {
@@ -113,15 +117,17 @@ class TvRepositoryImpl @Inject constructor(
 
 
 
-    override fun getCategory(category: Category): Flow<Result<List<Show>>> =
-        repositoryFlow(
-            localFlow = localManager.getCategory(category)
-                .map { list -> list.map { it.toDomain() } },
-            updateFun = {
-                val result = remoteManager.getTvCategory(category)
-                localManager.insertShow(result)
-            },
-        )
+    override fun getCategory(category: Category): Flow<Result<List<Show>>> = flow {
+        val localResult = localManager.getCategory(category, MediaType.TV)
+        emit(Result.success(localResult.filter { it.mediaType == MediaType.TV }
+            .map { it.toDomain() }))
+
+        val remoteReutlt = remoteManager.getTvCategory(category)
+        emit(Result.success(remoteReutlt.map { it.toDomain() }))
+
+        localManager.deleteCategory(category, MediaType.TV)
+        localManager.insertShow(remoteReutlt)
+    }.flowOn(ioDispatcher).handleErrors()
 
 
     override suspend fun getFavoriteTv(): Result<List<Show>> = try {

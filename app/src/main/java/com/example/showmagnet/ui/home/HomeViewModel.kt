@@ -24,11 +24,6 @@ class HomeViewModel @Inject constructor(
     val getCategoryUseCase: GetCategoryUseCase,
 ) : BaseViewModel<HomeContract.Event, HomeContract.State, HomeContract.Effect>() {
 
-    private var trendingShows: List<Show> = emptyList()
-    private var animeShows: List<Show> = emptyList()
-    private var popularShows: List<Show> = emptyList()
-    private var upcomingShows: List<Show> = emptyList()
-
     override fun setInitialState() = HomeContract.State()
     override fun handleEvents(event: HomeContract.Event) {
         when (event) {
@@ -44,70 +39,34 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun changeUpcomingMedia(type: MediaType) {
-        val result = upcomingShows.filter { it.type == type }
-        if (result.isEmpty()) {
-            updateCategory(UPCOMING, type) {
-                upcomingShows = it
+        updateCategory(UPCOMING, type) {
+            setState {
+                copy(upcomingMediaType = type, upcoming = it, connected = true, loading = false)
             }
-        }
-        setState {
-            copy(
-                upcomingMediaType = type,
-                upcoming = result,
-                connected = true,
-                loading = false
-            )
         }
     }
 
     private fun changePopularMedia(type: MediaType) {
-        val result = popularShows.filter { it.type == type }
-        if (result.isEmpty()) {
-            updateCategory(POPULAR, type) {
-                popularShows = it
+        updateCategory(POPULAR, type) {
+            setState {
+                copy(popularMediaType = type, popular = it, connected = true, loading = false)
             }
-        }
-        setState {
-            copy(
-                popularMediaType = type,
-                popular = result,
-                connected = true,
-                loading = false
-            )
         }
     }
 
     private fun changeAnimeMedia(type: MediaType) {
-        val result = animeShows.filter { it.type == type }
-        if (result.isEmpty()) {
-            updateCategory(ANIME, type) {
-                animeShows = it
+        updateCategory(ANIME, type) {
+            setState {
+                copy(animeMediaType = type, anime = it, connected = true, loading = false)
             }
-        }
-        setState {
-            copy(
-                animeMediaType = type,
-                anime = result,
-                connected = true,
-                loading = false
-            )
         }
     }
 
     private fun changeTrendingMedia(type: MediaType) {
-        val result = trendingShows.filter { it.type == type }
-        if (result.isEmpty()) {
-            updateCategory(TRENDING, type) {
-                trendingShows = it
+        updateCategory(TRENDING, type) {
+            setState {
+                copy(trendingMediaType = type, trending = it, connected = true, loading = false)
             }
-        }
-        setState {
-            copy(
-                trendingMediaType = type,
-                trending = result,
-                connected = true,
-                loading = false
-            )
         }
     }
 
@@ -119,22 +78,22 @@ class HomeViewModel @Inject constructor(
     private fun updateTrendingPeople() {
         getTrendingPeopleUseCase(
             timeWindow = viewState.value.personTimeWindow
-        ).collectResult(scope = viewModelScope, onSuccess = { list ->
-            val result = list.filter {
-                it.timeWindow == viewState.value.personTimeWindow
-            }
-            setState { copy(trendingPeople = result, connected = true, loading = false) }
-        }, onNetworkFailure = {
-            setState { copy(connected = false) }
-        }, onFailure = {
-            setEffect { HomeContract.Effect.ShowErrorToast(it) }
-        })
+        ).collectResult(
+            scope = viewModelScope,
+            onSuccess = {
+                setState { copy(trendingPeople = it, connected = true, loading = false) }
+            },
+            onNetworkFailure = {
+                setState { copy(connected = false) }
+            },
+            onFailure = {
+                setEffect { HomeContract.Effect.ShowErrorToast(it) }
+            },
+        )
     }
 
     private fun updateCategory(
-        category: Category,
-        mediaType: MediaType,
-        onSuccess: (List<Show>) -> Unit
+        category: Category, mediaType: MediaType, onSuccess: (List<Show>) -> Unit
     ) {
         getCategoryUseCase(category, mediaType).collectResult(
             scope = viewModelScope,
@@ -157,32 +116,36 @@ class HomeViewModel @Inject constructor(
             UPCOMING,
             viewState.value.upcomingMediaType,
         ) {
-            upcomingShows = it
-            changeUpcomingMedia(viewState.value.upcomingMediaType)
+            setState {
+                copy(upcoming = it, connected = true, loading = false)
+            }
         }
 
         updateCategory(
             TRENDING,
             viewState.value.trendingMediaType,
         ) {
-            trendingShows = it
-            changeTrendingMedia(viewState.value.trendingMediaType)
+            setState {
+                copy(trending = it, connected = true, loading = false)
+            }
         }
 
         updateCategory(
             POPULAR,
             viewState.value.popularMediaType,
         ) {
-            popularShows = it
-            changePopularMedia(viewState.value.popularMediaType)
+            setState {
+                copy(popular = it, connected = true, loading = false)
+            }
         }
 
         updateCategory(
             ANIME,
             viewState.value.animeMediaType,
         ) {
-            animeShows = it
-            changeAnimeMedia(viewState.value.animeMediaType)
+            setState {
+                copy(anime = it, connected = true, loading = false)
+            }
         }
 
         delay(500)

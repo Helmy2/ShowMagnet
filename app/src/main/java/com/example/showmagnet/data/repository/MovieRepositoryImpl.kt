@@ -6,6 +6,7 @@ import com.example.showmagnet.data.source.remote.api.MovieApi
 import com.example.showmagnet.data.source.remote.api.RemoteManager
 import com.example.showmagnet.data.source.remote.database.RemoteUserDataSource
 import com.example.showmagnet.data.source.remote.database.Types
+import com.example.showmagnet.di.IoDispatcher
 import com.example.showmagnet.domain.model.common.Cast
 import com.example.showmagnet.domain.model.common.Category
 import com.example.showmagnet.domain.model.common.Image
@@ -13,9 +14,11 @@ import com.example.showmagnet.domain.model.common.MediaType
 import com.example.showmagnet.domain.model.common.Show
 import com.example.showmagnet.domain.model.movie.Movie
 import com.example.showmagnet.domain.repository.MovieRepository
-import com.example.showmagnet.utils.repositoryFlow
+import com.example.showmagnet.utils.handleErrors
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
@@ -23,6 +26,7 @@ class MovieRepositoryImpl @Inject constructor(
     private val localManager: LocalManager,
     private val remoteManager: RemoteManager,
     private val api: MovieApi,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : MovieRepository {
     init {
         remoteUserDataSource.setReference(Types.MOVIES)
@@ -103,15 +107,18 @@ class MovieRepositoryImpl @Inject constructor(
         Result.failure(e)
     }
 
-    override fun getCategory(category: Category): Flow<Result<List<Show>>> =
-        repositoryFlow(
-            localFlow = localManager.getCategory(category)
-                .map { list -> list.map { it.toDomain() } },
-            updateFun = {
-                val result = remoteManager.getMovieCategory(category)
-                localManager.insertShow(result)
-            },
-        )
+    override fun getCategory(category: Category): Flow<Result<List<Show>>> = flow {
+        val localResult = localManager.getCategory(category, MediaType.MOVIE)
+        emit(Result.success(localResult.filter { it.mediaType == MediaType.MOVIE }
+            .map { it.toDomain() }))
+
+        val remoteReutlt = remoteManager.getMovieCategory(category)
+        emit(Result.success(remoteReutlt.map { it.toDomain() }))
+
+        localManager.deleteCategory(category, MediaType.MOVIE)
+        localManager.insertShow(remoteReutlt)
+    }.flowOn(ioDispatcher).handleErrors()
+
 
     override suspend fun discoverMovie(parameters: Map<String, String>): Result<List<Show>> = try {
         val response = api.discoverMovie(parameters)

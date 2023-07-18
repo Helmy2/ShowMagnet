@@ -6,6 +6,7 @@ import com.example.showmagnet.data.source.remote.api.PersonApi
 import com.example.showmagnet.data.source.remote.api.RemoteManager
 import com.example.showmagnet.data.source.remote.database.RemoteUserDataSource
 import com.example.showmagnet.data.source.remote.database.Types
+import com.example.showmagnet.di.IoDispatcher
 import com.example.showmagnet.domain.model.common.Image
 import com.example.showmagnet.domain.model.common.MediaType
 import com.example.showmagnet.domain.model.common.Show
@@ -13,9 +14,11 @@ import com.example.showmagnet.domain.model.common.TimeWindow
 import com.example.showmagnet.domain.model.person.Person
 import com.example.showmagnet.domain.model.person.PersonDetails
 import com.example.showmagnet.domain.repository.PersonRepository
-import com.example.showmagnet.utils.repositoryFlow
+import com.example.showmagnet.utils.handleErrors
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class PersonRepositoryImpl @Inject constructor(
@@ -23,6 +26,7 @@ class PersonRepositoryImpl @Inject constructor(
     private val localManager: LocalManager,
     private val remoteManger: RemoteManager,
     private val api: PersonApi,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : PersonRepository {
     init {
         remoteUserDataSource.setReference(Types.PERSONS)
@@ -88,17 +92,17 @@ class PersonRepositoryImpl @Inject constructor(
         Result.failure(e)
     }
 
-    override fun getTrendingPeople(timeWindow: TimeWindow): Flow<Result<List<Person>>> =
-        repositoryFlow(
-            localFlow =
-            localManager.getALlPeople().map { list ->
-                list.map { it.toDomain() }
-            },
-            updateFun = {
-                val result = remoteManger.getTrendingPeople(timeWindow)
-                localManager.insertPeople(result)
-            },
-        )
+    override fun getTrendingPeople(timeWindow: TimeWindow): Flow<Result<List<Person>>> = flow {
+        val localResult = localManager.getALlPeople()
+        emit(Result.success(localResult.map { it.toDomain() }))
+
+        val result = remoteManger.getTrendingPeople(timeWindow)
+        emit(Result.success(result.map { it.toDomain() }))
+
+        localManager.deleteAllPeople()
+        localManager.insertPeople(result)
+    }.flowOn(ioDispatcher).handleErrors()
+
 
     override suspend fun getFavoritePeople(): Result<List<Person>> = try {
         val favoriteList = getPersonFavoriteList().getOrThrow()

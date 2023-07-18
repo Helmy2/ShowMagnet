@@ -16,9 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.showmagnet.domain.model.common.Category
 import com.example.showmagnet.domain.model.common.MediaType.MOVIE
 import com.example.showmagnet.domain.model.common.MediaType.TV
-import com.example.showmagnet.domain.model.common.TimeWindow
+import com.example.showmagnet.domain.model.common.Show
 import com.example.showmagnet.ui.common.ui.ConnectionAndLoadingFeild
 import com.example.showmagnet.ui.common.ui.PersonList
 import com.example.showmagnet.ui.common.ui.ShowsList
@@ -67,78 +68,47 @@ fun HomeScreen(
                     .verticalScroll(state = rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                ShowsList(
-                    shows = state.upcoming,
-                    title = "Upcoming",
+                ShowsList(shows = state.upcoming,
+                    title = Category.UPCOMING.value,
                     selectedMediaType = state.upcomingMediaType,
-                    onSelectionChange = {
-                        handleEvent(HomeContract.Event.UpcomingMediaTypeChange(it))
-                    },
-                    onItemClick = {
-                        when (it.type) {
-                            MOVIE -> handleNavigation(HomeContract.Navigation.ToMovie(it.id))
-                            TV -> handleNavigation(HomeContract.Navigation.ToTv(it.id))
-                        }
-                    })
+                    onSelectionChange = { handleEvent(HomeContract.Event.UpcomingMediaTypeChange(it)) },
+                    onItemClick = { navigate(it, handleNavigation) })
                 ShowsList(
                     shows = state.trending,
-                    title = "Trending Show",
+                    title = Category.TRENDING.value,
                     selectedMediaType = state.trendingMediaType,
-                    onSelectionChange = {
-                        handleEvent(HomeContract.Event.TrendingMediaTypeChange(it))
-                    },
-                    onItemClick = {
-                        when (it.type) {
-                            MOVIE -> handleNavigation(HomeContract.Navigation.ToMovie(it.id))
-                            TV -> handleNavigation(HomeContract.Navigation.ToTv(it.id))
-                        }
-                    },
+                    onSelectionChange = { handleEvent(HomeContract.Event.TrendingMediaTypeChange(it)) },
+                    onItemClick = { navigate(it, handleNavigation) },
                 )
                 PersonList(
                     people = state.trendingPeople,
                     title = "Popular People",
-                    selectedIndex = TimeWindow.values().indexOf(state.personTimeWindow),
-                    selectionList = TimeWindow.values().map { it.formattedValue },
-                    onSelectionChange = {
-                        handleEvent(
-                            HomeContract.Event.PersonTimeWindowChange(
-                                TimeWindow.values()[it]
-                            )
-                        )
-                    },
+                    selectedTimeWindow = state.personTimeWindow,
+                    onSelectionChange = { handleEvent(HomeContract.Event.PersonTimeWindowChange(it)) },
                     onItemClick = { handleNavigation(HomeContract.Navigation.ToPerson(it)) },
                 )
                 ShowsList(
                     shows = state.popular,
-                    title = "Popular",
+                    title = Category.POPULAR.value,
                     selectedMediaType = state.popularMediaType,
-                    onSelectionChange = {
-                        handleEvent(HomeContract.Event.PopularMediaTypeChange(it))
-                    },
-                    onItemClick = {
-                        when (it.type) {
-                            MOVIE -> handleNavigation(HomeContract.Navigation.ToMovie(it.id))
-                            TV -> handleNavigation(HomeContract.Navigation.ToTv(it.id))
-                        }
-                    },
+                    onSelectionChange = { handleEvent(HomeContract.Event.PopularMediaTypeChange(it)) },
+                    onItemClick = { navigate(it, handleNavigation) },
                 )
                 ShowsList(
                     shows = state.anime,
-                    title = "Anime",
+                    title = Category.ANIME.value,
                     selectedMediaType = state.animeMediaType,
-                    onSelectionChange = {
-                        handleEvent(HomeContract.Event.AnimeMediaTypeChange(it))
-                    },
-                    onItemClick = {
-                        when (it.type) {
-                            MOVIE -> handleNavigation(HomeContract.Navigation.ToMovie(it.id))
-                            TV -> handleNavigation(HomeContract.Navigation.ToTv(it.id))
-                        }
-                    },
+                    onSelectionChange = { handleEvent(HomeContract.Event.AnimeMediaTypeChange(it)) },
+                    onItemClick = { navigate(it, handleNavigation) },
                 )
             }
         }
     }
 }
 
-
+private fun navigate(show: Show, handleNavigation: (HomeContract.Navigation) -> Unit) {
+    when (show.type) {
+        MOVIE -> handleNavigation(HomeContract.Navigation.ToMovie(show.id))
+        TV -> handleNavigation(HomeContract.Navigation.ToTv(show.id))
+    }
+}

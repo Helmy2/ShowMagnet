@@ -3,24 +3,11 @@ package com.example.showmagnet.utils
 import com.example.showmagnet.domain.model.common.NetworkUnavailableException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 
-fun <T> repositoryFlow(
-    localFlow: Flow<T>, updateFun: suspend () -> Unit
-): Flow<Result<T>> = channelFlow {
-    launch {
-        localFlow.collect {
-            send(Result.success(it))
-        }
-    }
-
-    launch {
-        updateFun()
-    }
-}.handleErrors()
 
 fun <T> Flow<Result<T>>.handleErrors(): Flow<Result<T>> = flow {
     try {
@@ -39,7 +26,7 @@ fun <T> Flow<Result<T>>.collectResult(
     onNetworkFailure: (String) -> Unit
 ) {
     scope.launch {
-        collect {
+        collectLatest {
             it.handle(onSuccess, onFailure, onNetworkFailure)
         }
     }

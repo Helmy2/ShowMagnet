@@ -4,12 +4,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import com.example.showmagnet.data.source.local.model.CategoryDb
-import com.example.showmagnet.data.source.local.model.CategoryWithShows
 import com.example.showmagnet.data.source.local.model.ShowDb
 import com.example.showmagnet.domain.model.common.Category
-import kotlinx.coroutines.flow.Flow
+import com.example.showmagnet.domain.model.common.MediaType
 
 @Dao
 interface ShowDao {
@@ -19,9 +17,10 @@ interface ShowDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCategory(data: List<CategoryDb>)
 
-    @Transaction
-    @Query("SELECT * FROM category_table where category = :category")
-    fun getCategory(category: Category): Flow<List<CategoryWithShows>>
+    @Query("SELECT * FROM category_table join show_table on category = categoryName where category = :category and mediaType = :mediaType")
+    fun getCategory(category: Category, mediaType: MediaType): List<ShowDb>
 
 
+    @Query("DELETE FROM show_table where categoryName = :category and mediaType = :mediaType")
+    suspend fun deleteCategory(category: Category, mediaType: MediaType)
 }
