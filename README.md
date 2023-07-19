@@ -6,7 +6,7 @@ Movie is an application based on modern Android tech-stacks especially focus on 
 
 ## Tech stack
 
-- 100% Kotlin based 
+- 100% Kotlin based
 - Coroutines & Flow
 - Hilt dependency injection library
 - Jetpack Compose
@@ -36,79 +36,26 @@ Add your [TMDB access token](https://www.themoviedb.org/settings/api) in local.p
 ```
 access_token=YOUR_ACCESS_TOKEN
 ```
-Add Create [a firebase projects](https://console.firebase.google.com/)
+Add Create [a firebase projects](https://console.firebase.google.com/) and add `google-services.json` file
 
 ## Preview
 ### On boarding
-<body>
-  <div class="image"><img src='images/onboarding_1.jpg'></div>
-  <div class="image"><img src='images/onboarding_2.jpg'></div>
-  <div class="image"><img src='images/onboarding_3.jpg'></div>
-  <div class="image"><img src='images/onboarding_4.jpg'></div>
-</body>
+<img width="200" src='images/onboarding_1.jpg'> <img width="200" src='images/onboarding_2.jpg'>
+<img width="200" src='images/onboarding_3.jpg'> <img width="200" src='images/onboarding_4.jpg'>
+
 
 ### Auth
-<body>
-  <div class="image"><img src='images/sign_in_dark.jpg'></div>
-  <div class="image"><img src='images/sign_in.jpg'></div>
-  <div class="image"><img src='images/sign_up_dark.jpg'></div>
-  <div class="image"><img src='images/sign_up.jpg'></div>
-</body>
+<img width="200" src='images/sign_in_dark.jpg'><img width="200" src='images/sign_in.jpg'>
+<img width="200" src='images/sign_up_dark.jpg'><img width="200" src='images/sign_up.jpg'>
+
 
 ### Main
-<body>
-  <div class="image"><img src='images/image_dark_1.jpg'></div>
-  <div class="image"><img src='images/image_dark_2.jpg'></div>
-  <div class="image"><img src='images/image_dark_3.jpg'></div>
-  <div class="image"><img src='images/image_dark_4.jpg'></div>
-</body>
+<img width="200" src='images/image_dark_1.jpg'><img width="200" src='images/image_dark_2.jpg'>
+<img width="200" src='images/image_dark_3.jpg'><img width="200" src='images/image_dark_4.jpg'>
+<img width="200" src='images/image_1.jpg'><img width="200" src='images/image_2.jpg'>
+<img width="200" src='images/image_3.jpg'><img width="200" src='images/image_4.jpg'>
 
-<body>
-  <div class="image"><img src='images/image_1.jpg'></div>
-  <div class="image"><img src='images/image_2.jpg'></div>
-  <div class="image"><img src='images/image_3.jpg'></div>
-  <div class="image"><img src='images/image_4.jpg'></div>
-</body>
 
 ### Details
-<body>
-  <div class="image"><img src='images/gif_1.gif'></div>
-  <div class="image"><img src='images/gif_2.gif'></div>
-  <div class="image"><img src='images/gif_3.gif'></div>
-  <div class="image"><img src='images/gif_4.gif'></div>
-
-</body>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<style>
-.image {
-  border: 1px dotted black;
-  width: 200px;
-  display: inline-block;
-  margin-right:20px;
-  margin-bottom:20px;
-}
-</style>
+<img width="200" src='images/gif_1.gif'><img width="200" src='images/gif_2.gif'>
+<img width="200" src='images/gif_3.gif'><img width="200" src='images/gif_4.gif'>
