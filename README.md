@@ -1,7 +1,7 @@
 <h1 align="center">Show Magnet</h1>
 
 <p align="center">  
-Movie is an application based on modern Android tech-stacks especially focus on Jetpack Compose UI using The Movie DB API. Also fetching data from the network and integrating persisted data using Room.
+Show Magnet is an application based on modern Android tech-stacks especially focus on Jetpack Compose UI using The Movie DB API. Also fetching data from the network and integrating persisted data using Room.
 </p>
 
 ## Tech stack
@@ -36,7 +36,7 @@ Add your [TMDB access token](https://www.themoviedb.org/settings/api) in local.p
 ```
 access_token=YOUR_ACCESS_TOKEN
 ```
-Add Create [a firebase projects](https://console.firebase.google.com/) and add `google-services.json` file
+Create [a firebase projects](https://console.firebase.google.com/) and add `google-services.json` file
 
 ## Preview
 ### On boarding
