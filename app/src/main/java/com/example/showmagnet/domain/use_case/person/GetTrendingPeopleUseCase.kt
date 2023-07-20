@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetTrendingPeopleUseCase @Inject constructor(
     private val personRepository: PersonRepository
 ) {
-    operator fun invoke(timeWindow: TimeWindow): Flow<Result<List<Person>>> =
+    operator fun invoke(timeWindow: TimeWindow): Flow<List<Person>> =
         personRepository.getTrendingPeople(timeWindow)
 
 }

@@ -60,7 +60,6 @@ fun FavoriteScreen(
     }) {
         ConnectionAndLoadingFeild(connected = state.connected,
             loading = state.loading,
-            haveData = state.movie.isNotEmpty(),
             onRefresh = { handleEvent(FavoriteContract.Event.Refresh) }) {
             Column(
                 Modifier

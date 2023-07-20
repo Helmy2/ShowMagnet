@@ -36,6 +36,10 @@ fun HomeScreen(
     handleNavigation: (HomeContract.Navigation) -> Unit
 ) {
 
+    LaunchedEffect(key1 = true) {
+//        handleEvent(HomeContract.Event.Refresh)
+    }
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -59,7 +63,6 @@ fun HomeScreen(
         ConnectionAndLoadingFeild(
             connected = state.connected,
             loading = state.loading,
-            haveData = state.upcoming.isNotEmpty(),
             onRefresh = { handleEvent(HomeContract.Event.Refresh) },
         ) {
             Column(

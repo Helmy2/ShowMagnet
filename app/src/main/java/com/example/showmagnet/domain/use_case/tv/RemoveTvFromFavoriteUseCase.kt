@@ -6,5 +6,5 @@ import javax.inject.Inject
 class RemoveTvFromFavoriteUseCase @Inject constructor(
     private val tvRepository: TvRepository
 ) {
-    suspend operator fun invoke(id: Int) = tvRepository.deleteFromFavoriteTvList(id)
+    suspend operator fun invoke(id: Int) = tvRepository.deleteFromFavorite(id)
 }

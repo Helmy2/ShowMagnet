@@ -81,7 +81,7 @@ class ProfileViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             userPreferencesUserCase().collectLatest {
-                setState { copy(dark = it.darkTheme) }
+                setState { copy(dark = it.darkTheme ?: false) }
             }
         }
         refresh()

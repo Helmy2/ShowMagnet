@@ -6,6 +6,7 @@ import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
@@ -15,7 +16,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.example.showmagnet.ui.common.theme.ShowMagnetTheme
 import com.example.showmagnet.ui.navigation.AppNavHost
-import com.example.showmagnet.ui.navigation.AppNavViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -26,11 +26,11 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         installSplashScreen()
 
-        val viewModel by viewModels<AppNavViewModel>()
+        val viewModel by viewModels<MainViewModel>()
 
         setContent {
             val userPreferences by viewModel.userPreferencesStateFlow.collectAsState()
-            ShowMagnetTheme(darkTheme = userPreferences?.darkTheme ?: false) {
+            ShowMagnetTheme(darkTheme = userPreferences?.darkTheme ?: isSystemInDarkTheme()) {
                 Surface(Modifier.fillMaxSize()) {
                     userPreferences?.let {
                         AppNavHost(it.isUserSignedIn)

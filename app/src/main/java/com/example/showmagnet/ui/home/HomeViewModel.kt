@@ -1,28 +1,40 @@
 package com.example.showmagnet.ui.home
 
 import androidx.lifecycle.viewModelScope
-import com.example.showmagnet.domain.model.common.Category
 import com.example.showmagnet.domain.model.common.Category.ANIME
 import com.example.showmagnet.domain.model.common.Category.POPULAR
 import com.example.showmagnet.domain.model.common.Category.TRENDING
 import com.example.showmagnet.domain.model.common.Category.UPCOMING
 import com.example.showmagnet.domain.model.common.MediaType
-import com.example.showmagnet.domain.model.common.Show
+import com.example.showmagnet.domain.model.common.NetworkUnavailableException
 import com.example.showmagnet.domain.model.common.TimeWindow
 import com.example.showmagnet.domain.use_case.person.GetTrendingPeopleUseCase
+import com.example.showmagnet.domain.use_case.person.RefreshTrendingPeopleUseCase
 import com.example.showmagnet.domain.use_case.show.GetCategoryUseCase
+import com.example.showmagnet.domain.use_case.show.RefreshCategoryUseCase
 import com.example.showmagnet.ui.common.BaseViewModel
-import com.example.showmagnet.utils.collectResult
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     val getTrendingPeopleUseCase: GetTrendingPeopleUseCase,
+    val refreshTrendingPeopleUseCase: RefreshTrendingPeopleUseCase,
     val getCategoryUseCase: GetCategoryUseCase,
+    val refreshCategoryUseCase: RefreshCategoryUseCase,
 ) : BaseViewModel<HomeContract.Event, HomeContract.State, HomeContract.Effect>() {
+
+    private val errorHandler = CoroutineExceptionHandler { _, e ->
+        if (e is NetworkUnavailableException) {
+            setState { copy(loading = false, connected = false) }
+        } else {
+            setEffect { HomeContract.Effect.ShowErrorToast(e.localizedMessage.orEmpty()) }
+        }
+    }
 
     override fun setInitialState() = HomeContract.State()
     override fun handleEvents(event: HomeContract.Event) {
@@ -39,121 +51,91 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun changeUpcomingMedia(type: MediaType) {
-        updateCategory(UPCOMING, type) {
-            setState {
-                copy(upcomingMediaType = type, upcoming = it, connected = true, loading = false)
-            }
+        viewModelScope.launch(errorHandler) {
+            val result = getCategoryUseCase(UPCOMING, type).first()
+            setState { copy(upcoming = result, upcomingMediaType = type) }
+
+            refreshCategoryUseCase(UPCOMING, type)
         }
     }
 
     private fun changePopularMedia(type: MediaType) {
-        updateCategory(POPULAR, type) {
-            setState {
-                copy(popularMediaType = type, popular = it, connected = true, loading = false)
-            }
+        viewModelScope.launch(errorHandler) {
+            val result = getCategoryUseCase(POPULAR, type).first()
+            setState { copy(popular = result, popularMediaType = type) }
+
+            refreshCategoryUseCase(POPULAR, type)
         }
     }
 
     private fun changeAnimeMedia(type: MediaType) {
-        updateCategory(ANIME, type) {
-            setState {
-                copy(animeMediaType = type, anime = it, connected = true, loading = false)
-            }
+        viewModelScope.launch(errorHandler) {
+            val result = getCategoryUseCase(ANIME, type).first()
+            setState { copy(anime = result, animeMediaType = type) }
+
+            refreshCategoryUseCase(ANIME, type)
         }
     }
 
     private fun changeTrendingMedia(type: MediaType) {
-        updateCategory(TRENDING, type) {
-            setState {
-                copy(trendingMediaType = type, trending = it, connected = true, loading = false)
-            }
+        viewModelScope.launch(errorHandler) {
+            val result = getCategoryUseCase(TRENDING, type).first()
+            setState { copy(trending = result, trendingMediaType = type) }
+
+            refreshCategoryUseCase(TRENDING, type)
         }
     }
 
     private fun updatePopularPeopleTimeWidow(timeWindow: TimeWindow) {
-        setState { copy(personTimeWindow = timeWindow) }
-        updateTrendingPeople()
+        viewModelScope.launch(errorHandler) {
+            val result = getTrendingPeopleUseCase(timeWindow).first()
+            setState { copy(trendingPeople = result, personTimeWindow = timeWindow) }
+            refreshTrendingPeopleUseCase(timeWindow)
+        }
     }
 
-    private fun updateTrendingPeople() {
-        getTrendingPeopleUseCase(
-            timeWindow = viewState.value.personTimeWindow
-        ).collectResult(
-            scope = viewModelScope,
-            onSuccess = {
-                setState { copy(trendingPeople = it, connected = true, loading = false) }
-            },
-            onNetworkFailure = {
-                setState { copy(connected = false) }
-            },
-            onFailure = {
-                setEffect { HomeContract.Effect.ShowErrorToast(it) }
-            },
-        )
-    }
+    private fun refresh() = viewModelScope.launch(errorHandler) {
+        setState { copy(loading = true, connected = true) }
 
-    private fun updateCategory(
-        category: Category, mediaType: MediaType, onSuccess: (List<Show>) -> Unit
-    ) {
-        getCategoryUseCase(category, mediaType).collectResult(
-            scope = viewModelScope,
-            onSuccess = onSuccess,
-            onNetworkFailure = {
-                setState { copy(connected = false) }
-            },
-            onFailure = {
-                setEffect { HomeContract.Effect.ShowErrorToast(it) }
-            },
-        )
-    }
+        val state = viewState.value
+        refreshCategoryUseCase(UPCOMING, state.upcomingMediaType)
+        refreshCategoryUseCase(POPULAR, state.popularMediaType)
+        refreshCategoryUseCase(ANIME, state.animeMediaType)
+        refreshCategoryUseCase(TRENDING, state.trendingMediaType)
 
-    private fun refresh() = viewModelScope.launch {
-        setState { copy(loading = true) }
+        refreshTrendingPeopleUseCase(state.personTimeWindow)
 
-        updateTrendingPeople()
-
-        updateCategory(
-            UPCOMING,
-            viewState.value.upcomingMediaType,
-        ) {
-            setState {
-                copy(upcoming = it, connected = true, loading = false)
-            }
-        }
-
-        updateCategory(
-            TRENDING,
-            viewState.value.trendingMediaType,
-        ) {
-            setState {
-                copy(trending = it, connected = true, loading = false)
-            }
-        }
-
-        updateCategory(
-            POPULAR,
-            viewState.value.popularMediaType,
-        ) {
-            setState {
-                copy(popular = it, connected = true, loading = false)
-            }
-        }
-
-        updateCategory(
-            ANIME,
-            viewState.value.animeMediaType,
-        ) {
-            setState {
-                copy(anime = it, connected = true, loading = false)
-            }
-        }
-
-        delay(500)
         setState { copy(loading = false) }
     }
 
     init {
         refresh()
+        val state = viewState.value
+        viewModelScope.launch {
+            getCategoryUseCase(UPCOMING, state.upcomingMediaType).collectLatest {
+                setState { copy(upcoming = it) }
+            }
+        }
+        viewModelScope.launch {
+            getCategoryUseCase(POPULAR, state.popularMediaType).collectLatest {
+                setState { copy(popular = it) }
+            }
+        }
+        viewModelScope.launch {
+            getCategoryUseCase(ANIME, state.animeMediaType).collectLatest {
+                setState { copy(anime = it) }
+            }
+        }
+        viewModelScope.launch {
+            getCategoryUseCase(TRENDING, state.trendingMediaType).collectLatest {
+                setState { copy(trending = it) }
+            }
+        }
+        viewModelScope.launch {
+            getTrendingPeopleUseCase(state.personTimeWindow).collectLatest {
+                setState { copy(trendingPeople = it) }
+            }
+        }
     }
 }
 

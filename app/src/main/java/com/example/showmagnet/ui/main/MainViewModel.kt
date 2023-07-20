@@ -1,4 +1,4 @@
-package com.example.showmagnet.ui.navigation
+package com.example.showmagnet.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class AppNavViewModel
+class MainViewModel
 @Inject constructor(
     userPreferencesUserCase: UserPreferencesUserCase
 ) : ViewModel() {

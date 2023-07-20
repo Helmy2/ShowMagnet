@@ -14,12 +14,12 @@ interface TvRepository {
     suspend fun getImages(id: Int): Result<List<Image>>
     suspend fun getRecommendations(id: Int): Result<List<Show>>
     suspend fun getSeason(id: Int, seasonNumber: Int): Result<List<Episode>>
-    suspend fun isFavoriteTv(id: Int): Result<Boolean>
-    suspend fun deleteFromFavoriteTvList(id: Int): Result<Boolean>
-    suspend fun getTvFavoriteList(): Result<List<Int>>
-    suspend fun addTvToFavoriteList(id: Int): Result<Boolean>
+    suspend fun deleteFromFavorite(id: Int): Result<Boolean>
+    suspend fun addToFavorite(id: Int): Result<Boolean>
     suspend fun discoverTv(parameters: Map<String, String>): Result<List<Show>>
     suspend fun search(query: String, page: Int): Result<List<Show>>
-    fun getCategory(category: Category): Flow<Result<List<Show>>>
-    suspend fun getFavorite(): Flow<Result<List<Show>>>
+    fun getCategory(category: Category): Flow<List<Show>>
+    suspend fun getFavorite(): Flow<List<Show>>
+    suspend fun refreshCategory(category: Category)
+    suspend fun refreshFavorite()
 }

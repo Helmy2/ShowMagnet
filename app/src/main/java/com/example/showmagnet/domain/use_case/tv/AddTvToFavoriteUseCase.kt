@@ -6,5 +6,5 @@ import javax.inject.Inject
 class AddTvToFavoriteUseCase @Inject constructor(
     private val tvRepository: TvRepository
 ) {
-    suspend operator fun invoke(id: Int) = tvRepository.addTvToFavoriteList(id)
+    suspend operator fun invoke(id: Int) = tvRepository.addToFavorite(id)
 }

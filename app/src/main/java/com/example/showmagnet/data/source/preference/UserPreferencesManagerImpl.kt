@@ -54,7 +54,7 @@ class UserPreferencesManagerImpl @Inject constructor(
 
     private fun mapUserPreferences(preferences: Preferences): UserPreferences {
         val isOnboardingComplete = preferences[PreferencesKeys.IsUserSignedIN] ?: false
-        val darkTheme = preferences[PreferencesKeys.DarkTheme] ?: true
+        val darkTheme = preferences[PreferencesKeys.DarkTheme]
         return UserPreferences(isOnboardingComplete, darkTheme)
     }
 }

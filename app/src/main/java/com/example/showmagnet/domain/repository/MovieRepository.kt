@@ -19,12 +19,12 @@ interface MovieRepository {
     suspend fun getRecommendations(id: Int): Result<List<Show>>
 
     suspend fun addMovieToFavoriteList(id: Int): Result<Boolean>
-    suspend fun getMoviesFavoriteList(): Result<List<Int>>
     suspend fun deleteFromFavoriteMovieList(id: Int): Result<Boolean>
-    suspend fun isFavoriteMovie(id: Int): Result<Boolean>
     suspend fun discoverMovie(parameters: Map<String, String>): Result<List<Show>>
     suspend fun search(query: String, page: Int): Result<List<Show>>
-    fun getCategory(category: Category): Flow<Result<List<Show>>>
-    suspend fun getFavorite(): Flow<Result<List<Show>>>
+    fun getCategory(category: Category): Flow<List<Show>>
+    suspend fun getFavorite(): Flow<List<Show>>
 
+    suspend fun refreshCategory(category: Category)
+    suspend fun refreshFavorite()
 }
