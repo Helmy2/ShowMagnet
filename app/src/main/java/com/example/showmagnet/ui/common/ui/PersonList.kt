@@ -128,8 +128,10 @@ fun PersonList(
         }
 
         Spacer(modifier = Modifier.height(8.dp))
+
         LazyRow(
             contentPadding = PaddingValues(horizontal = 8.dp),
+            modifier = Modifier.height(250.dp)
         ) {
             items(items = people, key = { it.id }) { person ->
                 PersonItem(
@@ -142,6 +144,7 @@ fun PersonList(
         }
     }
 }
+
 
 @Composable
 private fun PersonItem(

@@ -120,11 +120,13 @@ fun ShowsList(
                 }
             }
         }
-
         Spacer(modifier = Modifier.height(8.dp))
+
         LazyRow(
             contentPadding = PaddingValues(horizontal = 8.dp),
+            modifier = Modifier.height(300.dp)
         ) {
+
             items(items = shows, key = { it.id }) { show ->
                 ShowItem(
                     url = show.posterPath.baseUrl,

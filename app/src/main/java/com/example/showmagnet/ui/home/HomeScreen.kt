@@ -37,7 +37,7 @@ fun HomeScreen(
 ) {
 
     LaunchedEffect(key1 = true) {
-//        handleEvent(HomeContract.Event.Refresh)
+        handleEvent(HomeContract.Event.Refresh)
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -71,34 +71,36 @@ fun HomeScreen(
                     .verticalScroll(state = rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                ShowsList(shows = state.upcoming,
+                ShowsList(
+                    shows = state.upcoming.filter { it.mediaType == state.upcomingMediaType },
                     title = Category.UPCOMING.value,
                     selectedMediaType = state.upcomingMediaType,
                     onSelectionChange = { handleEvent(HomeContract.Event.UpcomingMediaTypeChange(it)) },
-                    onItemClick = { navigate(it, handleNavigation) })
+                    onItemClick = { navigate(it, handleNavigation) },
+                )
                 ShowsList(
-                    shows = state.trending,
+                    shows = state.trending.filter { it.mediaType == state.trendingMediaType },
                     title = Category.TRENDING.value,
                     selectedMediaType = state.trendingMediaType,
                     onSelectionChange = { handleEvent(HomeContract.Event.TrendingMediaTypeChange(it)) },
                     onItemClick = { navigate(it, handleNavigation) },
                 )
                 PersonList(
-                    people = state.trendingPeople,
+                    people = state.trendingPeople.filter { it.timeWindow == state.personTimeWindow },
                     title = "Popular People",
                     selectedTimeWindow = state.personTimeWindow,
                     onSelectionChange = { handleEvent(HomeContract.Event.PersonTimeWindowChange(it)) },
                     onItemClick = { handleNavigation(HomeContract.Navigation.ToPerson(it)) },
                 )
                 ShowsList(
-                    shows = state.popular,
+                    shows = state.popular.filter { it.mediaType == state.popularMediaType },
                     title = Category.POPULAR.value,
                     selectedMediaType = state.popularMediaType,
                     onSelectionChange = { handleEvent(HomeContract.Event.PopularMediaTypeChange(it)) },
                     onItemClick = { navigate(it, handleNavigation) },
                 )
                 ShowsList(
-                    shows = state.anime,
+                    shows = state.anime.filter { it.mediaType == state.animeMediaType },
                     title = Category.ANIME.value,
                     selectedMediaType = state.animeMediaType,
                     onSelectionChange = { handleEvent(HomeContract.Event.AnimeMediaTypeChange(it)) },

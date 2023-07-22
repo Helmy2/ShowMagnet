@@ -16,6 +16,7 @@ import com.example.showmagnet.domain.model.person.PersonDetails
 import com.example.showmagnet.domain.repository.PersonRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -101,26 +102,30 @@ class PersonRepositoryImpl @Inject constructor(
     }
 
     override fun getTrendingPeople(timeWindow: TimeWindow): Flow<List<Person>> =
-        localManager.getPeople(PeopleType.POPULAR_PEOPLE.name, timeWindow.name)
+        localManager.getPeople(PeopleType.POPULAR_PEOPLE.name)
+            .distinctUntilChanged()
             .map { list -> list.map { it.toDomain() } }.flowOn(ioDispatcher)
 
 
     override suspend fun refreshTrending(timeWindow: TimeWindow) {
         val remoteReutlt = remoteManger.getTrendingPeople(timeWindow)
 
-        localManager.deletePeople(PeopleType.POPULAR_PEOPLE.name, timeWindow.name)
-        localManager.insertPeople(remoteReutlt)
+        localManager.refreshPeople(
+            remoteReutlt,
+            PeopleType.POPULAR_PEOPLE,
+            timeWindow
+        )
     }
 
     override suspend fun getFavorite(): Flow<List<Person>> =
-        localManager.getPeople(PeopleType.FAVORITE_PEOPLE.name, TimeWindow.DAY.name)
-            .map { list -> list.map { it.toDomain() } }.flowOn(ioDispatcher).flowOn(ioDispatcher)
+        localManager.getPeople(PeopleType.FAVORITE_PEOPLE.name)
+            .distinctUntilChanged()
+            .map { list -> list.map { it.toDomain() } }.flowOn(ioDispatcher)
 
     override suspend fun refreshFavorite() {
         val remoteReutlt = remoteManger.getFavoritePeople()
 
-        localManager.deletePeople(PeopleType.FAVORITE_PEOPLE.name, TimeWindow.DAY.name)
-        localManager.insertPeople(remoteReutlt)
+        localManager.refreshPeople(remoteReutlt, PeopleType.FAVORITE_PEOPLE, TimeWindow.DAY)
     }
 
     override suspend fun addPersonToFavoriteList(id: Int) = remoteManger.addToFavorite(id)

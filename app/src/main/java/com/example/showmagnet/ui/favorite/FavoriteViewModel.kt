@@ -12,7 +12,6 @@ import com.example.showmagnet.ui.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,24 +42,18 @@ class FavoriteViewModel @Inject constructor(
 
     private suspend fun changeFavoriteMovie() {
         viewModelScope.launch(errorHandler) {
-            val result = getFavoriteMovieUseCase().first()
-            setState { copy(movie = result) }
             refreshFavoriteMovieUseCase()
         }
     }
 
     private suspend fun changeFavoriteTv() {
         viewModelScope.launch(errorHandler) {
-            val result = getFavoriteTvUseCase().first()
-            setState { copy(tv = result, connected = true) }
             refreshFavoriteTvUseCase()
         }
     }
 
     private suspend fun changeFavoritePeople() {
         viewModelScope.launch(errorHandler) {
-            val result = getFavoritePeopleUseCase().first()
-            setState { copy(people = result, connected = true) }
             refreshFavoritePeopleUseCase()
         }
     }
@@ -77,20 +70,23 @@ class FavoriteViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(errorHandler) {
-            getFavoriteMovieUseCase().collectLatest {
-                setState { copy(movie = it) }
+            launch {
+                getFavoriteMovieUseCase().collectLatest {
+                    setState { copy(movie = it) }
+                }
+            }
+            launch {
+                getFavoriteTvUseCase().collectLatest {
+                    setState { copy(tv = it) }
+                }
+            }
+            launch {
+                getFavoritePeopleUseCase().collectLatest {
+                    setState { copy(people = it) }
+                }
             }
         }
-        viewModelScope.launch(errorHandler) {
-            getFavoriteTvUseCase().collectLatest {
-                setState { copy(tv = it) }
-            }
-        }
-        viewModelScope.launch(errorHandler) {
-            getFavoritePeopleUseCase().collectLatest {
-                setState { copy(people = it) }
-            }
-        }
+        refresh()
     }
 
 }

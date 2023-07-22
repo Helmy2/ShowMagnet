@@ -18,6 +18,7 @@ import com.example.showmagnet.domain.model.tv.Tv
 import com.example.showmagnet.domain.repository.TvRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -129,25 +130,27 @@ class TvRepositoryImpl @Inject constructor(
 
 
     override fun getCategory(category: Category): Flow<List<Show>> =
-        localManager.getShows(category.toShowType(), MediaType.TV)
+        localManager.getShows(category.toShowType())
+            .distinctUntilChanged()
             .map { list -> list.map { it.toDomain() } }.flowOn(ioDispatcher).flowOn(ioDispatcher)
 
     override suspend fun refreshCategory(category: Category) {
         val remoteReutlt = remoteManager.getTvCategory(category)
 
-        localManager.deleteShows(category.toShowType(), MediaType.TV)
-        localManager.insertShow(remoteReutlt)
+        localManager.refreshShow(remoteReutlt, category.toShowType(), MediaType.TV)
     }
 
     override suspend fun getFavorite(): Flow<List<Show>> =
-        localManager.getShows(ShowType.FAVORITE_SHOW, MediaType.TV)
-            .map { list -> list.map { it.toDomain() } }.flowOn(ioDispatcher)
+        localManager.getShows(ShowType.FAVORITE_SHOW)
+            .distinctUntilChanged()
+            .map { list -> list.map { it.toDomain() } }
+            .map { it.filter { it.mediaType == MediaType.TV } }
+            .flowOn(ioDispatcher)
 
     override suspend fun refreshFavorite() {
         val remoteReutlt = remoteManager.getFavoriteTvs()
 
-        localManager.deleteShows(ShowType.FAVORITE_SHOW, MediaType.TV)
-        localManager.insertShow(remoteReutlt)
+        localManager.refreshShow(remoteReutlt, ShowType.FAVORITE_SHOW, MediaType.TV)
     }
 
     override suspend fun discoverTv(parameters: Map<String, String>): Result<List<Show>> =
